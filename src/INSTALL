@@ -1,0 +1,5 @@
+unipair installation instructions
+---------------------------------
+
+1. Install libudev
+2. Run make

@@ -1,0 +1,116 @@
+-------------------------------------------------------------------------------
+---  MLOCK MANUAL - Version 0.1  ---------------------------- November 2014 ---
+-------------------------------------------------------------------------------
+
+OSI Certified Open Source Software
+
+-------------------------------------------------------------------------------
+
+mlock reads and writes encryped miniLock files (https://minilock.io/).
+
+CONTENT:
+-------------------------------------------------------------------------------
+
+1. Overview
+2. Features
+3. Platforms
+4. Contact
+
+
+1.  Overview
+-------------------------------------------------------------------------------
+
+mlock is a fast native implementation of the minilock file format.
+Despite its name (and in contrast to the original implementation), it can also 
+handle BIG files.
+
+A short description of minilock's benefits (source: https://minilock.io):
+
+"""
+Enter your miniLock passphrase on any computer, and you'll get access to your
+miniLock ID. No key storage or management — just a single passphrase to access
+your miniLock identity anywhere. miniLock uses modern cryptographic primitives
+to accomplish this securely.
+"""
+
+A minilock ID is a short public key derived from a secret passphrase and an
+E-mail address. This ID may be published on websites, mail signatures, twitter
+etc. to enable anyone to encrypt data for this ID. Only the receiver who
+applies the correct mail and passphrase can decrypt the content.
+
+A minilock ID looks like this: jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83
+
+Since the minilock IDs are very comfortable to handle, there is no need for a
+cumbersome key exchange process like using keyservers or manually copying key
+files to hosts.
+
+A sender can define a list of minilock IDs which are able to decrypt the file.
+There is no need to generate a new file for each receiver.
+A minilock file does not contain any visible information about its recipients.
+
+Read more about the cryptographic details: https://minilock.io
+
+
+2.  Features
+-------------------------------------------------------------------------------
+
+USAGE: mlock [OPTION]...
+mlock reads and writes encryped miniLock files (https://minilock.io/)
+
+Available options:
+
+  -E, --encrypt <file>  Encrypt the given file (see -r)
+  -D, --decrypt <file>  Decrypt the given miniLock-file
+  -o, --output <file>   Override the target file name (assumes -D or -E)
+  -m, --mail <string>   User mail address (salt)
+  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)
+  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
+  -q, --quiet           Reserved
+  -h, --help            Print this help screen
+  -v, --version         Print version information
+
+If neither -E nor -D is given, mlock exits after showing your miniLock ID.
+
+
+Examples:
+---------
+
+FILE ENCRYPTION
+
+mlock --encrypt libsodium-1.0.0.tar.gz --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Please enter your secret passphrase:
+Unlocking...
+Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
+Encrypting file libsodium-1.0.0.tar.gz...
+Calculating file hash...
+Task completed.
+
+The encrypted file is libsodium-1.0.0.tar.gz.minilock
+This file can be decrypted by the receiver EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+
+
+FILE DECRYPTION
+
+mlock --decrypt libsodium-1.0.0.tar.gz.minilock --mail receiver@test.org
+Please enter your secret passphrase:
+Unlocking...
+Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Decrypting file libsodium-1.0.0.tar.gz.minilock...
+Calculating file hash...
+Writing to file libsodium-1.0.0.tar.gz...
+Task completed.
+
+
+3.  Platforms
+-------------------------------------------------------------------------------
+
+mlock is currently available for Linux.
+
+
+4.  Contact
+-------------------------------------------------------------------------------
+
+Andre Simon
+andre.simon1@gmx.de
+http://www.andre-simon.de/
+http://wiki.andre-simon.de/

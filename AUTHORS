@@ -1,0 +1,19 @@
+mlock: Andre Simon <andre dot simon1 at gmx de>
+
+minilock specification: Nadim Kobeissi (https://minilock.io)
+
+
+Libraries:
+----------
+
+Base58: Per Löwgren (license: GPL)
+
+Base64: Chris Venter (license: Public Domain)
+
+Blake2: Samuel Neves (license: Public Domain)
+
+JSON: James McLaughlin (license: BSD)
+
+scrypt: Colin Percival (license: BSD)
+
+sodium: libsodium Project (license: ISC)
