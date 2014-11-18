@@ -1,5 +1,13 @@
 mlock ChangeLog
 
+18.11.2014
+
+mlock 0.2
+
+-added progress info output
+-replaced ftell by ftello and fseek by fseeko
+
+---
 11.11.2014
 
 mlock 0.1

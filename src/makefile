@@ -8,7 +8,7 @@ LIBS=libs/
 
 OWASP_FLAGS=-Wextra  -fPIE -Wno-unused-parameter -Wformat=2 -Wformat-security -fstack-protector-all -Wstrict-overflow
 
-CFLAGS=-O2 -Wall ${OWASP_FLAGS} -std=c99 -I${LIBS} -I${LIBS}scrypt/util -I${LIBS}scrypt/scryptenc -I${LIBS}scrypt/crypto
+CFLAGS=-O2 -Wall ${OWASP_FLAGS} -std=gnu99 -I${LIBS} -I${LIBS}scrypt/util -I${LIBS}scrypt/scryptenc -I${LIBS}scrypt/crypto
 
 LDFLAGS=-lm $(shell pkg-config --libs  openssl) -lsodium
 
