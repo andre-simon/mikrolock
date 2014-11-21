@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 struct termios oldtermios;
 
+//see http://stackoverflow.com/questions/1513734/problem-with-kbhitand-getch-for-linux/1513806#1513806
 int ttyraw(int fd) {
 
     struct termios newtermios;

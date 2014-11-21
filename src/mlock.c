@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 
 
+
 #include <sodium/crypto_scalarmult.h>
 #include <sodium/crypto_secretbox.h>
 #include <sodium/crypto_box.h>
@@ -38,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "blake2/blake2.h"
 #include "b58/base58.h"
 #include "scrypt/crypto/crypto_scrypt.h"
+#include "pinentry/pinentry.h"
 
 #include "utils.h"
 
@@ -452,7 +454,6 @@ int minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_pk, uin
 
     int b64_cnt, b_64_epem_cnt;
 
-
     if (get_json_integer(json_header, "version")!=1) {
         printf("WARNING: minilock file version mismatch\n");
     }
@@ -601,7 +602,7 @@ free_decode_res:
     return ret_val;
 }
 
-void prompt_user(const char* prompt_txt, uint8_t* input, int max_len, int is_secret){
+void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secret){
 
     if (is_secret){
       // Catch the most popular signals.
@@ -634,6 +635,19 @@ void prompt_user(const char* prompt_txt, uint8_t* input, int max_len, int is_sec
     }
 }
 
+int check_password(const char *c_passphrase){
+
+  size_t len  = strlen(c_passphrase);
+  
+  if (len<40) return 0;
+  
+  const char * s  = c_passphrase;
+  uint8_t i;
+  for (i=0; s[i]; s[i]==' ' ? i++ : *s++);
+  return i > 3;
+}
+
+
 /******************************************************************************/
 
 void print_help() {
@@ -646,6 +660,7 @@ void print_help() {
 	printf("  -m, --mail <string>   Mail address (salt)\n");
 	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)\n");
 	printf("  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)\n");
+	printf("  -p, --pinentry        Use pinentry program to ask for the passphrase\n");
 	printf("  -q, --quiet           Reserved\n");
 	printf("  -h, --help            Print this help screen\n");
 	printf("  -v, --version         Print version information\n\n");
@@ -662,19 +677,6 @@ void print_version(int show_license_info) {
 	}
 }
 
-
-int check_password(const char *c_passphrase){
-
-  size_t len  = strlen(c_passphrase);
-  
-  if (len<40) return 0;
-  
-  const char * s  = c_passphrase;
-  uint8_t i;
-  for (i=0; s[i]; s[i]==' ' ? i++ : *s++);
-  return i > 3;
-}
-
 int main(int argc, char **argv) {
 
     if (argc == 1) {
@@ -686,6 +688,7 @@ int main(int argc, char **argv) {
     uint8_t c_input_file[BUF_PATH_LEN]  = {0};
     uint8_t c_output_file[BUF_PATH_LEN]  = {0};
     int do_enc=0, do_dec=0;
+    int use_pinentry=0;
     int c;
 
     int exclude_me =0;
@@ -708,12 +711,13 @@ int main(int argc, char **argv) {
             {"version", no_argument,       0, 'v' },
             {"help", no_argument,          0, 'h' },
             {"exclude-me", no_argument,    0, 'x' },
+	    {"pinentry", no_argument,      0, 'p' },
             {"mail",    required_argument, 0, 'm' },
             {"rcpt",    required_argument, 0, 'r' },
             {0,         0,                 0, 0 }
         };
 
-        c = getopt_long(argc, argv, "E:D:o:qvhm:r:x",
+        c = getopt_long(argc, argv, "E:D:o:qvhm:r:xp",
                         long_options, &option_index);
         if (c == -1)
             break;
@@ -757,6 +761,9 @@ int main(int argc, char **argv) {
         case 'x':
             exclude_me = 1;
             break;
+	case 'p':
+            use_pinentry = 1;
+            break;
         case  '?':
             goto main_exit_on_failure;
         default:
@@ -766,10 +773,13 @@ int main(int argc, char **argv) {
 
     print_version(1);
     if(!strlen((const char*)c_user_salt)){
-	prompt_user("Please enter your mail address:\n", c_user_salt, sizeof c_user_salt, 0);
+	prompt_tty("Please enter your mail address:\n", c_user_salt, sizeof c_user_salt, 0);
     }
-    prompt_user("Please enter your secret passphrase:\r\n", c_user_passphrase, sizeof c_user_passphrase, 1);
-
+    
+    if (!use_pinentry ||  prompt_pinentry((const char*)c_user_salt, c_user_passphrase, sizeof c_user_passphrase)<0){
+      prompt_tty("Please enter your secret passphrase:\r\n", c_user_passphrase, sizeof c_user_passphrase, 1);
+    }
+    
     if (!check_password( (const char*) c_user_passphrase)){
         fprintf(stderr, "ERROR: the passphrase must consist of several random words\n");
         goto main_exit_on_failure;
@@ -803,7 +813,6 @@ int main(int argc, char **argv) {
     base58_encode((unsigned char *)c_minilock_id, b_my_pk, KEY_LEN + 1);
 
     printf("Your miniLock-ID: %s\n", c_minilock_id);
-
 
     if (do_dec || do_enc) {
       

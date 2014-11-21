@@ -1,11 +1,12 @@
 mlock ChangeLog
 
-18.11.2014
+21.11.2014
 
 mlock 0.2
 
 -added progress info output
 -replaced ftell by ftello and fseek by fseeko
+-added --pinentry flag
 
 ---
 11.11.2014

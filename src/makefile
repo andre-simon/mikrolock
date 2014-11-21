@@ -8,15 +8,16 @@ LIBS=libs/
 
 OWASP_FLAGS=-Wextra  -fPIE -Wno-unused-parameter -Wformat=2 -Wformat-security -fstack-protector-all -Wstrict-overflow
 
-CFLAGS=-O2 -Wall ${OWASP_FLAGS} -std=gnu99 -I${LIBS} -I${LIBS}scrypt/util -I${LIBS}scrypt/scryptenc -I${LIBS}scrypt/crypto
+CFLAGS=-O2 -Wall ${OWASP_FLAGS} -std=gnu99 -I${LIBS} -I${LIBS}scrypt/util -I${LIBS}scrypt/scryptenc \
+	-I${LIBS}scrypt/crypto -I${LIBS}pinentry/pinentry
 
 LDFLAGS=-lm $(shell pkg-config --libs  openssl) -lsodium
 
-OBJECTS=utils.o mlock.o  ${LIBS}b58/base58.o ${LIBS}json/json.o ${LIBS}libb64/cencode.o ${LIBS}libb64/cdecode.o \
-	${LIBS}blake2/blake2s-ref.o ${LIBS}scrypt/util/memlimit.o \
+OBJECTS=utils.o mlock.o  ${LIBS}b58/base58.o ${LIBS}json/json.o ${LIBS}libb64/cencode.o \
+	${LIBS}libb64/cdecode.o ${LIBS}blake2/blake2s-ref.o ${LIBS}scrypt/util/memlimit.o \
 	${LIBS}scrypt/scryptenc/scryptenc_cpuperf.o  ${LIBS}scrypt/scryptenc/scryptenc.o \
 	${LIBS}scrypt/crypto/sha256.o ${LIBS}scrypt/crypto/crypto_scrypt-ref.o \
-	${LIBS}scrypt/crypto/crypto_aesctr.o
+	${LIBS}scrypt/crypto/crypto_aesctr.o ${LIBS}pinentry/pinentry.o
 
 EXECUTABLE=mlock
 
@@ -38,3 +39,4 @@ clean:
 	@rm -f libs/scrypt/util/*.o
 	@rm -f libs/scrypt/scryptenc/*.o
 	@rm -f libs/scrypt/crypto/*.o
+	@rm -f libs/pinentry/pinentry/*.o
