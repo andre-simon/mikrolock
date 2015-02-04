@@ -144,9 +144,9 @@ void dump(const char *what, uint8_t *s, int len) {
 
 int blake2s_stream( FILE *stream, void *resstream ) {
     int ret = -1;
-    size_t sum, n;
+    off_t sum, n;
     blake2s_state S[1];
-    static const size_t buffer_length = 1048576;
+    static const off_t buffer_length = 1048576;
     uint8_t *buffer = ( uint8_t * )malloc( buffer_length );
 
     if( !buffer ) return -1;

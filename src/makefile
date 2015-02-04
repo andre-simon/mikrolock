@@ -13,7 +13,10 @@ CFLAGS=-O2 -Wall ${OWASP_FLAGS} -std=gnu99 -I${LIBS} -I${LIBS}scrypt/util -I${LI
 
 LDFLAGS=-lm $(shell pkg-config --libs  openssl) -lsodium
 
-OBJECTS=utils.o mlock.o  ${LIBS}b58/base58.o ${LIBS}json/json.o ${LIBS}libb64/cencode.o \
+
+CLI_OBJECTS=mlock.o
+
+CORE_OBJECTS=minilock.o utils.o ${LIBS}b58/base58.o ${LIBS}json/json.o ${LIBS}libb64/cencode.o \
 	${LIBS}libb64/cdecode.o ${LIBS}blake2/blake2s-ref.o ${LIBS}scrypt/util/memlimit.o \
 	${LIBS}scrypt/scryptenc/scryptenc_cpuperf.o  ${LIBS}scrypt/scryptenc/scryptenc.o \
 	${LIBS}scrypt/crypto/sha256.o ${LIBS}scrypt/crypto/crypto_scrypt-ref.o \
@@ -21,13 +24,12 @@ OBJECTS=utils.o mlock.o  ${LIBS}b58/base58.o ${LIBS}json/json.o ${LIBS}libb64/ce
 
 EXECUTABLE=mlock
 
-all: $(SOURCES) $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+cli: lib$(EXECUTABLE).a ${CLI_OBJECTS}
+	${CC} ${LDFLAGS} -o $(EXECUTABLE) ${CLI_OBJECTS} -L. -l$(EXECUTABLE)
 
-.cpp.o:
-	$(CC) $(CFLAGS) $< -o $@
+lib-static lib$(EXECUTABLE).a: ${CORE_OBJECTS}
+	${AR} ${ARFLAGS} lib$(EXECUTABLE).a ${CORE_OBJECTS}
 
 clean:
 	@rm -f *.o
