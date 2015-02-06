@@ -11,18 +11,18 @@ ApplicationWindow {
     height: 500
     color: "#49698d"
     title: "mlock UI"
-    minimumWidth: columns.implicitWidth + columns.x *2
-    minimumHeight: columns.implicitHeight + columns.y *2
+    //minimumWidth: columns.implicitWidth + columns.x *2
+    //minimumHeight: columns.implicitHeight + columns.y *2
 
     MlockInterface {
-         id: myobject
+         id: mlock
       }
 
-    ColumnLayout{
+  //  ColumnLayout{
 
-        id: columns
-        x: 15
-        y: 15
+    //    id: columns
+      //  x: 15
+        //y: 15
 
         TextArea {
             id: textArea1
@@ -30,7 +30,7 @@ ApplicationWindow {
             y: 24
             width: 240
             height: 53
-            text: "Dexcription"
+            text: "Description"
             readOnly: true
 
         }
@@ -65,11 +65,45 @@ ApplicationWindow {
             Layout.fillWidth: true
 
             onClicked: {
-                        console.log(myobject.aufruf(txtMailAddress.text))
-                    }
+                        btnUnlock.enabled    = false
 
+                        console.log("unlocking...")
+                        txtMyId.text=mlock.unlock( txtPassphrase.text, txtMailAddress.text)
+                console.log("unlocking done")
+                btnUnlock.enabled    = true
+                        btnNext.enabled = true
+
+                    }
         }
-    }
+
+        TextField {
+            id: txtMyId
+            x: 24
+            y: 254
+
+            width: 233
+            height: 22
+
+            placeholderText: qsTr("My MiniLock ID")
+            Layout.fillWidth: true
+            readOnly: true
+        }
+
+        Button {
+            id: btnNext
+            x: 39
+            y: 310
+            width: 69
+            height: 70
+            text: qsTr("Process file")
+            enabled: false
+            Layout.fillWidth: true
+
+            onClicked: {
+
+                    }
+        }
+//    }
     //  x: Screen.width/2 - width/2
     //  y: Screen.height/2 - height/2
 }

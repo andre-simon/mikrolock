@@ -3,6 +3,14 @@
 
 #include <QObject>
 
+#include <string.h>
+
+extern "C" {
+#include "scrypt/crypto/crypto_scrypt.h"
+#include "utils.h"
+#include "minilock.h"
+}
+
 class MlockInterface : public QObject
 {
     Q_OBJECT
@@ -11,10 +19,7 @@ public:
     ~MlockInterface();
 
 
-    Q_INVOKABLE QString aufruf(QString test){
-      return QString(test + " BLA");
-    }
-
+    Q_INVOKABLE QString unlock(QString, QString);
 
 signals:
 

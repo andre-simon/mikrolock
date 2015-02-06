@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "utils.h"
 #include "minilock.h"
 
-
+// sadasfsa fff as fasf assffasf saf as fsa fas
 
 void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secret){
 

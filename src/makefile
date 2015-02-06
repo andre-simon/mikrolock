@@ -17,9 +17,11 @@ LDFLAGS=-lm $(shell pkg-config --libs  openssl) -lsodium
 CLI_OBJECTS=mlock.o
 
 CORE_OBJECTS=minilock.o utils.o ${LIBS}b58/base58.o ${LIBS}json/json.o ${LIBS}libb64/cencode.o \
-	${LIBS}libb64/cdecode.o ${LIBS}blake2/blake2s-ref.o ${LIBS}scrypt/util/memlimit.o \
+        ${LIBS}blake2/blake2s-ref.o \
+        ${LIBS}scrypt/crypto/crypto_scrypt-ref.o \
+        ${LIBS}libb64/cdecode.o  ${LIBS}scrypt/util/memlimit.o \
 	${LIBS}scrypt/scryptenc/scryptenc_cpuperf.o  ${LIBS}scrypt/scryptenc/scryptenc.o \
-	${LIBS}scrypt/crypto/sha256.o ${LIBS}scrypt/crypto/crypto_scrypt-ref.o \
+        ${LIBS}scrypt/crypto/sha256.o \
 	${LIBS}scrypt/crypto/crypto_aesctr.o ${LIBS}pinentry/pinentry.o
 
 EXECUTABLE=mlock
