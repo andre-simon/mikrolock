@@ -95,7 +95,7 @@ void print_help() {
 }
 
 void print_version(int show_license_info) {
-	printf("mlock version " VERSION " Copyright 2014 Andre Simon\n");
+        printf("mlock version " VERSION " Copyright 2014, 2015 Andre Simon\n");
 
 	if (show_license_info){
 	    printf("This program comes with ABSOLUTELY NO WARRANTY\n");
@@ -247,6 +247,7 @@ int main(int argc, char **argv) {
       
         printf("%scrypting file %s...\n", do_enc ? "En" : "De", c_input_file);
 
+        //TODO check nur bei decrypt... num_rcpts init? fehler-marke?
 	if (!exclude_me) {
 	  c_rcpt_list[num_rcpts] = malloc(strlen((char*)c_minilock_id)+1);
 	  sprintf(c_rcpt_list[num_rcpts], "%s", (char*)c_minilock_id);

@@ -42,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos, uint8_t* b_file_nonce_prefix,
 		uint8_t* b_file_key, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len) {
+
     unsigned char b_file_nonce[KEY_LEN-8]= {0};
     unsigned char b_nonce_cnt[8]= {0};
     unsigned char b_block_len[4]= {0};
@@ -52,9 +53,7 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
     int chunk_len =0;
     error_code ret_val = err_failed;
     off_t current_pos=crypt_block_start;
-
     memcpy(b_file_nonce, b_file_nonce_prefix, NONCE_PREFIX_LEN);
-
     while (!exit_loop) {
 
         fread(&b_block_len, 1, sizeof b_block_len, input_file);
@@ -94,13 +93,10 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
         }
 
         if (num_chunks==1) {
-
             uint8_t* dest_file = strlen((char*)c_override_out_name) ? c_override_out_name : b_decrypt_block;
-	    memcpy(c_out_name, dest_file, out_name_len-1);
-
+            memcpy(c_out_name, dest_file, out_name_len-1);
             printf("Writing to file %s...\n", dest_file);
             output_file = fopen((char *)dest_file, "wb");
-	    
             if (!output_file) {
                 exit_loop=1;
 		ret_val = err_file_write;
@@ -112,6 +108,7 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
 		ret_val = err_file_write;
                 goto free_encode_write_file_error;
             }
+
             printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
 	    fflush(stdout);
         }
@@ -575,25 +572,25 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         printf("Calculating file hash...\n");
 
         unsigned char hash[KEY_LEN] = {0};
+
         if( blake2s_stream( input_file, hash ) < 0 ) {
 	    ret_val = err_hash;
+            printf("X222\n");
             goto exit_decode_loop_on_failure;
         } else if (memcmp(hash, b_file_hash, KEY_LEN)) {
 	    ret_val = err_hash;
+            printf("X333\n");
             goto exit_decode_loop_on_failure;
         }
-
         // calculating hash moves fp to the end
      //   fseeko(input_file, 0, SEEK_END); 
         off_t eof_pos   = ftello(input_file);
         fseeko(input_file, crypt_block_start, SEEK_SET);
-
 	error_code file_err_err = decode_file(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, c_override_out_name, c_out_name,  out_name_len);
         if (file_err_err) {
 	    ret_val = file_err_err;
             goto exit_decode_loop_on_failure;
         }
-
         ret_val = err_ok;
 
 exit_decode_loop_on_failure:
@@ -607,7 +604,6 @@ exit_decode_loop_on_failure:
         free(b_recipient_id);
         json_value_free (json_file_desc);
         json_value_free (json_file_info);
-
         goto free_decode_res;
 
     } // loop decryptInfo
@@ -619,6 +615,5 @@ free_decode_res:
     free(c_json_buffer);
     json_value_free (json_header);
     fclose(input_file);
-
     return ret_val;
 }
