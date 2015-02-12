@@ -44,59 +44,60 @@ QString MlockInterface::unlock(QString passphrase, QString salt){
 }
 
 
-int MlockInterface::decrypt(QString inFileName){
+int MlockInterface::decrypt(QString inFileName, QString overrideOutName){
 
     std::string std_inFileName = inFileName.mid(7).toStdString();
-
-    return minilock_decode((uint8_t*) std_inFileName.c_str(), b_my_sk, b_my_pk, c_override_out_name, c_final_out_name, sizeof c_final_out_name);
-    //fprintf(stdout, "DONE c_final_out_name: %s, errcode: %d", c_final_out_name, err_code);
-
-    /*switch (err_code){
-      case  err_file_write:
-        fprintf(stderr, "ERROR: could not write to file %s\n", c_final_out_name);
-        break;
-      case err_file_open:
-        //fprintf(stderr, "ERROR: could not open file %s\n", do_dec ? c_input_file : c_final_out_name);
-        break;
-      case err_file_read:
-        //fprintf(stderr, "ERROR: could not read file %s\n", do_dec ? c_input_file :c_final_out_name);
-        break;
-      case err_format:
-        fprintf(stderr, "ERROR: invalid file format of %s\n", std_inFileName.c_str());
-        break;
-      case err_no_rcpt:
-        fprintf(stderr, "ERROR: no recipients defined\n");
-        break;
-      default:
-        break;
-    }
-
-    return err_code;*/
+    std::string std_overrideOutName= overrideOutName.toStdString();
+    return minilock_decode((uint8_t*) std_inFileName.c_str(), b_my_sk, b_my_pk, (uint8_t*)std_overrideOutName.c_str(), c_final_out_name, sizeof c_final_out_name);
 }
 
-int MlockInterface::encrypt(QString inFileName, bool omitMyId, QString rcpt1, QString rcpt2, QString rcpt3) {
+int MlockInterface::encrypt(QString inFileName, QString overrideOutName, bool omitMyId, QString rcpt1, QString rcpt2, QString rcpt3) {
     std::string std_inFileName = inFileName.mid(7).toStdString();
+    std::string std_overrideOutName= overrideOutName.toStdString();
 
-    char* c_rcpt_list[5]= {0};
-    unsigned int num_rcpts=0;
+    freeMem();
+
+    if (!omitMyId){
+        c_rcpt_list[num_rcpts] = (char*)malloc(strlen((char*)c_minilock_id)+1);
+        snprintf(c_rcpt_list[num_rcpts], strlen((char*)c_minilock_id)+1, "%s",(char*)c_minilock_id);
+        num_rcpts++;
+    }
 
     if (rcpt1.size()){
-        c_rcpt_list[num_rcpts] = (char*)rcpt1.toStdString().c_str();
+        c_rcpt_list[num_rcpts] =  (char*)malloc(rcpt1.size()+1);
+        snprintf(c_rcpt_list[num_rcpts], rcpt1.size()+1, "%s",(char*)rcpt1.toStdString().c_str());
         num_rcpts++;
     }
     if (rcpt2.size()){
-        c_rcpt_list[num_rcpts] = (char*)rcpt2.toStdString().c_str();
+        c_rcpt_list[num_rcpts] =  (char*)malloc(rcpt2.size()+1);
+        snprintf(c_rcpt_list[num_rcpts], rcpt2.size()+1, "%s",(char*)rcpt2.toStdString().c_str());
         num_rcpts++;
     }
     if (rcpt3.size()){
-        c_rcpt_list[num_rcpts] = (char*)rcpt3.toStdString().c_str();
+        c_rcpt_list[num_rcpts] =  (char*)malloc(rcpt3.size()+1);
+        snprintf(c_rcpt_list[num_rcpts], rcpt3.size()+1, "%s",(char*)rcpt3.toStdString().c_str());
         num_rcpts++;
     }
 
-    if (!omitMyId){
-        c_rcpt_list[num_rcpts] = (char*)c_minilock_id;
-        num_rcpts++;
-    }
+    return minilock_encode((uint8_t*) std_inFileName.c_str(), c_minilock_id, b_my_sk,  b_my_pk, c_rcpt_list, num_rcpts, (uint8_t*)std_overrideOutName.c_str(), c_final_out_name, sizeof c_final_out_name);
+}
 
-    return minilock_encode((uint8_t*) std_inFileName.c_str(), c_minilock_id, b_my_sk,  b_my_pk, c_rcpt_list, num_rcpts, c_override_out_name, c_final_out_name, sizeof c_final_out_name);
+void MlockInterface::freeMem(){
+    if (num_rcpts>0){
+        while (num_rcpts--  ) {
+            free(c_rcpt_list[num_rcpts]);
+        }
+    }
+}
+
+bool MlockInterface::checkMiniLockID(QString id){
+    if (id.isEmpty()) return true;
+
+     std::string std_id= id.toStdString();
+    uint8_t b_rcpt_pk[KEY_LEN + 1]= {0};
+    uint8_t b_cs[1];
+
+    base58_decode(b_rcpt_pk, (const unsigned char*)std_id.c_str());
+    blake_2s_array(b_rcpt_pk, KEY_LEN , b_cs, sizeof b_cs);
+    return b_cs[0]==b_rcpt_pk[KEY_LEN];
 }

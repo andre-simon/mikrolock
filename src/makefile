@@ -6,6 +6,11 @@ CC=gcc
 
 LIBS=libs/
 
+QMAKE=qmake-qt5
+
+
+GUI_QT_DIR=./gui/mlock-gui/
+
 OWASP_FLAGS=-Wextra  -fPIE -Wno-unused-parameter -Wformat=2 -Wformat-security -fstack-protector-all -Wstrict-overflow
 
 CFLAGS=-O2 -Wall ${OWASP_FLAGS} -std=gnu99 -I${LIBS} -I${LIBS}scrypt/util -I${LIBS}scrypt/scryptenc \
@@ -15,6 +20,9 @@ LDFLAGS=-lm $(shell pkg-config --libs  openssl) -lsodium
 
 
 CLI_OBJECTS=mlock.o
+
+# Qt user interface
+GUI_OBJECTS:=${GUI_QT_DIR}main.cpp ${GUI_QT_DIR}mlockinterface.cpp
 
 CORE_OBJECTS=minilock.o utils.o ${LIBS}b58/base58.o ${LIBS}json/json.o ${LIBS}libb64/cencode.o \
         ${LIBS}blake2/blake2s-ref.o \
@@ -32,6 +40,9 @@ cli: lib$(EXECUTABLE).a ${CLI_OBJECTS}
 
 lib-static lib$(EXECUTABLE).a: ${CORE_OBJECTS}
 	${AR} ${ARFLAGS} lib$(EXECUTABLE).a ${CORE_OBJECTS}
+	
+gui-qt: lib$(EXECUTABLE).a ${GUI_OBJECTS}
+	cd ${GUI_QT_DIR} && ${QMAKE} && $(MAKE)
 
 clean:
 	@rm -f *.o

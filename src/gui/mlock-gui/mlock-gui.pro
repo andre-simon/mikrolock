@@ -15,7 +15,7 @@ RESOURCES += qml.qrc
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
-QMAKE_CFLAGS +=
+QMAKE_CXXFLAGS += -std=c++11 
 
 LIBS += -lm -lssl -lcrypto -lsodium -L../.. -lmlock
 

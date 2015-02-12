@@ -357,6 +357,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         if (decrypt_info_array_item_len<500) {
 	    exit_loop_on_error=1;
 	    ret_val = err_format;
+           // printf("XXX %d", decrypt_info_array_item_len);
             goto free_encode_loop_on_failure;
         }
 

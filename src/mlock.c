@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
                 goto main_exit_on_failure;
             }
             c_rcpt_list[num_rcpts] = (char*)malloc(strlen(optarg)+1);
-            snprintf(c_rcpt_list[num_rcpts], 50, "%s",optarg);
+            snprintf(c_rcpt_list[num_rcpts], strlen(optarg)+1, "%s",optarg);
             num_rcpts++;
             break;
         case 'x':
@@ -253,7 +253,7 @@ int main(int argc, char **argv) {
 	  sprintf(c_rcpt_list[num_rcpts], "%s", (char*)c_minilock_id);
 	  num_rcpts++;
 	}
-	
+
 	if (do_dec || do_enc){
 	  error_code err_code;
 	  if (do_dec) 
@@ -281,15 +281,6 @@ int main(int argc, char **argv) {
 	      break;
 	  }
 	}
-	
-	/*
-        if (do_dec && minilock_decode(c_input_file, b_my_sk, b_my_pk, c_override_out_name, c_final_out_name, sizeof c_final_out_name))
-            fprintf(stderr, "ERROR: file decryption failed: %s\n", c_input_file);
-        else if (do_enc && minilock_encode(c_input_file, c_minilock_id, b_my_sk, 
-					  b_my_pk, c_rcpt_list, num_rcpts, c_override_out_name))
-            fprintf(stderr, "ERROR: file encryption failed: %s\n", c_input_file);
-
-	*/
 	
         sodium_memzero(b_my_sk, sizeof b_my_sk);
         printf("Task completed.\n");

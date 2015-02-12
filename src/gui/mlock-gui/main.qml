@@ -20,6 +20,10 @@ ApplicationWindow {
     x: Screen.width/2 - width/2
     y: Screen.height/2 - height/2
 
+    onClosing:  {
+        mlock.freeMem()
+    }
+
     MlockInterface {
         id: mlock
     }
@@ -67,6 +71,7 @@ ApplicationWindow {
                 id: txtMailAddress
                 placeholderText: qsTr("E-Mail address")
                 Layout.fillWidth: true
+                onTextChanged: { btnUnlock.enabled=true }
             }
 
             TextField {
@@ -74,6 +79,7 @@ ApplicationWindow {
                 echoMode: 2
                 placeholderText: qsTr("Passphrase")
                 Layout.fillWidth: true
+                onTextChanged: { btnUnlock.enabled=true }
             }
 
             Button {
@@ -83,6 +89,20 @@ ApplicationWindow {
                 Layout.fillWidth: true
 
                 onClicked: {
+
+                    if (txtPassphrase.text.length<40){
+                        inputErrorMsg.text = "The passphrase must consist of several random words"
+                        inputErrorMsg.open()
+                        txtPassphrase.forceActiveFocus()
+                        return
+                    }
+                    if (txtMailAddress.text.length==0){
+                        inputErrorMsg.text = "The mail address must be set"
+                        inputErrorMsg.open()
+                        txtMailAddress.forceActiveFocus()
+                        return
+                    }
+
                     btnUnlock.enabled    = false
                     txtMyId.text=mlock.unlock( txtPassphrase.text, txtMailAddress.text)
                     //btnUnlock.enabled    = true
@@ -101,7 +121,7 @@ ApplicationWindow {
 
             Button {
                 id: btnNext
-                text: qsTr("Process file")
+                text: qsTr("Encrypt or decrypt file")
                 enabled: false
                 Layout.fillWidth: true
 
@@ -152,21 +172,63 @@ ApplicationWindow {
 
             width: 500
 
+
             Label {
-                text: "<font color=\"white\"><h1>Select a file</h1><br>Select a file to encrypt/decrypt.</font><br>"
+                text: "<font color=\"white\"><h1>Select a destination file</h1><br>Select the output file here.</font><br>"
                 Layout.fillWidth: true
             }
 
             Button {
+                id: btnSelDestFile
+                text: qsTr("Save file as...")
+                enabled: true
+                Layout.fillWidth: true
+
+                onClicked: {
+                    destFileDialog.open()
+                }
+            }
+
+            TextField {
+                id: txtDestFile
+
+                placeholderText: qsTr("Destination file name")
+                Layout.fillWidth: true
+                readOnly: false
+            }
+
+            Label {
+                text: "<br><font color=\"white\"><h1>Select an input file</h1><br>A miniLock file will be automatically decrypted.<br>Any other file will be encrypted.</font><br>"
+                Layout.fillWidth: true
+            }
+
+            Button {
+
                 id: btnSelFile
-                text: qsTr("Select file")
+                text: qsTr("Select a file to encrypt or decrypt.")
                 enabled: false
                 Layout.fillWidth: true
 
                 onClicked: {
+                    //todo: bei decrypt muesste man ausgabeverz. angeben koennen
+                    // encrypt nimmt als default eingabepfad + .minilock
+                    if (txtDestFile.text.length==0){
+                        inputErrorMsg.text = "The destination file must be set"
+                        inputErrorMsg.open()
+                        txtDestFile.forceActiveFocus()
+                        return
+                    }
+
                     fileDialog.open()
                 }
 
+            }
+
+            Label {
+                id: lblWorking1
+                text: "<br><font color=\"yellow\">---WORKING---</font>"
+                opacity: 0
+                Layout.fillWidth: true
             }
 
         }
@@ -235,7 +297,7 @@ ApplicationWindow {
 
             CheckBox {
                 id: cbOmitMyId
-                text: qsTr("<font color=\"white\">Omit my miniLock ID</font>")
+                text: qsTr("<font color=\"white\">Omit my miniLock ID (you won't be able to decrypt the file)</font>")
 
             }
 
@@ -247,15 +309,32 @@ ApplicationWindow {
                 Layout.fillWidth: true
 
                 onClicked: {
+
+                    if (!mlock.checkMiniLockID(txtRcpt1.text)  ||  !mlock.checkMiniLockID(txtRcpt2.text) || !mlock.checkMiniLockID(txtRcpt3.text)){
+                        inputErrorMsg.text = "A miniLock ID is invalid"
+                        inputErrorMsg.open()
+
+                        return
+                    }
+
                     btnEncrypt.enabled= false
-                    console.log("crypting...")
-                    var retVal=mlock.encrypt( fileDialog.fileUrl, cbOmitMyId.checked, txtRcpt1.text, txtRcpt2.text, txtRcpt3.text)
+                    lblWorking2.opacity= 1
+                    var retVal=mlock.encrypt( fileDialog.fileUrl, txtDestFile.text, cbOmitMyId.checked, txtRcpt1.text, txtRcpt2.text, txtRcpt3.text)
                     if (retVal>0) {
                         show_error(retVal)
+                        lblWorking2.opacity=0
                     }
-                    console.log("crypting done")
+                    lblWorking2.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
                     btnEncrypt.enabled= true
                 }
+
+            }
+
+            Label {
+                id: lblWorking2
+                text: "<br><font color=\"yellow\"><h2>---WORKING---</h2></font>"
+                opacity: 0
+                Layout.fillWidth: true
 
             }
 
@@ -302,24 +381,39 @@ ApplicationWindow {
         modality:  "WindowModal"
         visible: false
 
+
         onAccepted: {
             var inFile = fileDialog.fileUrl.toString().substring(7)
             var patt = /minilock$/
             if (patt.test(inFile)){
-                var retVal=mlock.decrypt( fileDialog.fileUrl)
+                lblWorking1.opacity = 1
+                var retVal=mlock.decrypt( fileDialog.fileUrl, txtDestFile.text)
                 if (retVal>0) {
                     show_error(retVal)
+                    lblWorking2.opacity=0
                 }
+                lblWorking1.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
             } else {
                 selectFileScreen.state = "hide"
                 encryptScreen.state = "show"
             }
         }
-        onRejected: {
-            console.log("Canceled")
-            //Qt.quit()
-        }
+
         Component.onCompleted: visible = false
+    }
+
+    FileDialog {
+        id: destFileDialog
+        title: "Please choose the output file"
+        selectExisting: false
+        selectMultiple: false
+        modality:  "WindowModal"
+        visible: false
+
+        onAccepted: {
+            txtDestFile.text = destFileDialog.fileUrl.toString().substring(7)
+        }
+
     }
 
     MessageDialog {
@@ -327,9 +421,13 @@ ApplicationWindow {
         title: "Processing error"
         text: "Could not process the file."
         visible: false
-        onAccepted: {
-        }
-        Component.onCompleted: visible = false
     }
 
+
+    MessageDialog {
+        id: inputErrorMsg
+        title: "Input validation error"
+        text: "Invalid input."
+        visible: false
+    }
 }
