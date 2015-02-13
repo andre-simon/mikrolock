@@ -1,3 +1,22 @@
+/*
+mlock reads and writes encrypted files in the minilock format
+
+Copyright (C) 2015 Andre Simon
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Window 2.0
@@ -57,8 +76,8 @@ ApplicationWindow {
         ColumnLayout{
 
             id: columns
-            x: 25
-            y: 25
+            x: 50
+            y: 50
 
             width: 500
 
@@ -121,7 +140,7 @@ ApplicationWindow {
 
             Button {
                 id: btnNext
-                text: qsTr("Encrypt or decrypt file")
+                text: qsTr("<b>Encrypt or decrypt file</b>")
                 enabled: false
                 Layout.fillWidth: true
 
@@ -167,20 +186,20 @@ ApplicationWindow {
 
         ColumnLayout{
 
-            x: 25
-            y: 25
+            x: 50
+            y: 50
 
             width: 500
 
 
             Label {
-                text: "<font color=\"white\"><h1>Select a destination file</h1><br>Select the output file here.</font><br>"
+                text: "<font color=\"white\"><h1>Select the destination directory</h1><br>Select the output directory.</font><br>"
                 Layout.fillWidth: true
             }
 
             Button {
                 id: btnSelDestFile
-                text: qsTr("Save file as...")
+                text: qsTr("Save file in...")
                 enabled: true
                 Layout.fillWidth: true
 
@@ -192,7 +211,7 @@ ApplicationWindow {
             TextField {
                 id: txtDestFile
 
-                placeholderText: qsTr("Destination file name")
+                placeholderText: qsTr("Destination directory")
                 Layout.fillWidth: true
                 readOnly: false
             }
@@ -226,7 +245,7 @@ ApplicationWindow {
 
             Label {
                 id: lblWorking1
-                text: "<br><font color=\"yellow\">---WORKING---</font>"
+                text:  "<br><font color=\"yellow\"><h2>---WORKING---</h2></font>"
                 opacity: 0
                 Layout.fillWidth: true
             }
@@ -267,13 +286,13 @@ ApplicationWindow {
 
         ColumnLayout{
 
-            x: 25
-            y: 25
+            x: 50
+            y: 50
 
             width: 500
 
             Label {
-                text: "<font color=\"white\"><h1>Encryption:</h1><br><b>Who is allowed to open this file?</b><br><br>Paste a miniLock ID for each person which needs access.</font>"
+                text: "<font color=\"white\"><h1>Encryption</h1><br><b>Who is allowed to open this file?</b><br><br>Paste a miniLock ID for each person which needs access.</font>"
                 Layout.fillWidth: true
             }
 
@@ -313,7 +332,6 @@ ApplicationWindow {
                     if (!mlock.checkMiniLockID(txtRcpt1.text)  ||  !mlock.checkMiniLockID(txtRcpt2.text) || !mlock.checkMiniLockID(txtRcpt3.text)){
                         inputErrorMsg.text = "A miniLock ID is invalid"
                         inputErrorMsg.open()
-
                         return
                     }
 
@@ -323,8 +341,9 @@ ApplicationWindow {
                     if (retVal>0) {
                         show_error(retVal)
                         lblWorking2.opacity=0
+                    } else {
+                        lblWorking2.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
                     }
-                    lblWorking2.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
                     btnEncrypt.enabled= true
                 }
 
@@ -390,9 +409,10 @@ ApplicationWindow {
                 var retVal=mlock.decrypt( fileDialog.fileUrl, txtDestFile.text)
                 if (retVal>0) {
                     show_error(retVal)
-                    lblWorking2.opacity=0
+                    lblWorking1.opacity=0
+                } else {
+                    lblWorking1.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
                 }
-                lblWorking1.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
             } else {
                 selectFileScreen.state = "hide"
                 encryptScreen.state = "show"
@@ -404,14 +424,15 @@ ApplicationWindow {
 
     FileDialog {
         id: destFileDialog
-        title: "Please choose the output file"
-        selectExisting: false
+        title: "Please choose the destination directory"
+        selectExisting: true
+        selectFolder: true
         selectMultiple: false
         modality:  "WindowModal"
         visible: false
 
         onAccepted: {
-            txtDestFile.text = destFileDialog.fileUrl.toString().substring(7)
+            txtDestFile.text = destFileDialog.fileUrl.toString().substring(7)+"/"
         }
 
     }

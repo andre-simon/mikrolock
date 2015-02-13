@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MLOCK MANUAL - Version 0.1  ---------------------------- November 2014 ---
+---  MLOCK MANUAL - Version 0.3  ---------------------------- February 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -36,7 +36,8 @@ to accomplish this securely.
 A minilock ID is a short public key derived from a secret passphrase and an
 E-mail address. This ID may be published on websites, mail signatures, twitter
 etc. to enable anyone to encrypt data for this ID. Only the receiver who
-applies the correct mail and passphrase can decrypt the content.
+applies the correct mail and passphrase to derive the same ID can decrypt the
+content.
 
 A minilock ID looks like this: jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83
 
@@ -44,7 +45,7 @@ Since the minilock IDs are very comfortable to handle, there is no need for a
 cumbersome key exchange process like using keyservers or manually copying key
 files to hosts.
 
-A sender can define a list of minilock IDs which are able to decrypt the file.
+A sender can define a list of minilock IDs which are allowed to decrypt the file.
 There is no need to generate a new file for each receiver.
 A minilock file does not contain any visible information about its recipients.
 

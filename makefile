@@ -55,10 +55,14 @@ install:
 	@echo "Type mlock --help or man mlock for instructions."
 	@echo "Do not hesitate to report problems. Unknown bugs are hard to fix."
 
+install-gui:
+	${INSTALL_PROGRAM} ./src/gui/mlock-gui/mlock-gui ${DESTDIR}${bin_dir}
+
+
 gui:
 	${MAKE} -C ./src -f ./makefile gui-qt
 	@echo
-#	@echo "You need to run 'make install' AND 'make install-gui' now!"
+	@echo "You need to run 'make install' AND 'make install-gui' now!"
 	
 uninstall:
 	@echo "Removing mlock files from system..."

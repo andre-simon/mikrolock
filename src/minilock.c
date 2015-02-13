@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "utils.h"
 
 error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos, uint8_t* b_file_nonce_prefix,
-		uint8_t* b_file_key, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len) {
+                uint8_t* b_file_key, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len, int override_out_name_as_dir) {
 
     unsigned char b_file_nonce[KEY_LEN-8]= {0};
     unsigned char b_nonce_cnt[8]= {0};
@@ -93,10 +93,22 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
         }
 
         if (num_chunks==1) {
-            uint8_t* dest_file = strlen((char*)c_override_out_name) ? c_override_out_name : b_decrypt_block;
-            memcpy(c_out_name, dest_file, out_name_len-1);
-            printf("Writing to file %s...\n", dest_file);
-            output_file = fopen((char *)dest_file, "wb");
+            //uint8_t* dest_file = strlen((char*)c_override_out_name) ? c_override_out_name : b_decrypt_block;
+
+            if (strlen((char*)c_override_out_name)){
+                if (override_out_name_as_dir){
+                   snprintf((char*)c_out_name,  out_name_len-1, "%s%s", c_override_out_name, b_decrypt_block);
+                } else {
+                    snprintf((char*)c_out_name,  out_name_len-1, "%s", c_override_out_name);
+                }
+            } else {
+                snprintf((char*)c_out_name,  out_name_len-1, "%s", b_decrypt_block);
+            }
+
+            #ifndef QUIET_MODE
+            printf("Writing to file %s...\n", c_out_name);
+            #endif
+            output_file = fopen((char *)c_out_name, "wb");
             if (!output_file) {
                 exit_loop=1;
 		ret_val = err_file_write;
@@ -109,8 +121,10 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
                 goto free_encode_write_file_error;
             }
 
-            printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
-	    fflush(stdout);
+            #ifndef QUIET_MODE
+                printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
+                fflush(stdout);
+            #endif
         }
 
 free_encode_write_file_error:
@@ -119,8 +133,9 @@ free_encode_write_file_error:
         free(b_chunk);
     }
     
+    #ifndef QUIET_MODE
     printf("\n");
-
+    #endif
     if (output_file) fclose(output_file);
     return ret_val;
 }
@@ -131,13 +146,12 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
 
     FILE *input_file = fopen((char*)c_input_file, "r+b");
     if(input_file == NULL) {
-        //fprintf(stderr, "ERROR: could not open file %s\n", c_input_file);
         return err_file_read;
     }
     
      off_t current_pos=0;
     fseeko(input_file, 0, SEEK_END); 
-    off_t eof_pos   = ftello(input_file);
+  //  off_t eof_pos   = ftello(input_file);
     fseeko(input_file, 0, SEEK_SET);
     
     
@@ -159,8 +173,6 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     crypto_secretbox_easy((unsigned char*)b_crypt_block, (unsigned char*)b_read_buffer,
                           BUF_PATH_LEN, b_file_nonce, b_file_key);
 
-    //dump (" CRYPT ", b_crypt_block, BUF_PATH_LEN + MAC_LEN + 1);
-
     number_to_array2(b_block_len, sizeof b_block_len, BUF_PATH_LEN  );
 
     fwrite(b_block_len, 1, sizeof b_block_len, output_file);
@@ -171,7 +183,6 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
         number_to_array(b_nonce_cnt, sizeof b_nonce_cnt, ++num_chunks);
         off_t num_read = fread(&b_read_buffer, 1, sizeof b_read_buffer, input_file);
         if ( ferror(input_file)) {
-            //fprintf(stderr, "ERROR: could not read file %s\n", c_input_file);
 	    ret_val = err_file_read;
 	    break;
         }
@@ -183,8 +194,11 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
         }
         
         current_pos += num_read;
+
+        #ifndef QUIET_MODE
         printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
 	fflush(stdout);
+        #endif
 
         memcpy(b_file_nonce+NONCE_PREFIX_LEN, b_nonce_cnt, sizeof b_nonce_cnt);
         crypto_secretbox_easy((unsigned char*)b_crypt_block, (unsigned char*)b_read_buffer, num_read, b_file_nonce, b_file_key);
@@ -202,32 +216,40 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
 
     }
 
+    #ifndef QUIET_MODE
     printf("\n");
+    #endif
+
     fclose(input_file);
     return ret_val;
 }
 
-error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b_my_sk, uint8_t* b_my_pk, char**c_rcpt_list, int num_rcpts, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len) {
+error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b_my_sk, char**c_rcpt_list, int num_rcpts, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len, int override_out_name_as_dir) {
 
     int ret_val = err_failed;
 
     if(num_rcpts==0) {
-       // fprintf(stderr, "ERROR: no recipients defined\n");
         return err_no_rcpt;
     }
 
     //char c_out_file[BUF_PATH_LEN] = {0}; //c_out_file ausserhalb definieren unds als param mitgeben
 
     if ( strlen((char*)c_override_out_name) ) {
+        if (override_out_name_as_dir){
+            char* delim=strrchr((char*)c_filename, '/');
+            char *fname= delim ? delim+1 : (char*)c_filename;
+            snprintf((char*)c_out_name,  out_name_len-1, "%s%s.minilock", c_override_out_name, fname);
+        }else {
         snprintf((char*)c_out_name,  out_name_len-1, "%s", c_override_out_name);
+        }
+
     } else {
         snprintf((char*)c_out_name,  out_name_len-1, "%s.minilock", c_filename);
     }
 
     FILE *output_file = fopen((char*)c_out_name, "w+b");
     if(output_file == NULL) {
-      //  fprintf(stderr, "ERROR: could not open file %s\n", c_out_name);
-        return err_file_read;
+        return err_file_write;
     }
 
     //Reserve 4 bytes for the JSON header length
@@ -299,8 +321,9 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 
     unsigned char b_hash[KEY_LEN] = {0};
 
+    #ifndef QUIET_MODE
     printf("Calculating file hash...\n");
-
+#endif
     if( blake2s_stream( output_file, b_hash ) < 0 ) {
         ret_val = err_hash;
         goto free_encode_res;
@@ -357,7 +380,6 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         if (decrypt_info_array_item_len<500) {
 	    exit_loop_on_error=1;
 	    ret_val = err_format;
-           // printf("XXX %d", decrypt_info_array_item_len);
             goto free_encode_loop_on_failure;
         }
 
@@ -366,7 +388,6 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         fwrite(c_decrypt_info_array_item_json, 1, decrypt_info_array_item_len , output_file);
 
         if ( ferror(output_file)) {
-            //fprintf(stderr, "ERROR: could not write output file\n");
 	    ret_val = err_file_write;
 	    exit_loop_on_error=1;
         } else {
@@ -393,7 +414,7 @@ free_encode_res:
 }
 
 
-error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_pk, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len) {
+error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_pk, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len, int override_out_name_as_dir) {
 
     error_code ret_val = err_failed;
 
@@ -420,20 +441,17 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
 
     FILE *input_file = fopen((char*)c_filename, "r+b");
     if(input_file == NULL) {
-        //fprintf(stderr, "ERROR: could not open file %s\n", c_filename);
         return err_file_open;
     }
 
     uint8_t b_header[12] = {0};
     fread(&b_header, 1, sizeof b_header, input_file);
     if (feof(input_file) || ferror(input_file)) {
-       // fprintf(stderr, "ERROR: could not read file %s\n", c_filename);
 	ret_val = err_file_read;
         goto free_decode_res;
     }
 
     if (strncmp((const char *)b_header, "miniLock", 8)) {
-       // fprintf(stderr, "ERROR: invalid file format\n");
 	ret_val = err_format;
         goto free_decode_res;
     }
@@ -570,24 +588,23 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
 
         off_t crypt_block_start = ftello(input_file);
 
+        #ifndef QUIET_MODE
         printf("Calculating file hash...\n");
-
+        #endif
         unsigned char hash[KEY_LEN] = {0};
 
         if( blake2s_stream( input_file, hash ) < 0 ) {
 	    ret_val = err_hash;
-            printf("X222\n");
             goto exit_decode_loop_on_failure;
         } else if (memcmp(hash, b_file_hash, KEY_LEN)) {
 	    ret_val = err_hash;
-            printf("X333\n");
             goto exit_decode_loop_on_failure;
         }
         // calculating hash moves fp to the end
      //   fseeko(input_file, 0, SEEK_END); 
         off_t eof_pos   = ftello(input_file);
         fseeko(input_file, crypt_block_start, SEEK_SET);
-	error_code file_err_err = decode_file(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, c_override_out_name, c_out_name,  out_name_len);
+        error_code file_err_err = decode_file(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, c_override_out_name, c_out_name,  out_name_len, override_out_name_as_dir);
         if (file_err_err) {
 	    ret_val = file_err_err;
             goto exit_decode_loop_on_failure;

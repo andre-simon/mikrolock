@@ -47,6 +47,7 @@ gui-qt: lib$(EXECUTABLE).a ${GUI_OBJECTS}
 clean:
 	@rm -f *.o
 	@rm -f ./mlock
+	@rm -f ./mlock-gui
 	@rm -f libs/b58/base58.o
 	@rm -f libs/json/json.o
 	@rm -f libs/libb64/*.o

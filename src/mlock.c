@@ -257,9 +257,9 @@ int main(int argc, char **argv) {
 	if (do_dec || do_enc){
 	  error_code err_code;
 	  if (do_dec) 
-	    err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk, c_override_out_name, c_final_out_name, sizeof c_final_out_name);
+            err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk, c_override_out_name, c_final_out_name, sizeof c_final_out_name, 0);
 	  else
-	    err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk,  b_my_pk, c_rcpt_list, num_rcpts, c_override_out_name, c_final_out_name, sizeof c_final_out_name);
+            err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, c_override_out_name, c_final_out_name, sizeof c_final_out_name, 0);
 	  
 	  switch (err_code){
 	    case  err_file_write:
