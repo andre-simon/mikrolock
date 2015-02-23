@@ -45,8 +45,8 @@ Since the minilock IDs are very comfortable to handle, there is no need for a
 cumbersome key exchange process like using keyservers or manually copying key
 files to hosts.
 
-A sender can define a list of minilock IDs which are allowed to decrypt the file.
-There is no need to generate a new file for each receiver.
+A sender can define a list of minilock IDs to let multiple recipients decrypt 
+the file. There is no need to generate a new file for each receiver.
 A minilock file does not contain any visible information about its recipients.
 
 Read more about the cryptographic details: https://minilock.io

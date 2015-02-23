@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 
 extern "C" {
-#include "scrypt/crypto/crypto_scrypt.h"
+#include <sodium/crypto_pwhash_scryptsalsa208sha256.h>
 #include "utils.h"
 #include "minilock.h"
 }

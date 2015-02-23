@@ -232,8 +232,6 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         return err_no_rcpt;
     }
 
-    //char c_out_file[BUF_PATH_LEN] = {0}; //c_out_file ausserhalb definieren unds als param mitgeben
-
     if ( strlen((char*)c_override_out_name) ) {
         if (override_out_name_as_dir){
             char* delim=strrchr((char*)c_filename, '/');
@@ -323,7 +321,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 
     #ifndef QUIET_MODE
     printf("Calculating file hash...\n");
-#endif
+    #endif
     if( blake2s_stream( output_file, b_hash ) < 0 ) {
         ret_val = err_hash;
         goto free_encode_res;

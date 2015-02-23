@@ -1,7 +1,7 @@
 #ifndef _MINILOCK_H
 #define _MINILOCK_H
 
-#define VERSION "0.3"
+#define VERSION "0.4"
 
 #define QUIET_MODE 1
 

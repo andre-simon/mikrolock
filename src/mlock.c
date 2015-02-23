@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <stdio.h>
 
-#include "scrypt/crypto/crypto_scrypt.h"
+#include <sodium/crypto_pwhash_scryptsalsa208sha256.h>
 #include "pinentry/pinentry.h"
 
 #include "utils.h"
@@ -177,6 +177,11 @@ int main(int argc, char **argv) {
 
         case 'r':
 	    if (num_rcpts+1== sizeof c_rcpt_list) break;
+	    
+	    if (strlen(optarg)>46) {
+                fprintf(stderr, "ERROR: invalid Minilock ID: %s\n", optarg);
+                goto main_exit_on_failure;
+            }
             base58_decode(b_rcpt_pk, (const unsigned char*)optarg);
             blake_2s_array(b_rcpt_pk, KEY_LEN , b_cs, sizeof b_cs);
             if (b_cs[0]!=b_rcpt_pk[KEY_LEN]) {
@@ -223,10 +228,12 @@ int main(int argc, char **argv) {
                    b_passphrase_blake2, KEY_LEN);
 
     sodium_memzero(c_user_passphrase, strlen((char *)c_user_passphrase));
-    int scrypt_retval= crypto_scrypt(b_passphrase_blake2, KEY_LEN,
+
+    int scrypt_retval= crypto_pwhash_scryptsalsa208sha256_ll(b_passphrase_blake2, KEY_LEN,
                                      (const uint8_t *)c_user_salt, strlen((char *)c_user_salt),
                                      131072, 8, 1,
                                      b_my_sk, sizeof b_my_sk);
+
     if (scrypt_retval) {
         fprintf(stderr, "ERROR: key derivation failed\n");
         goto main_exit_on_failure;
@@ -247,8 +254,7 @@ int main(int argc, char **argv) {
       
         printf("%scrypting file %s...\n", do_enc ? "En" : "De", c_input_file);
 
-        //TODO check nur bei decrypt... num_rcpts init? fehler-marke?
-	if (!exclude_me) {
+	if (do_enc && !exclude_me) {
 	  c_rcpt_list[num_rcpts] = malloc(strlen((char*)c_minilock_id)+1);
 	  sprintf(c_rcpt_list[num_rcpts], "%s", (char*)c_minilock_id);
 	  num_rcpts++;
@@ -261,7 +267,10 @@ int main(int argc, char **argv) {
 	  else
             err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, c_override_out_name, c_final_out_name, sizeof c_final_out_name, 0);
 	  
+	  
 	  switch (err_code){
+	    case err_ok:
+	      break;
 	    case  err_file_write:
 	      fprintf(stderr, "ERROR: could not write to file %s\n", c_final_out_name);
 	      break;
@@ -277,7 +286,17 @@ int main(int argc, char **argv) {
 	    case err_no_rcpt:
 	      fprintf(stderr, "ERROR: no recipients defined\n");
 	      break;
-	    default:
+	    case  err_failed:
+	     fprintf(stderr, "ERROR: undefined error\n");
+	      break;
+	    case err_open:
+	     fprintf(stderr, "ERROR: could not decrypt data\n");
+	      break;
+	    case err_box:
+	      fprintf(stderr, "ERROR: could not crypt data\n");
+	      break;
+	    case err_hash:
+	      fprintf(stderr, "ERROR: could not hash data\n");
 	      break;
 	  }
 	}
@@ -288,6 +307,7 @@ int main(int argc, char **argv) {
     ret_val = EXIT_SUCCESS;
 
 main_exit_on_failure:
+
     while (num_rcpts--) {
        free(c_rcpt_list[num_rcpts]);
     }

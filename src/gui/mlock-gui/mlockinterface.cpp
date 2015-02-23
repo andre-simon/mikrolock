@@ -40,7 +40,7 @@ QString MlockInterface::unlock(QString passphrase, QString salt){
     blake_2s_array((uint8_t*)std_passphrase.c_str(), std_passphrase.length(),
                    b_passphrase_blake2, KEY_LEN);
 
-    int scrypt_retval= crypto_scrypt(b_passphrase_blake2, KEY_LEN,
+    int scrypt_retval= crypto_pwhash_scryptsalsa208sha256_ll(b_passphrase_blake2, KEY_LEN,
                                      (uint8_t*)std_salt.c_str(), std_salt.length(),
                                      131072, 8, 1,
                                      b_my_sk, sizeof b_my_sk);
