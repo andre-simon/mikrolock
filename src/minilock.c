@@ -150,10 +150,11 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     }
     
      off_t current_pos=0;
+    #ifndef QUIET_MODE
     fseeko(input_file, 0, SEEK_END); 
-  //  off_t eof_pos   = ftello(input_file);
+     off_t eof_pos   = ftello(input_file);
     fseeko(input_file, 0, SEEK_SET);
-    
+    #endif
     
     unsigned char b_file_nonce[KEY_LEN - 8]= {0};
     memcpy(b_file_nonce, b_file_nonce_prefix, NONCE_PREFIX_LEN);

@@ -39,12 +39,21 @@ ApplicationWindow {
     x: Screen.width/2 - width/2
     y: Screen.height/2 - height/2
 
+    property bool isBusy: false
+
     onClosing:  {
         mlock.freeMem()
     }
 
     MlockInterface {
         id: mlock
+    }
+
+    BusyIndicator {
+        id: busyIndication
+        anchors.centerIn: parent
+        running: false
+        z: 100
     }
 
     Rectangle {
@@ -193,7 +202,7 @@ ApplicationWindow {
 
 
             Label {
-                text: "<font color=\"white\"><h1>"+qsTr("Select the destination directory")+"</h1><br>"+qsTr("Select the output directory.")+"</font><br>"
+                text: "<font color=\"white\"><h1>"+qsTr("Select the destination directory")+"</h1></font><br>"
                 Layout.fillWidth: true
             }
 
@@ -334,9 +343,12 @@ ApplicationWindow {
                         inputErrorMsg.open()
                         return
                     }
-
+                    console.log("encrypt...")
+                    busyIndication.running=true
+busyIndication.visible=true
                     btnEncrypt.enabled= false
                     lblWorking2.opacity= 1
+                   lblWorking2.visible= true
                     var retVal=mlock.encrypt( fileDialog.fileUrl, txtDestFile.text, cbOmitMyId.checked, txtRcpt1.text, txtRcpt2.text, txtRcpt3.text)
                     if (retVal>0) {
                         show_error(retVal)
@@ -345,6 +357,8 @@ ApplicationWindow {
                         lblWorking2.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
                     }
                     btnEncrypt.enabled= true
+busyIndication.visible=false
+                    busyIndication.running=false
                 }
 
             }
@@ -392,6 +406,9 @@ ApplicationWindow {
         decErrorMsg.open()
     }
 
+
+
+
     FileDialog {
         id: fileDialog
         title: qsTr("Please choose a file")
@@ -405,6 +422,8 @@ ApplicationWindow {
             var inFile = mlock.localFilePath( fileDialog.fileUrl.toString())
             var patt = /minilock$/
             if (patt.test(inFile)){
+                btnSelFile.enabled=false
+                isBusy=true
                 lblWorking1.opacity = 1
                 var retVal=mlock.decrypt( fileDialog.fileUrl, txtDestFile.text)
                 if (retVal>0) {
@@ -413,6 +432,8 @@ ApplicationWindow {
                 } else {
                     lblWorking1.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
                 }
+                btnSelFile.enabled=true
+                isBusy=false
             } else {
                 selectFileScreen.state = "hide"
                 encryptScreen.state = "show"
