@@ -1,7 +1,7 @@
 mlock installation instructions
 -------------------------------
 
-mlock requires the libsodium release 0.6.0 and the OpenSSL libraries.
+mlock requires the libsodium library (release 0.6.0).
 mlock-gui requires Qt5.
 
 1. Basic installation

@@ -38,14 +38,15 @@ lib-static lib$(EXECUTABLE).a: ${CORE_OBJECTS}
 	${AR} ${ARFLAGS} lib$(EXECUTABLE).a ${CORE_OBJECTS}
 	
 gui-qt: lib$(EXECUTABLE).a ${GUI_OBJECTS}
-	cd ${GUI_QT_DIR} && ${QMAKE} && $(MAKE)
+	cd ${GUI_QT_DIR} && ${QMAKE} 'DEFINES+=DATA_DIR=\\\"${DATA_DIR}\\\"' && $(MAKE)
 
 clean:
 	@rm -f *.o
 	@rm -f ./mlock
-	@rm -f ./mlock-gui
+	@rm -f gui/mlock-gui/mlock-gui
 	@rm -f libs/b58/base58.o
 	@rm -f libs/json/json.o
 	@rm -f libs/libb64/*.o
 	@rm -f libs/blake2/*.o
 	@rm -f libs/pinentry/pinentry/*.o
+	@rm -f gui/mlock-gui/*.o

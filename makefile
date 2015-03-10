@@ -18,9 +18,8 @@ man_dir = ${PREFIX}/share/man/man1/
 # Location of the documentation:
 doc_dir = ${PREFIX}/share/doc/mlock/
 
-# Commands:
-#QMAKE=qmake
-QMAKE=qmake-qt4
+# Location of the mlock data files:
+data_dir = ${PREFIX}/share/mlock/
 
 INSTALL_DATA=install -m644
 INSTALL_PROGRAM=install -m755
@@ -56,11 +55,14 @@ install:
 	@echo "Do not hesitate to report problems. Unknown bugs are hard to fix."
 
 install-gui:
+	${MKDIR} ${DESTDIR}${data_dir}
+	${MKDIR} ${DESTDIR}${data_dir}l10n
+	${INSTALL_DATA} ./l10n/*.qm ${DESTDIR}${data_dir}l10n
 	${INSTALL_PROGRAM} ./src/gui/mlock-gui/mlock-gui ${DESTDIR}${bin_dir}
 
 
 gui:
-	${MAKE} -C ./src -f ./makefile gui-qt
+	${MAKE} -C ./src -f ./makefile DATA_DIR=${data_dir}  gui-qt
 	@echo
 	@echo "You need to run 'make install' AND 'make install-gui' now!"
 	
@@ -69,6 +71,8 @@ uninstall:
 	${RMDIR} ${DESTDIR}${doc_dir}
 	rm -f ${DESTDIR}${man_dir}mlock.1.gz
 	rm -f ${DESTDIR}${bin_dir}mlock
+	rm -f ${DESTDIR}${bin_dir}mlock-gui
+	${RMDIR} ${DESTDIR}${data_dir}
 	@echo "Done. Have a nice day!"
 
 clean:

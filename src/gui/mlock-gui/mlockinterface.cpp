@@ -36,7 +36,6 @@ QString MlockInterface::unlock(QString passphrase, QString salt){
     uint8_t b_cs[1];
     uint8_t b_passphrase_blake2[KEY_LEN] = {0};
 
-
     blake_2s_array((uint8_t*)std_passphrase.c_str(), std_passphrase.length(),
                    b_passphrase_blake2, KEY_LEN);
 
@@ -61,14 +60,16 @@ QString MlockInterface::unlock(QString passphrase, QString salt){
 
 int MlockInterface::decrypt(QString inFileName, QString overrideOutDir){
 
-    std::string std_inFileName = inFileName.mid(7).toStdString();
+    QUrl url(inFileName);
+    std::string std_inFileName = url.toLocalFile().toStdString();
     std::string std_overrideOutDir= overrideOutDir.toStdString();
 
     return minilock_decode((uint8_t*) std_inFileName.c_str(), b_my_sk, b_my_pk, (uint8_t*)std_overrideOutDir.c_str(), c_final_out_name, sizeof c_final_out_name, 1);
 }
 
 int MlockInterface::encrypt(QString inFileName, QString overrideOutDir, bool omitMyId, QString rcpt1, QString rcpt2, QString rcpt3) {
-    std::string std_inFileName = inFileName.mid(7).toStdString();
+    QUrl url(inFileName);
+    std::string std_inFileName = url.toLocalFile().toStdString();
     std::string std_overrideOutDir= overrideOutDir.toStdString();
 
     freeMem();
@@ -117,4 +118,9 @@ bool MlockInterface::checkMiniLockID(QString id){
     base58_decode(b_rcpt_pk, (const unsigned char*)std_id.c_str());
     blake_2s_array(b_rcpt_pk, KEY_LEN , b_cs, sizeof b_cs);
     return b_cs[0]==b_rcpt_pk[KEY_LEN];
+}
+
+QString MlockInterface::localFilePath(QString s){
+    QUrl url(s);
+    return url.toLocalFile();
 }

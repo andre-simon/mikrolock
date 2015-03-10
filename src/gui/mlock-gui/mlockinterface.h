@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MLOCKINTERFACE_H
 
 #include <QObject>
+#include <QUrl>
 
 #include <string.h>
 
@@ -45,10 +46,11 @@ public:
     explicit MlockInterface(QObject *parent = 0);
     ~MlockInterface();
 
-    Q_INVOKABLE bool checkMiniLockID(QString id);
+    Q_INVOKABLE bool checkMiniLockID(QString);
     Q_INVOKABLE QString unlock(QString, QString);
+    Q_INVOKABLE QString localFilePath(QString);
     Q_INVOKABLE int decrypt(QString, QString);
-    Q_INVOKABLE int encrypt(QString , QString, bool , QString , QString , QString );
+    Q_INVOKABLE int encrypt(QString, QString, bool , QString, QString, QString);
     Q_INVOKABLE void freeMem();
 
 signals:

@@ -6,6 +6,7 @@ mlock ChangeLog
 mlock 0.4
 
 -replaced crypto_scrypt call by libsodium's crypto_pwhash_scryptsalsa208sha256_ll
+-removed OpenSSL lib dependency
 
 ---
 12.02.2015

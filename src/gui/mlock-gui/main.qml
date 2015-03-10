@@ -29,7 +29,7 @@ ApplicationWindow {
     visible: true
 
     color: "#49698d"
-    title: "mlock GUI"
+    title: "mlock GUI 0.5"
     minimumWidth: 500 + columns.x *2
     minimumHeight: columns.implicitHeight + columns.y *2
 
@@ -82,7 +82,7 @@ ApplicationWindow {
             width: 500
 
             Label {
-                text: "<font color=\"white\"><h1>Enter your email and passphrase</h1><br><b>mlock uses your email and passphrase to derive your <b>miniLock ID</b>.<br>Send your miniLock ID to others so they can encrypt files to you.<br>Encrypt files to friends using their miniLock IDs. <br><br>Your email is only used to derive your miniLock ID -<br> it remains completely secret and anonymous.<br></font>"
+                text: "<font color=\"white\"><h1>"+qsTr("Enter your email and passphrase")+"</h1><br><b>"+qsTr("mlock uses your email and passphrase to derive your <b>miniLock ID</b>.")+"<br>"+qsTr("Send your miniLock ID to others so they can encrypt files to you.<br>Encrypt files to friends using their miniLock IDs. <br><br>Your email is only used to derive your miniLock ID -<br> it remains completely secret and anonymous.")+"<br></font>"
                 Layout.fillWidth: true
             }
 
@@ -110,13 +110,13 @@ ApplicationWindow {
                 onClicked: {
 
                     if (txtPassphrase.text.length<40){
-                        inputErrorMsg.text = "The passphrase must consist of several random words"
+                        inputErrorMsg.text = qsTr("The passphrase must consist of several random words")
                         inputErrorMsg.open()
                         txtPassphrase.forceActiveFocus()
                         return
                     }
                     if (txtMailAddress.text.length==0){
-                        inputErrorMsg.text = "The mail address must be set"
+                        inputErrorMsg.text = qsTr("The mail address must be set")
                         inputErrorMsg.open()
                         txtMailAddress.forceActiveFocus()
                         return
@@ -193,7 +193,7 @@ ApplicationWindow {
 
 
             Label {
-                text: "<font color=\"white\"><h1>Select the destination directory</h1><br>Select the output directory.</font><br>"
+                text: "<font color=\"white\"><h1>"+qsTr("Select the destination directory")+"</h1><br>"+qsTr("Select the output directory.")+"</font><br>"
                 Layout.fillWidth: true
             }
 
@@ -217,7 +217,7 @@ ApplicationWindow {
             }
 
             Label {
-                text: "<br><font color=\"white\"><h1>Select an input file</h1><br>A miniLock file will be automatically decrypted.<br>Any other file will be encrypted.</font><br>"
+                text: "<br><font color=\"white\"><h1>"+qsTr("Select an input file")+"</h1><br>"+qsTr("A miniLock file will be automatically decrypted.<br>Any other file will be encrypted.")+"</font><br>"
                 Layout.fillWidth: true
             }
 
@@ -232,7 +232,7 @@ ApplicationWindow {
                     //todo: bei decrypt muesste man ausgabeverz. angeben koennen
                     // encrypt nimmt als default eingabepfad + .minilock
                     if (txtDestFile.text.length==0){
-                        inputErrorMsg.text = "The destination file must be set"
+                        inputErrorMsg.text = qsTr("The destination file must be set")
                         inputErrorMsg.open()
                         txtDestFile.forceActiveFocus()
                         return
@@ -292,7 +292,7 @@ ApplicationWindow {
             width: 500
 
             Label {
-                text: "<font color=\"white\"><h1>Encryption</h1><br><b>Who is allowed to open this file?</b><br><br>Paste a miniLock ID for each person which needs access.</font>"
+                text: "<font color=\"white\"><h1>"+qsTr("Encryption")+"</h1><br><b>"+qsTr("Who is allowed to open this file?")+"</b><br><br>"+qsTr("Paste a miniLock ID for each person which needs access.")+"</font>"
                 Layout.fillWidth: true
             }
 
@@ -316,7 +316,7 @@ ApplicationWindow {
 
             CheckBox {
                 id: cbOmitMyId
-                text: qsTr("<font color=\"white\">Omit my miniLock ID (you won't be able to decrypt the file)</font>")
+                text: qsTr("<font color=\"white\">"+qsTr("Omit my miniLock ID (you won't be able to decrypt the file)")+"</font>")
 
             }
 
@@ -330,7 +330,7 @@ ApplicationWindow {
                 onClicked: {
 
                     if (!mlock.checkMiniLockID(txtRcpt1.text)  ||  !mlock.checkMiniLockID(txtRcpt2.text) || !mlock.checkMiniLockID(txtRcpt3.text)){
-                        inputErrorMsg.text = "A miniLock ID is invalid"
+                        inputErrorMsg.text = qsTr("A miniLock ID is invalid")
                         inputErrorMsg.open()
                         return
                     }
@@ -365,28 +365,28 @@ ApplicationWindow {
     function show_error(error) {
         switch (error){
         case 2:
-            decErrorMsg.text="Could not decrypt the file."
+            decErrorMsg.text=qsTr("Could not decrypt the file.")
             break
         case 3:
-            decErrorMsg.text="Could not encrypt the file."
+            decErrorMsg.text=qsTr("Could not encrypt the file.")
             break
         case 4:
-            decErrorMsg.text="Could not open the file."
+            decErrorMsg.text=qsTr("Could not open the file.")
             break
         case 5:
-            decErrorMsg.text="Could not read the file."
+            decErrorMsg.text=qsTr("Could not read the file.")
             break
         case 6:
-            decErrorMsg.text="Could not write the file."
+            decErrorMsg.text=qsTr("Could not write the file.")
             break
         case 7:
-            decErrorMsg.text="Could not calculate the hash of the file."
+            decErrorMsg.text=qsTr("Could not calculate the hash of the file.")
             break
         case 8:
-            decErrorMsg.text="Illegal minilock file format."
+            decErrorMsg.text=qsTr("Illegal minilock file format.")
             break
         case 9:
-            decErrorMsg.text="No recipients defined."
+            decErrorMsg.text=qsTr("No recipients defined.")
             break
         }
         decErrorMsg.open()
@@ -394,7 +394,7 @@ ApplicationWindow {
 
     FileDialog {
         id: fileDialog
-        title: "Please choose a file"
+        title: qsTr("Please choose a file")
         selectExisting: true
         selectMultiple: false
         modality:  "WindowModal"
@@ -402,7 +402,7 @@ ApplicationWindow {
 
 
         onAccepted: {
-            var inFile = fileDialog.fileUrl.toString().substring(7)
+            var inFile = mlock.localFilePath( fileDialog.fileUrl.toString())
             var patt = /minilock$/
             if (patt.test(inFile)){
                 lblWorking1.opacity = 1
@@ -424,7 +424,7 @@ ApplicationWindow {
 
     FileDialog {
         id: destFileDialog
-        title: "Please choose the destination directory"
+        title: qsTr("Please choose the destination directory")
         selectExisting: true
         selectFolder: true
         selectMultiple: false
@@ -432,23 +432,23 @@ ApplicationWindow {
         visible: false
 
         onAccepted: {
-            txtDestFile.text = destFileDialog.fileUrl.toString().substring(7)+"/"
+            txtDestFile.text =  mlock.localFilePath( destFileDialog.fileUrl.toString())+"/"
         }
 
     }
 
     MessageDialog {
         id: decErrorMsg
-        title: "Processing error"
-        text: "Could not process the file."
+        title: qsTr("Processing error")
+        text: qsTr("Could not process the file.")
         visible: false
     }
 
 
     MessageDialog {
         id: inputErrorMsg
-        title: "Input validation error"
-        text: "Invalid input."
+        title: qsTr("Input validation error")
+        text: qsTr("Invalid input.")
         visible: false
     }
 }
