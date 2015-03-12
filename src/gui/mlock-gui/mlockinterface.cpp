@@ -19,9 +19,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mlockinterface.h"
 
+QObject *MlockInterface::qml_root = 0;
+
+
+char* MlockInterface::c_rcpt_list[5]= {0};
+unsigned int MlockInterface::num_rcpts=0;
+
+uint8_t MlockInterface::b_my_sk[KEY_LEN] = {0};
+uint8_t MlockInterface::b_my_pk[KEY_LEN + 1]= {0};
+uint8_t MlockInterface::c_minilock_id[KEY_LEN * 2]= {0};
+uint8_t MlockInterface::c_final_out_name[BUF_PATH_LEN]  = {0};
+
+extern int silent_mode;
 
 MlockInterface::MlockInterface(QObject *parent) : QObject(parent)
 {
+    silent_mode=1;
 }
 
 MlockInterface::~MlockInterface()
@@ -35,6 +48,7 @@ QString MlockInterface::unlock(QString passphrase, QString salt){
 
     uint8_t b_cs[1];
     uint8_t b_passphrase_blake2[KEY_LEN] = {0};
+
 
     blake_2s_array((uint8_t*)std_passphrase.c_str(), std_passphrase.length(),
                    b_passphrase_blake2, KEY_LEN);
@@ -58,19 +72,23 @@ QString MlockInterface::unlock(QString passphrase, QString salt){
 }
 
 
-int MlockInterface::decrypt(QString inFileName, QString overrideOutDir){
-
-    QUrl url(inFileName);
-    std::string std_inFileName = url.toLocalFile().toStdString();
-    std::string std_overrideOutDir= overrideOutDir.toStdString();
-
-    return minilock_decode((uint8_t*) std_inFileName.c_str(), b_my_sk, b_my_pk, (uint8_t*)std_overrideOutDir.c_str(), c_final_out_name, sizeof c_final_out_name, 1);
+void MlockInterface::decrypt(QString inFileName, QString overrideOutDir){
+    MlockInterface::qml_root->setProperty("isBusy", true);
+    DecryptThread *workerThread = new DecryptThread();
+    workerThread->setArgs(inFileName, overrideOutDir);
+    connect(workerThread, &DecryptThread::resultReady, this, &MlockInterface::handleResults);
+    connect(workerThread, &DecryptThread::finished, workerThread, &QObject::deleteLater);
+    workerThread->start();
 }
 
-int MlockInterface::encrypt(QString inFileName, QString overrideOutDir, bool omitMyId, QString rcpt1, QString rcpt2, QString rcpt3) {
-    QUrl url(inFileName);
-    std::string std_inFileName = url.toLocalFile().toStdString();
-    std::string std_overrideOutDir= overrideOutDir.toStdString();
+void MlockInterface::handleResults(int result){
+   // qDebug()<<"handleResults  "<<result;
+    MlockInterface::qml_root->setProperty("isBusy", false);
+    MlockInterface::qml_root->setProperty("errorCode", result);
+    MlockInterface::qml_root->setProperty("resultString", result ? "FAILED":"SUCCESS");
+}
+
+void MlockInterface::encrypt(QString inFileName, QString overrideOutDir, bool omitMyId, QString rcpt1, QString rcpt2, QString rcpt3) {
 
     freeMem();
 
@@ -96,16 +114,25 @@ int MlockInterface::encrypt(QString inFileName, QString overrideOutDir, bool omi
         num_rcpts++;
     }
 
-    return minilock_encode((uint8_t*) std_inFileName.c_str(), c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, (uint8_t*)std_overrideOutDir.c_str(), c_final_out_name, sizeof c_final_out_name, 1);
+    MlockInterface::qml_root->setProperty("isBusy", true);
+    EncryptThread *workerThread = new EncryptThread();
+    workerThread->setArgs(inFileName, overrideOutDir);
+    connect(workerThread, &EncryptThread::resultReady, this, &MlockInterface::handleResults);
+    connect(workerThread, &EncryptThread::finished, workerThread, &QObject::deleteLater);
+    workerThread->start();
 }
 
-void MlockInterface::freeMem(){
+void MlockInterface::freeMem(bool exitApp){
     if (num_rcpts>0){
         while (num_rcpts--  ) {
             free(c_rcpt_list[num_rcpts]);
         }
     }
     num_rcpts=0;
+
+    if (exitApp){
+        sodium_memzero( b_my_sk, sizeof b_my_sk);
+    }
 }
 
 bool MlockInterface::checkMiniLockID(QString id){

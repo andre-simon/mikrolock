@@ -26,8 +26,8 @@ import de.andresimon 1.0
 
 ApplicationWindow {
     id: window1
-    visible: true
 
+    visible: true
     color: "#49698d"
     title: "mlock GUI 0.5"
     minimumWidth: 500 + columns.x *2
@@ -40,9 +40,69 @@ ApplicationWindow {
     y: Screen.height/2 - height/2
 
     property bool isBusy: false
+    property int errorCode: -1
+    property string resultString: "WORKING"
+
+    menuBar: myTopMenu
+
+    MenuBar {
+        id: myTopMenu
+      Menu {
+        title: qsTr("Help")
+        MenuItem {
+          text: qsTr("About")
+          onTriggered: {
+              aboutMsg.open()
+          }
+        }
+      }
+    }
+
+    onIsBusyChanged: {
+        btnEncrypt.enabled=!isBusy
+        btnSelFile.enabled=!isBusy
+        resultString = isBusy ? "WORKING" : "COMPLETE"
+        busyIndication.running=isBusy
+        lblWorking2.opacity= isBusy ? 1 : 0
+        lblWorking1.opacity= isBusy ? 1 : 0
+    }
+
+    onErrorCodeChanged: {
+
+        switch (errorCode){
+        case 0:
+            return
+        case 2:
+            decErrorMsg.text=qsTr("Could not decrypt the file.")
+            break
+        case 3:
+            decErrorMsg.text=qsTr("Could not encrypt the file.")
+            break
+        case 4:
+            decErrorMsg.text=qsTr("Could not open the file.")
+            break
+        case 5:
+            decErrorMsg.text=qsTr("Could not read the file.")
+            break
+        case 6:
+            decErrorMsg.text=qsTr("Could not write the file.")
+            break
+        case 7:
+            decErrorMsg.text=qsTr("Could not calculate the hash of the file.")
+            break
+        case 8:
+            decErrorMsg.text=qsTr("Illegal minilock file format.")
+            break
+        case 9:
+            decErrorMsg.text=qsTr("No recipients defined.")
+            break
+        }
+        decErrorMsg.open()
+        errorCode=-1
+    }
 
     onClosing:  {
-        mlock.freeMem()
+        mlock.freeMem(true)
     }
 
     MlockInterface {
@@ -52,12 +112,18 @@ ApplicationWindow {
     BusyIndicator {
         id: busyIndication
         anchors.centerIn: parent
-        running: false
+        running: isBusy
         z: 100
     }
 
+
+
+
+
     Rectangle {
-        id: unlockScreen
+         objectName: "unlockScreen"
+
+         id: unlockScreen
         transitions: Transition {
             to: "hide"
             NumberAnimation { properties: "opacity"; easing.type: Easing.OutCirc; duration: 200  }
@@ -80,7 +146,6 @@ ApplicationWindow {
                 }
             }
         ]
-
 
         ColumnLayout{
 
@@ -200,7 +265,6 @@ ApplicationWindow {
 
             width: 500
 
-
             Label {
                 text: "<font color=\"white\"><h1>"+qsTr("Select the destination directory")+"</h1></font><br>"
                 Layout.fillWidth: true
@@ -238,25 +302,26 @@ ApplicationWindow {
                 Layout.fillWidth: true
 
                 onClicked: {
-                    //todo: bei decrypt muesste man ausgabeverz. angeben koennen
-                    // encrypt nimmt als default eingabepfad + .minilock
                     if (txtDestFile.text.length==0){
                         inputErrorMsg.text = qsTr("The destination file must be set")
                         inputErrorMsg.open()
                         txtDestFile.forceActiveFocus()
                         return
                     }
-
                     fileDialog.open()
                 }
-
             }
 
             Label {
                 id: lblWorking1
-                text:  "<br><font color=\"yellow\"><h2>---WORKING---</h2></font>"
+                text: resultString
+                font.pixelSize: 18
+                font.italic: true
+                color: "yellow"
                 opacity: 0
                 Layout.fillWidth: true
+                horizontalAlignment:Text.AlignHCenter
+                anchors.topMargin: 15
             }
 
         }
@@ -301,8 +366,9 @@ ApplicationWindow {
             width: 500
 
             Label {
-                text: "<font color=\"white\"><h1>"+qsTr("Encryption")+"</h1><br><b>"+qsTr("Who is allowed to open this file?")+"</b><br><br>"+qsTr("Paste a miniLock ID for each person which needs access.")+"</font>"
+                text: "<h1>"+qsTr("Encryption")+"</h1><br><b>"+qsTr("Who is allowed to open this file?")+"</b><br><br>"+qsTr("Paste a miniLock ID for each person which needs access.")
                 Layout.fillWidth: true
+                color: "white"
             }
 
             TextField {
@@ -325,7 +391,7 @@ ApplicationWindow {
 
             CheckBox {
                 id: cbOmitMyId
-                text: qsTr("<font color=\"white\">"+qsTr("Omit my miniLock ID (you won't be able to decrypt the file)")+"</font>")
+                text: "<font color=\"white\">"+qsTr("Omit my miniLock ID (you won't be able to decrypt the file)")+"</font>"
 
             }
 
@@ -337,77 +403,29 @@ ApplicationWindow {
                 Layout.fillWidth: true
 
                 onClicked: {
-
                     if (!mlock.checkMiniLockID(txtRcpt1.text)  ||  !mlock.checkMiniLockID(txtRcpt2.text) || !mlock.checkMiniLockID(txtRcpt3.text)){
                         inputErrorMsg.text = qsTr("A miniLock ID is invalid")
                         inputErrorMsg.open()
                         return
                     }
-                    console.log("encrypt...")
-                    busyIndication.running=true
-busyIndication.visible=true
-                    btnEncrypt.enabled= false
-                    lblWorking2.opacity= 1
-                   lblWorking2.visible= true
-                    var retVal=mlock.encrypt( fileDialog.fileUrl, txtDestFile.text, cbOmitMyId.checked, txtRcpt1.text, txtRcpt2.text, txtRcpt3.text)
-                    if (retVal>0) {
-                        show_error(retVal)
-                        lblWorking2.opacity=0
-                    } else {
-                        lblWorking2.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
-                    }
-                    btnEncrypt.enabled= true
-busyIndication.visible=false
-                    busyIndication.running=false
+                    mlock.encrypt( fileDialog.fileUrl, txtDestFile.text, cbOmitMyId.checked, txtRcpt1.text, txtRcpt2.text, txtRcpt3.text)
                 }
-
             }
 
             Label {
                 id: lblWorking2
-                text: "<br><font color=\"yellow\"><h2>---WORKING---</h2></font>"
+                text: resultString
                 opacity: 0
                 Layout.fillWidth: true
-
+                font.pixelSize: 18
+                font.italic: true
+                color: "yellow"
+                anchors.topMargin: 15
+                horizontalAlignment:Text.AlignHCenter
             }
 
         }
     }
-
-
-    //enum error_code { err_ok, err_failed, err_open, err_box,  err_file_open, err_file_read, err_file_write, err_hash, err_format, err_no_rcpt};
-    function show_error(error) {
-        switch (error){
-        case 2:
-            decErrorMsg.text=qsTr("Could not decrypt the file.")
-            break
-        case 3:
-            decErrorMsg.text=qsTr("Could not encrypt the file.")
-            break
-        case 4:
-            decErrorMsg.text=qsTr("Could not open the file.")
-            break
-        case 5:
-            decErrorMsg.text=qsTr("Could not read the file.")
-            break
-        case 6:
-            decErrorMsg.text=qsTr("Could not write the file.")
-            break
-        case 7:
-            decErrorMsg.text=qsTr("Could not calculate the hash of the file.")
-            break
-        case 8:
-            decErrorMsg.text=qsTr("Illegal minilock file format.")
-            break
-        case 9:
-            decErrorMsg.text=qsTr("No recipients defined.")
-            break
-        }
-        decErrorMsg.open()
-    }
-
-
-
 
     FileDialog {
         id: fileDialog
@@ -417,23 +435,13 @@ busyIndication.visible=false
         modality:  "WindowModal"
         visible: false
 
-
         onAccepted: {
             var inFile = mlock.localFilePath( fileDialog.fileUrl.toString())
             var patt = /minilock$/
             if (patt.test(inFile)){
-                btnSelFile.enabled=false
-                isBusy=true
+
                 lblWorking1.opacity = 1
-                var retVal=mlock.decrypt( fileDialog.fileUrl, txtDestFile.text)
-                if (retVal>0) {
-                    show_error(retVal)
-                    lblWorking1.opacity=0
-                } else {
-                    lblWorking1.text = "<br><font color=\"yellow\"><h2>*** SUCCESS ***</h2></font>"
-                }
-                btnSelFile.enabled=true
-                isBusy=false
+                mlock.decrypt( fileDialog.fileUrl, txtDestFile.text)
             } else {
                 selectFileScreen.state = "hide"
                 encryptScreen.state = "show"
@@ -455,7 +463,6 @@ busyIndication.visible=false
         onAccepted: {
             txtDestFile.text =  mlock.localFilePath( destFileDialog.fileUrl.toString())+"/"
         }
-
     }
 
     MessageDialog {
@@ -465,11 +472,17 @@ busyIndication.visible=false
         visible: false
     }
 
-
     MessageDialog {
         id: inputErrorMsg
         title: qsTr("Input validation error")
         text: qsTr("Invalid input.")
+        visible: false
+    }
+
+    MessageDialog {
+        id: aboutMsg
+        title: qsTr("About")
+        text: qsTr("mlock GUI 0.5\n\n(C) 2014-2015 Andre Simon\n\nReleased under the terms of the GNU GPL license.")
         visible: false
     }
 }

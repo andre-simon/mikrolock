@@ -17,6 +17,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+Die Nachbarskinder
+
+Wer andern gar zu wenig traut,
+Hat Angst an allen Ecken;
+Wer gar zu viel auf andre baut,
+Erwacht mit Schrecken.
+
+Es trennt sie nur ein leichter Zaun,
+Die beiden Sorgengründer;
+Zu wenig und zu viel Vertraun
+Sind Nachbarskinder.
+
+Wilhelm Busch
+*/
+
 #include "minilock.h"
 
 #include <string.h>
@@ -39,6 +55,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "blake2/blake2.h"
 #include "b58/base58.h"
 #include "utils.h"
+
+int silent_mode=0;
 
 error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos, uint8_t* b_file_nonce_prefix,
                 uint8_t* b_file_key, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len, int override_out_name_as_dir) {
@@ -105,9 +123,9 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
                 snprintf((char*)c_out_name,  out_name_len-1, "%s", b_decrypt_block);
             }
 
-            #ifndef QUIET_MODE
-            printf("Writing to file %s...\n", c_out_name);
-            #endif
+            if (!silent_mode)
+                printf("Writing to file %s...\n", c_out_name);
+            
             output_file = fopen((char *)c_out_name, "wb");
             if (!output_file) {
                 exit_loop=1;
@@ -121,10 +139,10 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
                 goto free_encode_write_file_error;
             }
 
-            #ifndef QUIET_MODE
+            if (!silent_mode) {
                 printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
                 fflush(stdout);
-            #endif
+            }
         }
 
 free_encode_write_file_error:
@@ -133,9 +151,9 @@ free_encode_write_file_error:
         free(b_chunk);
     }
     
-    #ifndef QUIET_MODE
-    printf("\n");
-    #endif
+
+    if (!silent_mode) printf("\n");
+
     if (output_file) fclose(output_file);
     return ret_val;
 }
@@ -150,11 +168,13 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     }
     
      off_t current_pos=0;
-    #ifndef QUIET_MODE
-    fseeko(input_file, 0, SEEK_END); 
-     off_t eof_pos   = ftello(input_file);
-    fseeko(input_file, 0, SEEK_SET);
-    #endif
+     off_t eof_pos=0;
+     
+    if (!silent_mode){
+        fseeko(input_file, 0, SEEK_END); 
+        eof_pos   = ftello(input_file);
+        fseeko(input_file, 0, SEEK_SET);
+    }
     
     unsigned char b_file_nonce[KEY_LEN - 8]= {0};
     memcpy(b_file_nonce, b_file_nonce_prefix, NONCE_PREFIX_LEN);
@@ -196,10 +216,10 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
         
         current_pos += num_read;
 
-        #ifndef QUIET_MODE
-        printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
-	fflush(stdout);
-        #endif
+        if (!silent_mode) {
+            printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
+            fflush(stdout);
+        }
 
         memcpy(b_file_nonce+NONCE_PREFIX_LEN, b_nonce_cnt, sizeof b_nonce_cnt);
         crypto_secretbox_easy((unsigned char*)b_crypt_block, (unsigned char*)b_read_buffer, num_read, b_file_nonce, b_file_key);
@@ -217,9 +237,7 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
 
     }
 
-    #ifndef QUIET_MODE
-    printf("\n");
-    #endif
+    if (!silent_mode) printf("\n");
 
     fclose(input_file);
     return ret_val;
@@ -320,9 +338,9 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 
     unsigned char b_hash[KEY_LEN] = {0};
 
-    #ifndef QUIET_MODE
-    printf("Calculating file hash...\n");
-    #endif
+    if (!silent_mode)
+        printf("Calculating file hash...\n");
+    
     if( blake2s_stream( output_file, b_hash ) < 0 ) {
         ret_val = err_hash;
         goto free_encode_res;
@@ -587,9 +605,9 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
 
         off_t crypt_block_start = ftello(input_file);
 
-        #ifndef QUIET_MODE
-        printf("Calculating file hash...\n");
-        #endif
+        if (!silent_mode)
+            printf("Calculating file hash...\n");
+        
         unsigned char hash[KEY_LEN] = {0};
 
         if( blake2s_stream( input_file, hash ) < 0 ) {

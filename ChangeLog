@@ -1,5 +1,13 @@
 mlock ChangeLog
 
+09.03.2015
+
+mlock 0.5
+
+-CLI: fixed progress output
+-GUI: added German translation, improved responsiveness
+
+---
 
 23.02.2015
 

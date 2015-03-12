@@ -161,7 +161,27 @@
     </message>
     <message>
         <source>Select the output directory.</source>
-        <translation>Wähle das Ausgabeverzeichnis.</translation>
+        <translation type="vanished">Wähle das Ausgabeverzeichnis.</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Hilfe</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>Über</translation>
+    </message>
+    <message>
+        <source>A miniLock ID is invalid</source>
+        <translation>Eine miniLock-ID ist ungültig</translation>
+    </message>
+    <message>
+        <source>mlock GUI 0.5
+
+(C) 2014-2015 Andre Simon
+
+Released under the terms of the GNU GPL license.</source>
+        <translation></translation>
     </message>
 </context>
 </TS>

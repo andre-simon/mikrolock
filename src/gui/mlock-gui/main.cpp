@@ -46,5 +46,8 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
+    // http://stackoverflow.com/questions/23177839/how-can-i-access-my-window-object-properties-from-c-while-using-qqmlapplicatio
+    MlockInterface::qml_root = engine.rootObjects().first();
+    MlockInterface::qml_root->setProperty("isBusy", false);
     return app.exec();
 }

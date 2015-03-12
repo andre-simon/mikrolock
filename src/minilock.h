@@ -3,9 +3,6 @@
 
 #define VERSION "0.5"
 
-//TODO add in win32 lib pro file
-//#define QUIET_MODE 1
-
 // for ftelloo: off_t
 #define _FILE_OFFSET_BITS 64
 

@@ -49,3 +49,5 @@ win32 {
         LIBS += -L"D:\Devel\qt-everywhere-opensource-src-5.4.0\qtbase\qml\QtQuick\Dialogs" -ldialogplugin
         LIBS += -L"D:\Devel\qt-everywhere-opensource-src-5.4.0\qtbase\qml\QtQuick\Window.2" -lwindowplugin
 }
+
+DISTFILES +=
