@@ -1,5 +1,14 @@
 mlock ChangeLog
 
+02.04.2015
+
+mlock 0.6
+
+-fixed library linking order in src/makefile
+-CLI: added --quiet option
+-CLI: added hashing progress output
+
+---
 09.03.2015
 
 mlock 0.5
@@ -8,7 +17,6 @@ mlock 0.5
 -GUI: added German translation, improved responsiveness
 
 ---
-
 23.02.2015
 
 mlock 0.4

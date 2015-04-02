@@ -29,6 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // sadasfsa fff as fasf assffasf saf as fsa fas
 
+extern int silent_mode;
+
 void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secret){
 
     if (is_secret){
@@ -88,7 +90,7 @@ void print_help() {
 	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)\n");
 	printf("  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)\n");
 	printf("  -p, --pinentry        Use pinentry program to ask for the passphrase\n");
-	printf("  -q, --quiet           Reserved\n");
+	printf("  -q, --quiet           Do not print progress information\n");
 	printf("  -h, --help            Print this help screen\n");
 	printf("  -v, --version         Print version information\n\n");
 	printf("If neither -E nor -D is given, mlock exits after showing your miniLock ID.\n");
@@ -118,6 +120,7 @@ int main(int argc, char **argv) {
     
     int do_enc=0, do_dec=0;
     int use_pinentry=0;
+    
     int c;
 
     int exclude_me =0;
@@ -197,6 +200,9 @@ int main(int argc, char **argv) {
             break;
 	case 'p':
             use_pinentry = 1;
+            break;
+	case 'q':
+            silent_mode = 1;
             break;
         case  '?':
             goto main_exit_on_failure;

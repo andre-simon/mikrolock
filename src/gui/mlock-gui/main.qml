@@ -29,7 +29,7 @@ ApplicationWindow {
 
     visible: true
     color: "#49698d"
-    title: "mlock GUI 0.5"
+    title: "mlock GUI 0.6"
     minimumWidth: 500 + columns.x *2
     minimumHeight: columns.implicitHeight + columns.y *2
 
@@ -482,7 +482,7 @@ ApplicationWindow {
     MessageDialog {
         id: aboutMsg
         title: qsTr("About")
-        text: qsTr("mlock GUI 0.5\n\n(C) 2014-2015 Andre Simon\n\nReleased under the terms of the GNU GPL license.")
+        text: qsTr("mlock GUI 0.6\n\n(C) 2014-2015 Andre Simon\n\nReleased under the terms of the GNU GPL license.")
         visible: false
     }
 }

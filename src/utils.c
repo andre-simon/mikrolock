@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "utils.h"
 
+int silent_mode=0;
+
 struct termios oldtermios;
 
 //see http://stackoverflow.com/questions/1513734/problem-with-kbhitand-getch-for-linux/1513806#1513806
@@ -152,6 +154,16 @@ int blake2s_stream( FILE *stream, void *resstream ) {
     if( !buffer ) return -1;
 
     blake2s_init( S, KEY_LEN );
+  
+    off_t eof_pos=0;
+    off_t current_pos=0; 
+    
+    if (!silent_mode){
+	current_pos   = ftello(stream);
+        fseeko(stream, 0, SEEK_END); 
+        eof_pos   = ftello(stream);
+        fseeko(stream, current_pos, SEEK_SET);
+    }
 
     while( 1 ) {
         sum = 0;
@@ -159,7 +171,13 @@ int blake2s_stream( FILE *stream, void *resstream ) {
         while( 1 ) {
             n = fread( buffer + sum, 1, buffer_length - sum, stream );
             sum += n;
+	    current_pos += n;
+	    if (!silent_mode) {
+	      printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
+	      fflush(stdout);
+	    }
 
+	    
             if( buffer_length == sum )
                 break;
 
@@ -185,6 +203,7 @@ final_process:
     blake2s_final( S, resstream, KEY_LEN );
     ret = 0;
 cleanup_buffer:
+    if (!silent_mode) printf("\n");
     free( buffer );
     return ret;
 }

@@ -56,7 +56,7 @@ Wilhelm Busch
 #include "b58/base58.h"
 #include "utils.h"
 
-int silent_mode=0;
+extern int silent_mode;
 
 error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos, uint8_t* b_file_nonce_prefix,
                 uint8_t* b_file_key, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len, int override_out_name_as_dir) {
