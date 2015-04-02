@@ -17,7 +17,7 @@ CFLAGS=-O2 -Wall ${OWASP_FLAGS} -std=gnu99 -I${LIBS} -I${LIBS}pinentry/pinentry
 
 LDFLAGS=-lm -lsodium
 
-
+# cmdline user interface
 CLI_OBJECTS=mlock.o
 
 # Qt user interface
@@ -32,7 +32,7 @@ EXECUTABLE=mlock
 
 
 cli: lib$(EXECUTABLE).a ${CLI_OBJECTS}
-	${CC} ${LDFLAGS} -o $(EXECUTABLE) ${CLI_OBJECTS} -L. -l$(EXECUTABLE)
+	${CC} -o $(EXECUTABLE) ${CLI_OBJECTS} -L. -l$(EXECUTABLE) ${LDFLAGS}
 
 lib-static lib$(EXECUTABLE).a: ${CORE_OBJECTS}
 	${AR} ${ARFLAGS} lib$(EXECUTABLE).a ${CORE_OBJECTS}

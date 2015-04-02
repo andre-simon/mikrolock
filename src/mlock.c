@@ -79,10 +79,10 @@ int check_password(const char *c_passphrase){
 
 void print_help() {
 	printf("USAGE: mlock [OPTION]...\n");
-	printf("mlock reads and writes encryped miniLock files (https://minilock.io/)\n\n");
+	printf("mlock reads and writes encrypted miniLock files (https://minilock.io/)\n\n");
 	printf("Available options:\n\n");
 	printf("  -E, --encrypt <file>  Encrypt the given file (see -r)\n");
-	printf("  -D, --decrypt <file>  Decrypt the given miniLock-file\n");
+	printf("  -D, --decrypt <file>  Decrypt the given miniLock file\n");
 	printf("  -o, --output <file>   Override the target file name (assumes -D or -E)\n");
 	printf("  -m, --mail <string>   Mail address (salt)\n");
 	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)\n");

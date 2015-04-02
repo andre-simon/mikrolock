@@ -26,7 +26,7 @@ lupdate_only{
 }
 
 linux {
-    LIBS += -lsodium -L../.. -lmlock
+    LIBS += -L../.. -lmlock -lsodium
     # Default rules for deployment.
     include(deployment.pri)
 }
