@@ -26,7 +26,7 @@ Wer gar zu viel auf andre baut,
 Erwacht mit Schrecken.
 
 Es trennt sie nur ein leichter Zaun,
-Die beiden Sorgengründer;
+Die beiden Sorgengruender;
 Zu wenig und zu viel Vertraun
 Sind Nachbarskinder.
 
@@ -106,7 +106,7 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
 
         if (file_err_retval) {
             exit_loop=1;
-	    ret_val = err_open;
+            ret_val = err_open;
             goto free_encode_write_file_error;
         }
 
@@ -129,13 +129,13 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
             output_file = fopen((char *)c_out_name, "wb");
             if (!output_file) {
                 exit_loop=1;
-		ret_val = err_file_write;
+                ret_val = err_file_write;
                 goto free_encode_write_file_error;
             }
         } else {
             if (fwrite(b_decrypt_block, 1, chunk_len-MAC_LEN, output_file) < chunk_len-MAC_LEN) {
                 exit_loop=1;
-		ret_val = err_file_write;
+                ret_val = err_file_write;
                 goto free_encode_write_file_error;
             }
 
@@ -146,7 +146,7 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
         }
 
 free_encode_write_file_error:
-	sodium_memzero(b_decrypt_block, chunk_len);
+        sodium_memzero(b_decrypt_block, chunk_len);
         free(b_decrypt_block);
         free(b_chunk);
     }
@@ -257,7 +257,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
             char *fname= delim ? delim+1 : (char*)c_filename;
             snprintf((char*)c_out_name,  out_name_len-1, "%s%s.minilock", c_override_out_name, fname);
         }else {
-        snprintf((char*)c_out_name,  out_name_len-1, "%s", c_override_out_name);
+            snprintf((char*)c_out_name,  out_name_len-1, "%s", c_override_out_name);
         }
 
     } else {
@@ -538,7 +538,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         sodium_memzero(c_decoded_file_desc, sizeof c_decoded_file_desc);
 
         if (!json_file_desc || json_file_desc->type!=json_object) {
-	    ret_val = err_format;
+            ret_val = err_format;
             goto exit_decode_loop_on_failure;
         }
 
@@ -548,7 +548,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         b_file_info=get_json_b64_string(json_file_desc, "fileInfo", &b64_fileinfo_cnt);
 
         if (!b_file_info || !b_sender_id || !b_recipient_id || b58_sender_cnt!=KEY_LEN+1 || b58_rcpt_cnt!=KEY_LEN+1 ) {
-	     ret_val = err_format;
+            ret_val = err_format;
             goto exit_decode_loop_on_failure;
         }
 
@@ -556,17 +556,17 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         blake_2s_array(b_recipient_id, KEY_LEN , b_cs, sizeof b_cs);
 
         if (b_cs[0]!=b_recipient_id[KEY_LEN]) {
-	     ret_val = err_format;
+            ret_val = err_format;
             goto exit_decode_loop_on_failure;
         }
         if (memcmp(b_my_pk, b_recipient_id, KEY_LEN)) {
-	     ret_val = err_format;
+            ret_val = err_format;
             goto exit_decode_loop_on_failure;
         }
         blake_2s_array(b_sender_id, KEY_LEN , b_cs, sizeof b_cs);
 
         if (b_cs[0]!=b_sender_id[KEY_LEN]) {
-	   ret_val = err_format;
+            ret_val = err_format;
             goto exit_decode_loop_on_failure;
         }
 
@@ -577,7 +577,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         // printf("\nVAL crypto_box_open_easy  %d %s\n", open_fi_retval, c_decoded_file_path);
 
         if (open_fi_retval) {
-	   ret_val = err_open;
+            ret_val = err_open;
             goto exit_decode_loop_on_failure;
         }
 
@@ -586,7 +586,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         sodium_memzero(c_decoded_file_path, sizeof c_decoded_file_path);
 
         if (!json_file_info || json_file_info->type!=json_object) {
-	   ret_val = err_format;
+            ret_val = err_format;
             goto exit_decode_loop_on_failure;
         }
 
@@ -595,11 +595,11 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         b_file_hash=get_json_b64_string(json_file_info, "fileHash", &b64_cnt_hash);
 
         if (b64_cnt_key != KEY_LEN || b64_cnt_nonce != NONCE_PREFIX_LEN ||  b64_cnt_hash != KEY_LEN) {
-	   ret_val = err_format;
+            ret_val = err_format;
             goto exit_decode_loop_on_failure;
         }
         if (!b_file_key || !b_file_nonce || !b_file_hash) {
-	   ret_val = err_format;
+            ret_val = err_format;
             goto exit_decode_loop_on_failure;
         }
 
@@ -611,10 +611,10 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         unsigned char hash[KEY_LEN] = {0};
 
         if( blake2s_stream( input_file, hash ) < 0 ) {
-	    ret_val = err_hash;
+            ret_val = err_hash;
             goto exit_decode_loop_on_failure;
         } else if (memcmp(hash, b_file_hash, KEY_LEN)) {
-	    ret_val = err_hash;
+            ret_val = err_hash;
             goto exit_decode_loop_on_failure;
         }
         // calculating hash moves fp to the end
@@ -623,7 +623,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         fseeko(input_file, crypt_block_start, SEEK_SET);
         error_code file_err_err = decode_file(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, c_override_out_name, c_out_name,  out_name_len, override_out_name_as_dir);
         if (file_err_err) {
-	    ret_val = file_err_err;
+            ret_val = file_err_err;
             goto exit_decode_loop_on_failure;
         }
         ret_val = err_ok;

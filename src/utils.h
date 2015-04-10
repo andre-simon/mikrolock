@@ -1,11 +1,13 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
-#include <signal.h>
+#ifndef WIN32
 #include <termios.h>
+#include <sys/ioctl.h>
+#endif
+#include <signal.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -28,16 +30,28 @@
 #define NONCE_PREFIX_LEN crypto_box_PUBLICKEYBYTES/2
 #define MAC_LEN  crypto_secretbox_MACBYTES
 
+#ifndef WIN32
 #define BUF_READ_FILE_LEN 1048576
+#else
+#define BUF_READ_FILE_LEN 1048576/2
+#endif
+
 #define BUF_PATH_LEN 256
 #define BUF_DECRYPTINFO_ITEM_LEN 550
 
+// for ftelloo: off_t
+#define _FILE_OFFSET_BITS 64
 
+// Win32 gcc ignores _FILE_OFFSET_BITS...
+#ifdef WIN32
+#define off_t off64_t
+#endif
+
+#ifndef WIN32
 int ttyraw(int fd);
-
 int ttyreset(int fd);
-
 void sigcatch(int sig);
+#endif
 
 int array_to_number(uint8_t* array, int size);
 

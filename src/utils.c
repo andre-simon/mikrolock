@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 int silent_mode=0;
 
+#ifndef WIN32
 struct termios oldtermios;
 
 //see http://stackoverflow.com/questions/1513734/problem-with-kbhitand-getch-for-linux/1513806#1513806
@@ -64,6 +65,7 @@ void sigcatch(int sig) {
     ttyreset(0);
     exit(0);
 }
+#endif
 
 int array_to_number(uint8_t* array, int size) {
     int n=0;
@@ -146,7 +148,7 @@ void dump(const char *what, uint8_t *s, int len) {
 
 int blake2s_stream( FILE *stream, void *resstream ) {
     int ret = -1;
-    off_t sum, n;
+
     blake2s_state S[1];
     static const off_t buffer_length = 1048576;
     uint8_t *buffer = ( uint8_t * )malloc( buffer_length );
@@ -155,11 +157,12 @@ int blake2s_stream( FILE *stream, void *resstream ) {
 
     blake2s_init( S, KEY_LEN );
   
+    off_t sum, n;
     off_t eof_pos=0;
-    off_t current_pos=0; 
+    off_t current_pos=0;
     
     if (!silent_mode){
-	current_pos   = ftello(stream);
+        current_pos   = ftello(stream);
         fseeko(stream, 0, SEEK_END); 
         eof_pos   = ftello(stream);
         fseeko(stream, current_pos, SEEK_SET);
@@ -171,12 +174,14 @@ int blake2s_stream( FILE *stream, void *resstream ) {
         while( 1 ) {
             n = fread( buffer + sum, 1, buffer_length - sum, stream );
             sum += n;
-	    current_pos += n;
-	    if (!silent_mode) {
-	      printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
-	      fflush(stdout);
-	    }
-
+            current_pos += n;
+            if (!silent_mode) {
+                //FIXME W32 data type issue
+                printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos *
+                       100
+                       );
+                fflush(stdout);
+            }
 	    
             if( buffer_length == sum )
                 break;

@@ -22,18 +22,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 
 #include <sodium/crypto_pwhash_scryptsalsa208sha256.h>
+
+#ifndef WIN32
 #include "pinentry/pinentry.h"
+#else
+#include <windows.h>
+#endif
 
 #include "utils.h"
 #include "minilock.h"
-
-// sadasfsa fff as fasf assffasf saf as fsa fas
 
 extern int silent_mode;
 
 void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secret){
 
+#ifdef WIN32
+  DWORD mode;
+  HANDLE ih = GetStdHandle( STD_INPUT_HANDLE  );
+#endif
+
     if (is_secret){
+
+    #ifndef WIN32
       // Catch the most popular signals.
       if((long) signal(SIGINT,sigcatch) < 0) {
 	  perror("signal");
@@ -48,20 +58,42 @@ void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secr
       if(ttyraw(0) < 0) {
 	  fprintf(stderr,"ERROR Can't go to raw mode.\n");
       }
+
+    #else
+
+      GetConsoleMode( ih, &mode );
+      SetConsoleMode( ih, mode & ~(ENABLE_ECHO_INPUT) );
+    #endif
+
     }
+
     printf("%s", prompt_txt);
     int pp_idx=0;
     uint8_t key=0;
     while( (read(0, &key, 1)) == 1 && pp_idx < max_len-1) {
 	key &= 255;
-        if( (is_secret && (key == 0xd || key==0x03)) || (!is_secret && key==0x0a) ) /* ASCII RETURN / CTRL+C */
+
+    if( (is_secret &&
+             #ifndef WIN32
+                 (key == 0xd || key==0x03)
+             #else
+                   (key==0xa)
+             #endif
+             )
+                || (!is_secret && key==0x0a) ) /* ASCII RETURN / CTRL+C */
             break;
         input[pp_idx++] = key;
     }
 
     if (is_secret){
-	ttyreset(0);
+
+#ifndef WIN32
+        ttyreset(0);
+#else
+        SetConsoleMode( ih, mode );
+#endif
     }
+
 }
 
 int check_password(const char *c_passphrase){
@@ -119,8 +151,10 @@ int main(int argc, char **argv) {
     uint8_t c_final_out_name[BUF_PATH_LEN]  = {0};
     
     int do_enc=0, do_dec=0;
+
+#ifndef WIN32
     int use_pinentry=0;
-    
+#endif
     int c;
 
     int exclude_me =0;
@@ -175,7 +209,7 @@ int main(int argc, char **argv) {
         case 'E':
             do_dec=c=='D';
             do_enc=!do_dec;
-            snprintf((char *)c_input_file, sizeof c_input_file-1, "%s",optarg);
+            snprintf((char *)c_input_file, sizeof c_input_file-1, "%s", optarg);
             break;
 
         case 'r':
@@ -192,16 +226,19 @@ int main(int argc, char **argv) {
                 goto main_exit_on_failure;
             }
             c_rcpt_list[num_rcpts] = (char*)malloc(strlen(optarg)+1);
-            snprintf(c_rcpt_list[num_rcpts], strlen(optarg)+1, "%s",optarg);
+            snprintf(c_rcpt_list[num_rcpts], strlen(optarg)+1, "%s", optarg);
             num_rcpts++;
             break;
         case 'x':
             exclude_me = 1;
             break;
-	case 'p':
+
+        case 'p':
+#ifndef WIN32
             use_pinentry = 1;
+#endif
             break;
-	case 'q':
+        case 'q':
             silent_mode = 1;
             break;
         case  '?':
@@ -216,9 +253,13 @@ int main(int argc, char **argv) {
 	prompt_tty("Please enter your mail address:\n", c_user_salt, sizeof c_user_salt, 0);
     }
     
+    #ifndef WIN32
     if (!use_pinentry ||  prompt_pinentry((const char*)c_user_salt, c_user_passphrase, sizeof c_user_passphrase)<0){
+    #endif
       prompt_tty("Please enter your secret passphrase:\r\n", c_user_passphrase, sizeof c_user_passphrase, 1);
+    #ifndef WIN32
     }
+    #endif
     
     if (!check_password( (const char*) c_user_passphrase)){
         fprintf(stderr, "ERROR: the passphrase must consist of several random words\n");
@@ -273,7 +314,6 @@ int main(int argc, char **argv) {
 	  else
             err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, c_override_out_name, c_final_out_name, sizeof c_final_out_name, 0);
 	  
-	  
 	  switch (err_code){
 	    case err_ok:
 	      break;
@@ -319,19 +359,3 @@ main_exit_on_failure:
     }
     return ret_val;
 }
-
-/*TODO Encryption errors
-
-Error 1: General encryption error
-Decryption errors
-
-Error 2: General decryption error
-Error 3: Could not parse header
-Error 4: Invalid header version
-Error 5: Could not validate sender ID
-Error 6: File is not encrypted for this recipient
-Error 7: Could not validate ciphertext hash
-
-https://www.securecoding.cert.org/confluence/display/seccode/FIO19-C.+Do+not+use+fseeko()+and+ftello()+to+compute+the+size+of+a+regular+file
-https://www.securecoding.cert.org/confluence/display/seccode/FIO03-C.+Do+not+make+assumptions+about+fopen%28%29+and+file+creation
-*/
