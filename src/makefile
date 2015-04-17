@@ -9,7 +9,7 @@ LIBS=libs/
 QMAKE=qmake-qt5
 
 
-GUI_QT_DIR=./gui/mlock-gui/
+GUI_QT_DIR=./gui/qt-widgets/mlock-gui/
 
 OWASP_FLAGS=-Wextra  -fPIE -Wno-unused-parameter -Wformat=2 -Wformat-security -fstack-protector-all -Wstrict-overflow
 
@@ -21,7 +21,7 @@ LDFLAGS=-lm -lsodium
 CLI_OBJECTS=mlock.o
 
 # Qt user interface
-GUI_OBJECTS:=${GUI_QT_DIR}main.cpp ${GUI_QT_DIR}mlockinterface.cpp
+GUI_OBJECTS:=${GUI_QT_DIR}main.cpp ${GUI_QT_DIR}mlockmainwindow.cpp
 
 CORE_OBJECTS=minilock.o utils.o ${LIBS}b58/base58.o ${LIBS}json/json.o ${LIBS}libb64/cencode.o \
         ${LIBS}blake2/blake2s-ref.o \
@@ -43,10 +43,15 @@ gui-qt: lib$(EXECUTABLE).a ${GUI_OBJECTS}
 clean:
 	@rm -f *.o
 	@rm -f ./mlock
-	@rm -f gui/mlock-gui/mlock-gui
+	@rm -f *.a
+	@rm -f gui/qt-widgets/mlock-gui/mlock-gui
+	@rm -f gui/qt-widgets/mlock-gui/*.o
+	@rm -f gui/qt-widgets/mlock-gui/qrc_*.cpp
+	@rm -f gui/qt-widgets/mlock-gui/moc_*.cpp
+	@rm -f gui/qt-widgets/mlock-gui/ui_*.h
 	@rm -f libs/b58/base58.o
 	@rm -f libs/json/json.o
 	@rm -f libs/libb64/*.o
 	@rm -f libs/blake2/*.o
-	@rm -f libs/pinentry/pinentry/*.o
+	@rm -f libs/pinentry/*.o
 	@rm -f gui/mlock-gui/*.o

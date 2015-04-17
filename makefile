@@ -58,7 +58,7 @@ install-gui:
 	${MKDIR} ${DESTDIR}${data_dir}
 	${MKDIR} ${DESTDIR}${data_dir}l10n
 	${INSTALL_DATA} ./l10n/*.qm ${DESTDIR}${data_dir}l10n
-	${INSTALL_PROGRAM} ./src/gui/mlock-gui/mlock-gui ${DESTDIR}${bin_dir}
+	${INSTALL_PROGRAM} ./src/gui/qt-widgets/mlock-gui/mlock-gui ${DESTDIR}${bin_dir}
 
 
 gui:

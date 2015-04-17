@@ -56,10 +56,8 @@ Wilhelm Busch
 #include "b58/base58.h"
 #include "utils.h"
 
-extern int silent_mode;
-
 error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos, uint8_t* b_file_nonce_prefix,
-                uint8_t* b_file_key, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len, int override_out_name_as_dir) {
+                uint8_t* b_file_key, struct output_options *out_opts) {
 
     unsigned char b_file_nonce[KEY_LEN-8]= {0};
     unsigned char b_nonce_cnt[8]= {0};
@@ -111,22 +109,21 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
         }
 
         if (num_chunks==1) {
-            //uint8_t* dest_file = strlen((char*)c_override_out_name) ? c_override_out_name : b_decrypt_block;
-
-            if (strlen((char*)c_override_out_name)){
-                if (override_out_name_as_dir){
-                   snprintf((char*)c_out_name,  out_name_len-1, "%s%s", c_override_out_name, b_decrypt_block);
+            
+            if (strlen((char*)out_opts->c_override_out_name)){
+                if (out_opts->override_out_name_as_dir){
+                   snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s", out_opts->c_override_out_name, b_decrypt_block);
                 } else {
-                    snprintf((char*)c_out_name,  out_name_len-1, "%s", c_override_out_name);
+                    snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s", out_opts->c_override_out_name);
                 }
             } else {
-                snprintf((char*)c_out_name,  out_name_len-1, "%s", b_decrypt_block);
+                snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s", b_decrypt_block);
             }
 
-            if (!silent_mode)
-                printf("Writing to file %s...\n", c_out_name);
+            if (!out_opts->silent_mode)
+                printf("Writing to file %s...\n", out_opts->c_final_out_name);
             
-            output_file = fopen((char *)c_out_name, "wb");
+            output_file = fopen((char *)out_opts->c_final_out_name, "wb");
             if (!output_file) {
                 exit_loop=1;
                 ret_val = err_file_write;
@@ -139,8 +136,9 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
                 goto free_encode_write_file_error;
             }
 
-            if (!silent_mode) {
-                printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
+            out_opts->crypto_progress = current_pos*1.0 / eof_pos * 100;
+            if (!out_opts->silent_mode) {
+                printf("\rProgress %3.0f%%", out_opts->crypto_progress);
                 fflush(stdout);
             }
         }
@@ -152,14 +150,14 @@ free_encode_write_file_error:
     }
     
 
-    if (!silent_mode) printf("\n");
+    if (!out_opts->silent_mode) printf("\n");
 
     if (output_file) fclose(output_file);
     return ret_val;
 }
 
 
-error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t* b_file_key, uint8_t *c_input_file) {
+error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t* b_file_key, uint8_t *c_input_file, struct output_options *out_opts) {
     error_code ret_val = err_failed;
 
     FILE *input_file = fopen((char*)c_input_file, "r+b");
@@ -170,11 +168,11 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
      off_t current_pos=0;
      off_t eof_pos=0;
      
-    if (!silent_mode){
+    //if (!out_opts->silent_mode){
         fseeko(input_file, 0, SEEK_END); 
         eof_pos   = ftello(input_file);
         fseeko(input_file, 0, SEEK_SET);
-    }
+    //}
     
     unsigned char b_file_nonce[KEY_LEN - 8]= {0};
     memcpy(b_file_nonce, b_file_nonce_prefix, NONCE_PREFIX_LEN);
@@ -216,8 +214,9 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
         
         current_pos += num_read;
 
-        if (!silent_mode) {
-            printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos * 100);
+	out_opts->crypto_progress = current_pos*1.0 / eof_pos * 100;
+        if (!out_opts->silent_mode) {
+            printf("\rProgress %3.0f%%", out_opts->crypto_progress);
             fflush(stdout);
         }
 
@@ -237,13 +236,13 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
 
     }
 
-    if (!silent_mode) printf("\n");
+    if (!out_opts->silent_mode) printf("\n");
 
     fclose(input_file);
     return ret_val;
 }
 
-error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b_my_sk, char**c_rcpt_list, int num_rcpts, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len, int override_out_name_as_dir) {
+error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b_my_sk, char**c_rcpt_list, int num_rcpts, struct output_options * out_opts) {
 
     int ret_val = err_failed;
 
@@ -251,20 +250,20 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         return err_no_rcpt;
     }
 
-    if ( strlen((char*)c_override_out_name) ) {
-        if (override_out_name_as_dir){
+    if ( strlen((char*)out_opts->c_override_out_name) ) {
+        if (out_opts->override_out_name_as_dir){
             char* delim=strrchr((char*)c_filename, '/');
             char *fname= delim ? delim+1 : (char*)c_filename;
-            snprintf((char*)c_out_name,  out_name_len-1, "%s%s.minilock", c_override_out_name, fname);
+            snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s.minilock", out_opts->c_override_out_name, fname);
         }else {
-            snprintf((char*)c_out_name,  out_name_len-1, "%s", c_override_out_name);
+            snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s", out_opts->c_override_out_name);
         }
 
     } else {
-        snprintf((char*)c_out_name,  out_name_len-1, "%s.minilock", c_filename);
+        snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s.minilock", c_filename);
     }
 
-    FILE *output_file = fopen((char*)c_out_name, "w+b");
+    FILE *output_file = fopen((char*)out_opts->c_final_out_name, "w+b");
     if(output_file == NULL) {
         return err_file_write;
     }
@@ -327,7 +326,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     fwrite(b_json_header_len, 1, sizeof b_json_header_len, output_file);
     fseeko(output_file, crypt_block_start, SEEK_SET);
 
-    error_code file_err_err = encode_file(output_file, b_file_nonce_rnd, b_file_key_rnd, c_filename);
+    error_code file_err_err = encode_file(output_file, b_file_nonce_rnd, b_file_key_rnd, c_filename, out_opts);
     if (file_err_err){
         ret_val = file_err_err;
         goto free_encode_res;
@@ -337,11 +336,8 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     fseeko(output_file, crypt_block_start, SEEK_SET);
 
     unsigned char b_hash[KEY_LEN] = {0};
-
-    if (!silent_mode)
-        printf("Calculating file hash...\n");
     
-    if( blake2s_stream( output_file, b_hash ) < 0 ) {
+    if( blake2s_stream( output_file, b_hash , out_opts) < 0 ) {
         ret_val = err_hash;
         goto free_encode_res;
     }
@@ -431,9 +427,9 @@ free_encode_res:
 }
 
 
-error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_pk, uint8_t *c_override_out_name, uint8_t *c_out_name, size_t out_name_len, int override_out_name_as_dir) {
+error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_pk, struct output_options* out_opts) {
 
-    error_code ret_val = err_failed;
+    error_code ret_val = err_not_allowed;
 
     uint8_t *b_ephemeral=0;
     uint8_t *b_nonce  = 0;
@@ -604,13 +600,10 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         }
 
         off_t crypt_block_start = ftello(input_file);
-
-        if (!silent_mode)
-            printf("Calculating file hash...\n");
         
         unsigned char hash[KEY_LEN] = {0};
 
-        if( blake2s_stream( input_file, hash ) < 0 ) {
+        if( blake2s_stream( input_file, hash, out_opts ) < 0 ) {
             ret_val = err_hash;
             goto exit_decode_loop_on_failure;
         } else if (memcmp(hash, b_file_hash, KEY_LEN)) {
@@ -621,7 +614,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
      //   fseeko(input_file, 0, SEEK_END); 
         off_t eof_pos   = ftello(input_file);
         fseeko(input_file, crypt_block_start, SEEK_SET);
-        error_code file_err_err = decode_file(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, c_override_out_name, c_out_name,  out_name_len, override_out_name_as_dir);
+        error_code file_err_err = decode_file(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, out_opts);
         if (file_err_err) {
             ret_val = file_err_err;
             goto exit_decode_loop_on_failure;

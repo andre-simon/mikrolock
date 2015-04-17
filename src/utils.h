@@ -53,6 +53,17 @@ int ttyreset(int fd);
 void sigcatch(int sig);
 #endif
 
+
+struct output_options  {
+  uint8_t c_override_out_name[BUF_PATH_LEN];
+  uint8_t c_final_out_name[BUF_PATH_LEN];
+  int override_out_name_as_dir;
+  float crypto_progress;
+  float hash_progress;
+  int task_mode;
+  int silent_mode;
+};
+
 int array_to_number(uint8_t* array, int size);
 
 void number_to_array(uint8_t* array, int size, int num );
@@ -65,7 +76,7 @@ uint8_t* base64_decode(const char *c_input, int* cnt);
 
 void dump(const char *what, uint8_t *s, int len);
 
-int blake2s_stream( FILE *stream, void *resstream );
+int blake2s_stream( FILE *stream, void *resstream,  struct output_options *out_opts);
 
 void blake_2s_array(uint8_t *b_in, int in_len, uint8_t *b_out, int out_len);
 

@@ -1,5 +1,15 @@
 mlock ChangeLog
 
+
+17.04.2015
+
+mlock 0.7
+
+-CLI: fixed error message if passphrase or salt prevents decryption
+-GUI: replaced QML application by a new Widgets interface
+-GUI: mlock-gui may be invoked with a filename as first argument
+
+---
 02.04.2015
 
 mlock 0.6

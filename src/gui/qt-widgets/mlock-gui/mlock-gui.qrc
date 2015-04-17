@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>mlock.png</file>
+        <file>Actions-dialog-ok-apply-icon.png</file>
+        <file>Actions-document-decrypt-icon.png</file>
+        <file>Actions-document-encrypt-icon.png</file>
+        <file>Actions-document-open-folder-icon.png</file>
+        <file>Actions-document-open-icon.png</file>
+        <file>Actions-document-save-icon.png</file>
+        <file>Actions-edit-copy-icon.png</file>
+        <file>Actions-go-previous-view-icon.png</file>
+        <file>Actions-process-stop-icon.png</file>
+        <file>Actions-user-group-new-icon.png</file>
+    </qresource>
+</RCC>

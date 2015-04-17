@@ -19,8 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "utils.h"
 
-int silent_mode=0;
-
 #ifndef WIN32
 struct termios oldtermios;
 
@@ -146,7 +144,11 @@ void dump(const char *what, uint8_t *s, int len) {
     printf("\n");
 }
 
-int blake2s_stream( FILE *stream, void *resstream ) {
+int blake2s_stream( FILE *stream, void *resstream, struct output_options *out_opts ) {
+  
+    if (!out_opts->silent_mode)
+        printf("Calculating file hash...\n");
+      
     int ret = -1;
 
     blake2s_state S[1];
@@ -161,12 +163,12 @@ int blake2s_stream( FILE *stream, void *resstream ) {
     off_t eof_pos=0;
     off_t current_pos=0;
     
-    if (!silent_mode){
+   ///// if (!out_opts->silent_mode){
         current_pos   = ftello(stream);
         fseeko(stream, 0, SEEK_END); 
         eof_pos   = ftello(stream);
         fseeko(stream, current_pos, SEEK_SET);
-    }
+    ////}
 
     while( 1 ) {
         sum = 0;
@@ -175,11 +177,12 @@ int blake2s_stream( FILE *stream, void *resstream ) {
             n = fread( buffer + sum, 1, buffer_length - sum, stream );
             sum += n;
             current_pos += n;
-            if (!silent_mode) {
-                //FIXME W32 data type issue
-                printf("\rProgress %3.0f%%", current_pos*1.0 / eof_pos *
-                       100
-                       );
+	    
+	    //FIXME W32 data type issue
+	        
+	    out_opts->hash_progress = current_pos*1.0 / eof_pos * 100;
+            if (!out_opts->silent_mode) {
+                printf("\rProgress (hash) %3.0f%%", out_opts->hash_progress);
                 fflush(stdout);
             }
 	    
@@ -208,7 +211,7 @@ final_process:
     blake2s_final( S, resstream, KEY_LEN );
     ret = 0;
 cleanup_buffer:
-    if (!silent_mode) printf("\n");
+    if (!out_opts->silent_mode) printf("\n");
     free( buffer );
     return ret;
 }

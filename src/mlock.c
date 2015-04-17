@@ -32,8 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "utils.h"
 #include "minilock.h"
 
-extern int silent_mode;
-
 void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secret){
 
 #ifdef WIN32
@@ -129,7 +127,7 @@ void print_help() {
 }
 
 void print_version(int show_license_info) {
-        printf("mlock version " VERSION " Copyright 2014, 2015 Andre Simon\n");
+        printf("mlock version " MLOCK_VERSION " Copyright 2014, 2015 Andre Simon\n");
 
 	if (show_license_info){
 	    printf("This program comes with ABSOLUTELY NO WARRANTY\n");
@@ -147,8 +145,17 @@ int main(int argc, char **argv) {
     uint8_t c_user_passphrase[256] = {0};
     uint8_t c_user_salt[256]  = {0};
     uint8_t c_input_file[BUF_PATH_LEN]  = {0};
-    uint8_t c_override_out_name[BUF_PATH_LEN]  = {0};
-    uint8_t c_final_out_name[BUF_PATH_LEN]  = {0};
+    //uint8_t c_override_out_name[BUF_PATH_LEN]  = {0};
+    //uint8_t c_final_out_name[BUF_PATH_LEN]  = {0};
+    
+    struct output_options out_opts;
+    memset(out_opts.c_final_out_name, 0, sizeof out_opts.c_final_out_name);
+    memset(out_opts.c_override_out_name, 0, sizeof out_opts.c_final_out_name);
+    out_opts.override_out_name_as_dir=0;
+    out_opts.task_mode=0;
+    out_opts.crypto_progress=0.0;
+    out_opts.hash_progress=0.0;
+    out_opts.silent_mode=0;
     
     int do_enc=0, do_dec=0;
 
@@ -194,7 +201,7 @@ int main(int argc, char **argv) {
             break;
 
         case 'o':
-            snprintf((char *)c_override_out_name, sizeof c_override_out_name-1, "%s", optarg);
+            snprintf((char *)out_opts.c_override_out_name, sizeof out_opts.c_override_out_name-1, "%s", optarg);
             break;
 
         case 'v':
@@ -239,7 +246,7 @@ int main(int argc, char **argv) {
 #endif
             break;
         case 'q':
-            silent_mode = 1;
+            out_opts.silent_mode = 1;
             break;
         case  '?':
             goto main_exit_on_failure;
@@ -310,21 +317,23 @@ int main(int argc, char **argv) {
 	if (do_dec || do_enc){
 	  error_code err_code;
 	  if (do_dec) 
-            err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk, c_override_out_name, c_final_out_name, sizeof c_final_out_name, 0);
+            err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk,                               &out_opts);
 	  else
-            err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, c_override_out_name, c_final_out_name, sizeof c_final_out_name, 0);
+            err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, &out_opts);
+	
+	  sodium_memzero(b_my_sk, sizeof b_my_sk);
 	  
 	  switch (err_code){
 	    case err_ok:
 	      break;
 	    case  err_file_write:
-	      fprintf(stderr, "ERROR: could not write to file %s\n", c_final_out_name);
+	      fprintf(stderr, "ERROR: could not write to file %s\n", out_opts.c_final_out_name);
 	      break;
 	    case err_file_open:
-	      fprintf(stderr, "ERROR: could not open file %s\n", do_dec ? c_input_file : c_final_out_name);
+	      fprintf(stderr, "ERROR: could not open file %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
 	      break;
 	    case err_file_read:  
-	      fprintf(stderr, "ERROR: could not read file %s\n", do_dec ? c_input_file :c_final_out_name);
+	      fprintf(stderr, "ERROR: could not read file %s\n", do_dec ? c_input_file :out_opts.c_final_out_name);
 	      break;
 	    case err_format:
 	      fprintf(stderr, "ERROR: invalid file format of %s\n", c_input_file);
@@ -344,10 +353,11 @@ int main(int argc, char **argv) {
 	    case err_hash:
 	      fprintf(stderr, "ERROR: could not hash data\n");
 	      break;
+	    case err_not_allowed:
+	      fprintf(stderr, "ERROR: not allowed to decrypt\n");
+	      break;
 	  }
 	}
-	
-        sodium_memzero(b_my_sk, sizeof b_my_sk);
         printf("Task completed.\n");
     }
     ret_val = EXIT_SUCCESS;
