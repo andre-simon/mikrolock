@@ -34,12 +34,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secret){
 
-#ifdef WIN32
+  #ifdef WIN32
   DWORD mode;
   HANDLE ih = GetStdHandle( STD_INPUT_HANDLE  );
 #endif
 
     if (is_secret){
+
 
     #ifndef WIN32
       // Catch the most popular signals.
@@ -184,7 +185,7 @@ int main(int argc, char **argv) {
             {"version", no_argument,       0, 'v' },
             {"help", no_argument,          0, 'h' },
             {"exclude-me", no_argument,    0, 'x' },
-	    {"pinentry", no_argument,      0, 'p' },
+            {"pinentry", no_argument,      0, 'p' },
             {"mail",    required_argument, 0, 'm' },
             {"rcpt",    required_argument, 0, 'r' },
             {0,         0,                 0, 0 }
@@ -245,6 +246,7 @@ int main(int argc, char **argv) {
             use_pinentry = 1;
 #endif
             break;
+
         case 'q':
             out_opts.silent_mode = 1;
             break;

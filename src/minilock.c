@@ -214,7 +214,7 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
         
         current_pos += num_read;
 
-	out_opts->crypto_progress = current_pos*1.0 / eof_pos * 100;
+        out_opts->crypto_progress = current_pos*1.0 / eof_pos * 100;
         if (!out_opts->silent_mode) {
             printf("\rProgress %3.0f%%", out_opts->crypto_progress);
             fflush(stdout);
@@ -602,6 +602,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         off_t crypt_block_start = ftello(input_file);
         
         unsigned char hash[KEY_LEN] = {0};
+
 
         if( blake2s_stream( input_file, hash, out_opts ) < 0 ) {
             ret_val = err_hash;

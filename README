@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MLOCK MANUAL - Version 0.6  ------------------------------- March 2015 ---
+---  MLOCK MANUAL - Version 0.7  ------------------------------- April 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -66,6 +66,7 @@ Available options:
   -m, --mail <string>   User mail address (salt)
   -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)
   -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
+  -p, --pinentry        Use pinentry program to ask for the passphrase
   -q, --quiet           Do not print progress information
   -h, --help            Print this help screen
   -v, --version         Print version information

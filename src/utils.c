@@ -152,7 +152,7 @@ int blake2s_stream( FILE *stream, void *resstream, struct output_options *out_op
     int ret = -1;
 
     blake2s_state S[1];
-    static const off_t buffer_length = 1048576;
+    static const off_t buffer_length = BUF_READ_FILE_LEN;
     uint8_t *buffer = ( uint8_t * )malloc( buffer_length );
 
     if( !buffer ) return -1;
@@ -163,12 +163,12 @@ int blake2s_stream( FILE *stream, void *resstream, struct output_options *out_op
     off_t eof_pos=0;
     off_t current_pos=0;
     
-   ///// if (!out_opts->silent_mode){
+  //  if (!silent_mode){
         current_pos   = ftello(stream);
         fseeko(stream, 0, SEEK_END); 
         eof_pos   = ftello(stream);
         fseeko(stream, current_pos, SEEK_SET);
-    ////}
+   // }
 
     while( 1 ) {
         sum = 0;
@@ -177,13 +177,10 @@ int blake2s_stream( FILE *stream, void *resstream, struct output_options *out_op
             n = fread( buffer + sum, 1, buffer_length - sum, stream );
             sum += n;
             current_pos += n;
-	    
-	    //FIXME W32 data type issue
-	        
-	    out_opts->hash_progress = current_pos*1.0 / eof_pos * 100;
+            out_opts->hash_progress = current_pos*1.0 / eof_pos * 100;
             if (!out_opts->silent_mode) {
-                printf("\rProgress (hash) %3.0f%%", out_opts->hash_progress);
-                fflush(stdout);
+               printf("\rProgress %3.0f%%", out_opts->hash_progress);
+               fflush(stdout);
             }
 	    
             if( buffer_length == sum )

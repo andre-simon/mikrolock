@@ -115,6 +115,7 @@ void MlockMainWindow::initProgressDisplay(bool isEncryptMode)
     ui->lblCurrentAction->setVisible(true);
     ui->progressBar->setValue(0);
     ui->progressBar->setVisible(true);
+    ui->btnEncrypt->setEnabled(false);
     out_opts.crypto_progress=0.0;
     out_opts.hash_progress=0.0;
 }
@@ -252,6 +253,7 @@ void MlockMainWindow::handleResults(int result){
         }
     }
     this->setCursor(Qt::ArrowCursor);
+    ui->btnEncrypt->setEnabled(true);
 }
 
 bool MlockMainWindow::checkMiniLockID(QString id)
@@ -278,7 +280,7 @@ void MlockMainWindow::on_btnSelectDestDir_clicked()
     QFileDialog dialog(this, tr("Select destination directory"), "");
     dialog.setFileMode(QFileDialog::Directory);
     if (dialog.exec() && !dialog.selectedFiles().empty()) {
-      ui->txtDestDir->setText(dialog.selectedFiles().at(0));
+      ui->txtDestDir->setText(QDir::toNativeSeparators(dialog.selectedFiles().at(0)));
 
       strncpy((char*)out_opts.c_override_out_name,
               ui->txtDestDir->text().toStdString().c_str(),
