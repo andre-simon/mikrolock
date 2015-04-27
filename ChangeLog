@@ -1,6 +1,15 @@
 mlock ChangeLog
 
 
+27.04.2015
+
+mlock 0.8
+
+-CLI: added passphrase security hint
+-GUI: fixed UTF8 file path handling
+-GUI: added passphrase security notification icon
+
+---
 17.04.2015
 
 mlock 0.7

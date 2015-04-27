@@ -11,5 +11,8 @@
         <file>Actions-go-previous-view-icon.png</file>
         <file>Actions-process-stop-icon.png</file>
         <file>Actions-user-group-new-icon.png</file>
+        <file>Status-security-high-icon.png</file>
+        <file>Status-security-low-icon.png</file>
+        <file>Status-security-medium-icon.png</file>
     </qresource>
 </RCC>

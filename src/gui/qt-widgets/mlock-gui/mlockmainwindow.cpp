@@ -43,6 +43,7 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
 
     ui->stackedWidget->setCurrentIndex(0);
     ui->lblCurrentAction->setVisible(false);
+  //  ui->lblSecIcon->setVisible(false);
     ui->progressBar->setVisible(false);
 
     memset(out_opts.c_final_out_name, 0, sizeof out_opts.c_final_out_name);
@@ -76,24 +77,31 @@ void MlockMainWindow::setInitialInputFile(QString file){
 
 void MlockMainWindow::on_txtPassPhrase_textChanged(){
     QString pp = ui->txtPassPhrase->text();
+
+    ui->lblSecIcon->setEnabled(!pp.isEmpty());
+
+    QString secLevel = (pp.length() < 25 || pp.count(QLatin1Char(' ')) < 3) ? "low": (pp.length()<40)? "medium":"high";
+
+    ui->lblSecIcon->setPixmap(QPixmap (":/Status-security-"+secLevel+"-icon.png"));
+
     ui->btnUnlock->setEnabled(!ui->txtMail->text().isEmpty()
-                              && pp.length()>=40 && pp.count(QLatin1Char(' ')) > 3 );
+                              && pp.length()>= 25 && pp.count(QLatin1Char(' ')) > 3 );
 }
 
 void MlockMainWindow::on_btnUnlock_clicked(){
 
     this->setCursor(Qt::WaitCursor);
-    std::string std_passphrase = ui->txtPassPhrase->text().toStdString();
-    std::string std_salt  = ui->txtMail->text().toStdString();
+    QByteArray passphrase = ui->txtPassPhrase->text().toUtf8();
+    QByteArray salt  = ui->txtMail->text().toUtf8();
 
     uint8_t b_cs[1];
     uint8_t b_passphrase_blake2[KEY_LEN] = {0};
 
-    blake_2s_array((uint8_t*)std_passphrase.c_str(), std_passphrase.length(),
+    blake_2s_array((uint8_t*)passphrase.data(), passphrase.length(),
                    b_passphrase_blake2, KEY_LEN);
 
     int scrypt_retval= crypto_pwhash_scryptsalsa208sha256_ll(b_passphrase_blake2, KEY_LEN,
-                                     (uint8_t*)std_salt.c_str(), std_salt.length(),
+                                     (uint8_t*)salt.data(), salt.length(),
                                      131072, 8, 1,
                                      b_my_sk, sizeof b_my_sk);
     if (scrypt_retval) {
@@ -302,7 +310,7 @@ void MlockMainWindow::on_btnSelectDestDir_clicked()
       ui->txtDestDir->setText(QDir::toNativeSeparators(dialog.selectedFiles().at(0)));
 
       strncpy((char*)out_opts.c_override_out_name,
-              ui->txtDestDir->text().toStdString().c_str(),
+              ui->txtDestDir->text().toLocal8Bit().data(),
               sizeof out_opts.c_override_out_name-1);
 
       if (!inputFilename.isEmpty()) {
@@ -412,19 +420,14 @@ MlockMainWindow::~MlockMainWindow()
 /// Threads
 
 void DecryptThread::run() {
-
-    std::string std_inFileName = inFileName.toStdString();
-
-    int result= minilock_decode((uint8_t*) std_inFileName.c_str(),
+    int result= minilock_decode((uint8_t*) inFileName.toLocal8Bit().data(),
                                 MlockMainWindow::b_my_sk, MlockMainWindow::b_my_pk,
                                 &MlockMainWindow::out_opts);
     emit resultReady(result);
 }
 
 void EncryptThread::run()  {
-
-    std::string std_inFileName = inFileName.toStdString();
-    int result= minilock_encode((uint8_t*) std_inFileName.c_str(), MlockMainWindow::c_minilock_id,
+    int result= minilock_encode((uint8_t*) inFileName.toLocal8Bit().data(), MlockMainWindow::c_minilock_id,
                                 MlockMainWindow::b_my_sk,
                                 MlockMainWindow::c_rcpt_list, MlockMainWindow::num_rcpts,
                                 &MlockMainWindow::out_opts);

@@ -99,7 +99,8 @@ int check_password(const char *c_passphrase){
 
   size_t len  = strlen(c_passphrase);
   
-  if (len<40) return 0;
+  if (len<25) return 0;
+  
   
   const char * s  = c_passphrase;
   uint8_t i;
@@ -273,6 +274,11 @@ int main(int argc, char **argv) {
     if (!check_password( (const char*) c_user_passphrase)){
         fprintf(stderr, "ERROR: the passphrase must consist of several random words\n");
         goto main_exit_on_failure;
+    }
+    
+    
+    if (strlen( (const char*) c_user_passphrase)<40) {
+      printf("WARNING: a weak passphrase may be declined by the original miniLock Chrome extension.\n");
     }
    
     printf("Unlocking...\n");
