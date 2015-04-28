@@ -1,0 +1,182 @@
+<!doctype html>
+<head>
+<meta charset="utf-8">
+<title>mlock - Liest und schreibt verschl&uuml;sselte miniLock-Dateien</title>
+
+<style type="text/css">
+
+</style>
+</head>
+
+<body>
+
+<h1>mlock</h1>
+<p>
+mlock liest und schreibt verschl&uuml;sselte miniLock-Dateien.
+</p>
+
+<h2>&Uuml;bersicht</h2>
+<p>
+mlock ist eine schnelle Implementierung der miniLock-Spezifikation.
+Trotz des Namens (und im Gegensatz zum Original) kann mlock auch mit gro&szlig;en Dateien umgehen.
+</p>
+<p>
+Eine kurze Zusammenfassung der miniLock-Eigenschaften (Quelle: <a href="https://minilock.io">https://minilock.io</a>):
+<br>
+<i>&quot;
+Enter your miniLock passphrase on any computer, and you'll get access to your
+miniLock ID. No key storage or management - just a single passphrase to access
+your miniLock identity anywhere. miniLock uses modern cryptographic primitives
+to accomplish this securely.
+&quot;</i>
+</p>
+
+<p>
+Eine MiniLock-ID  ist ein kurzer Public-Key der von einer geheimen Passphrase und einer E-Mail Adresse abgeleitet wurde.
+Diese ID kann  auf Webseiten, in Mailsignaturen, auf Twitter oder sonstwo ver&ouml;ffentlicht werden, damit jedermann in der Lage ist Inhalte für diese ID zu verschl&uuml;sseln.
+Nur ein Empf&auml;nger mit  der richtigen Passphrase/Mail-Kombination zur Erzeugung dieser ID kann die Daten wieder entschl&uuml;sseln.
+</p>
+
+<p>
+Eine MiniLock-ID sieht wie folgt aus: <code>jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83</code>
+</p>
+
+<p>
+Da  diese IDs sehr bequem zu handhaben sind, ist kein aufw&auml;ndiger  Schl&uuml;sseltausch  mit Keyservern oder manuellen Dateikopien notwendig.
+</p>
+
+<p>
+Beim Verschl&uuml;sseln kann eine Liste von miniLock-IDs  angegeben werden, um mehreren Empf&auml;ngern zu erm&ouml;glichen die Daten zu entschl&uuml;sseln.
+Es muss also nicht eine separate Datei f&uuml;r jeden Empf&auml;nger erzeugt werden.
+MiniLock-Dateien enthalten keine sichtbaren Hinweise auf Ihre Empf&auml;nger.
+</p>
+
+
+<h2>Wie funktioniert's?</h2>
+<p>
+A  m&ouml;chte etwas f&uuml;r B verschl&uuml;sseln. B gibt seine Mail-Adresse und Passphrase in mlock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.<br>
+A verschl&uuml;sselt die Datei und gibt die MiniLock-ID von B als Empf&auml;nger-ID an. A sendet nun die verschl&uuml;sselte Datei an B, der sie mit seiner Passphrase/Mail-Kombination entschl&uuml;sseln kann.<br>
+Wichtig hierbei ist, dass die Passphrase geheim bleibt - es werden nur die MiniLock-IDs (=public keys) ausgetauscht.
+</p>
+
+
+<h2>Die grafische Benutzeroberfl&auml;che</h2>
+
+<p>
+Nach dem Start des Programms werden eine Mail-Adresse und ein Password abgefragt.
+Aus diesen Informationen wird ein Schl&uuml;sselpaar gebildet (privater und &ouml;ffentlicher Schl&uuml;ssel).
+Damit die verschl&uuml;sselte Datei wirksam gesch&uuml;tzt ist, muss die Passphrase aus mehreren zuf&auml;llig gew&auml;hlten W&ouml;rtern bestehen.<br>
+</p>
+
+<br><br>
+<img src=":/manual/manual1.png"  border="0" alt="mlock GUI 1">
+
+<p>
+Hier k&ouml;nnen auch Unicode-Zeichen eingegeben werden:
+</p>
+
+<br><br>
+<img src=":/manual/manual2.png"  border="0" alt="mlock GUI 1">
+
+<p>
+Das Ampel-Icon zeigt folgende Information an:
+
+<ul>
+<li>rot: die Passphrase ist zu kurz oder enth&auml;lt zuwenig Leerzeichen</li>
+<li>gelb: die Passphrase wird wahrscheinlich vom Original MiniLock-Plugin f&uuml;r Chrome abgewiesen</li>
+<li>grün: die Passphrase ist ausreichend sicher</li>
+</ul>
+
+Nach dem Klick auf &quot;Meine miniLock-ID erzeugen&quot; wird die eigene ID im unteren Fensterrand angezeigt. Sie kann dort auch kopiert werden.<br><br>
+Nun wird der Ein- und Ausgabedialog angezeigt:
+</p>
+
+<br><br>
+<img src=":/manual/manual3.png"  border="0" alt="mlock GUI 1">
+
+<p>
+Hier wird das Ausgabeverzeichnis ausgew&auml;hlt und anschlie&szlig;end die Datei zur Ver- bzw. Entschl&uuml;sselung (sollte das Programm mit einer Datei als Argument aufgerufen worden sein, so wird dessen Pfad bereits in der Statusleiste angezeigt).<br>
+Man kann auch eine Datei auf das Programmfenster ziehen.<br>
+Wenn eine miniLock-Datei ausgew&auml;hlt wurde, wird diese automatisch entschl&uuml;sselt. Jede andere Datei wird im n&auml;chsten Dialog verschl&uuml;sselt:
+</p>
+
+<br><br>
+<img src=":/manual/manual4.png"  border="0" alt="mlock GUI 1">
+
+<p>
+In der oberen Liste k&ouml;nnen bis zu 50 miniLock-IDs der Datei-Empf&auml;nger angegeben werden.<br>
+Nach dem Klick auf &quot;Datei verschl&uuml;sseln&quot; wird die miniLock-Datei im vorher angegebenen Zielverzeichnis abgelegt.
+</p>
+
+
+<h2>Die Kommandozeilenversion</h2>
+<p>
+Neben der grafischen Oberfl&auml;che gibt es auch eine Kommandozeilenversion von mlock.
+</p>
+<pre>
+USAGE: mlock [OPTION]...
+mlock reads and writes encrypted miniLock files (https://minilock.io/)
+
+Available options:
+
+  -E, --encrypt &lt;file&gt;  Encrypt the given file (see -r)
+  -D, --decrypt &lt;file&gt;  Decrypt the given miniLock file
+  -o, --output &lt;file&gt;   Override the target file name (assumes -D or -E)
+  -m, --mail &lt;string&gt;   User mail address (salt)
+  -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)
+  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
+  -p, --pinentry        Use pinentry for passphrase input
+  -q, --quiet           Do not print progress information
+  -h, --help            Print this help screen
+  -v, --version         Print version information
+
+If neither -E nor -D is given, mlock exits after showing your miniLock ID.
+</pre>
+
+<h2>Beispiele der Kommandozeilenversion</h2>
+
+<h3>Verschl&uuml;sselung</h3>
+<pre>
+mlock --encrypt libsodium-1.0.0.tar.gz --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Please enter your secret passphrase:
+Unlocking...
+Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
+Encrypting file libsodium-1.0.0.tar.gz...
+Calculating file hash...
+Task completed.
+</pre>
+
+<p>
+Die verschl&uuml;sselte Datei ist libsodium-1.0.0.tar.gz.minilock<br>
+Diese Datei kann vom Emp&auml;nger EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX entschl&uuml;sselt werden.
+</p>
+
+<h3>Entschl&uuml;sselung</h3>
+
+<pre>
+mlock --decrypt libsodium-1.0.0.tar.gz.minilock --mail receiver@test.org
+Please enter your secret passphrase:
+Unlocking...
+Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Decrypting file libsodium-1.0.0.tar.gz.minilock...
+Calculating file hash...
+Writing to file libsodium-1.0.0.tar.gz...
+Task completed.
+</pre>
+</p>
+
+<h2>Verwendete Crypto-Funktionen</h2>
+<p>
+Die MiniLock-ID wird wie folgt erzeugt:</p>
+<pre>secret := <a href="http://doc.libsodium.org/password_hashing/README.html#key-derivation" target="new">scrypt</a>(<a href="https://blake2.net" target="new">blake2</a>(passphrase), mail, 131072, 1)
+id := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( <a href="http://doc.libsodium.org/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret) + <a href="https://blake2.net" target="new">blake2</a>(secret) )
+</pre>
+<p>
+Der JSON-Dateiheader der MiniLock-Dateien enth&auml;lt die MiniLock-ID des Senders, die IDs der Empf&auml;nger sowie Schl&uuml;ssel und Hashwert der verschl&uuml;sselten Eingabedatei.<br>
+Diese Informationen werden separat mit jeder angegebenen Empf&auml;nger-ID als Public-Key mittels <a href="http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a> verschl&uuml;sselt.<br>
+Die Eingabedatei wird mit <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> verschl&uuml;sselt. <br><br>
+Mehr Infos zu den kryptographischen Eigenschaften und dem Dateiformat: <a href="https://minilock.io">https://minilock.io</a>.
+</p>
+
+</body>
+</html>
