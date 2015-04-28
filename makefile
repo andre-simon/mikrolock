@@ -21,6 +21,10 @@ doc_dir = ${PREFIX}/share/doc/mlock/
 # Location of the mlock data files:
 data_dir = ${PREFIX}/share/mlock/
 
+# Location of additional gui files
+desktop_apps = ${PREFIX}/share/applications/
+desktop_pixmaps = ${PREFIX}/share/pixmaps/
+
 INSTALL_DATA=install -m644
 INSTALL_PROGRAM=install -m755
 MKDIR=mkdir -p -m 755
@@ -57,7 +61,12 @@ install:
 install-gui:
 	${MKDIR} ${DESTDIR}${data_dir}
 	${MKDIR} ${DESTDIR}${data_dir}l10n
+	${MKDIR} ${DESTDIR}${desktop_apps} \
+		${DESTDIR}${desktop_pixmaps}
+
 	${INSTALL_DATA} ./l10n/*.qm ${DESTDIR}${data_dir}l10n
+	${INSTALL_DATA} ./mlock.desktop ${DESTDIR}${desktop_apps}
+	${INSTALL_DATA} ./src/gui/qt-widgets/mlock-gui/mlock.xpm ${DESTDIR}${desktop_pixmaps}
 	${INSTALL_PROGRAM} ./src/gui/qt-widgets/mlock-gui/mlock-gui ${DESTDIR}${bin_dir}
 
 
@@ -72,6 +81,8 @@ uninstall:
 	rm -f ${DESTDIR}${man_dir}mlock.1.gz
 	rm -f ${DESTDIR}${bin_dir}mlock
 	rm -f ${DESTDIR}${bin_dir}mlock-gui
+	rm -rf ${DESTDIR}${desktop_apps}mlock.desktop
+	rm -rf ${DESTDIR}${desktop_pixmaps}mlock.xpm
 	${RMDIR} ${DESTDIR}${data_dir}
 	@echo "Done. Have a nice day!"
 

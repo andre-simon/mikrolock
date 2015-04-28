@@ -54,4 +54,3 @@ clean:
 	@rm -f libs/libb64/*.o
 	@rm -f libs/blake2/*.o
 	@rm -f libs/pinentry/*.o
-	@rm -f gui/mlock-gui/*.o

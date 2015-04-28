@@ -75,6 +75,7 @@ private slots:
     void on_txtDestDir_textChanged();
     void on_txtMail_textChanged();
     void on_actionAbout_mlock_triggered();
+    void on_action_Manual_triggered();
 
   public slots:
     void handleResults(int);

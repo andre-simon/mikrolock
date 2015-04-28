@@ -23,8 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPixmap>
 #include <QDesktopWidget>
 
+#include <QFileInfo>
+
 #include "mlockmainwindow.h"
 #include "ui_mlockmainwindow.h"
+
+#include "showmanualdialog.h"
 
 // static data items shared with threads
 char* MlockMainWindow::c_rcpt_list[50]= {0};
@@ -43,7 +47,6 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
 
     ui->stackedWidget->setCurrentIndex(0);
     ui->lblCurrentAction->setVisible(false);
-  //  ui->lblSecIcon->setVisible(false);
     ui->progressBar->setVisible(false);
 
     memset(out_opts.c_final_out_name, 0, sizeof out_opts.c_final_out_name);
@@ -62,7 +65,6 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
 
     for(int i=0;i<5;i++){
            QLineEdit* le =  new QLineEdit();
-          // le->setFont(QFont("Courier New",8,1 ));
            scrollAreaLayout->addWidget(le);
     }
 
@@ -324,7 +326,6 @@ void MlockMainWindow::on_btnSelectDestDir_clicked()
 void MlockMainWindow::on_btnSelInputFile_clicked()
 {
     inputFilename = QFileDialog::getOpenFileName(this, tr("Select the input file"), "", "*.*");
-
     startFileProcessing();
 }
 
@@ -365,9 +366,7 @@ void MlockMainWindow::dropEvent(QDropEvent* event)
 void MlockMainWindow::on_btnAddRcpt_clicked()
 {
     QLineEdit* le =  new QLineEdit();
-    //le->setFont(QFont("Courier New",8,1 ));
     scrollAreaLayout->addWidget(le);
-
     if (scrollAreaLayout->count()==50) {
         ui->btnAddRcpt->setEnabled(false);
     }
@@ -404,9 +403,21 @@ void MlockMainWindow::on_actionAbout_mlock_triggered()
                         ).arg(MLOCK_VERSION).arg(QString(qVersion ())) );
 }
 
+void MlockMainWindow::on_action_Manual_triggered(){
+
+     ShowManualDialog dialog;
+     QString l10nManualUri  = ":/manual/manual_"+QLocale::system().name()+".html";
+
+     if (QFileInfo::exists(l10nManualUri))
+         dialog.setHTMLSource(l10nManualUri);
+    else
+         dialog.setHTMLSource(":/manual/manual_en_EN.html");
+
+     dialog.exec();
+}
+
 void MlockMainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
-    qDebug()<<"drag";
     if (event->mimeData()->hasFormat("text/uri-list"))
         event->acceptProposedAction();
 }

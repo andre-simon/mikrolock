@@ -14,5 +14,11 @@
         <file>Status-security-high-icon.png</file>
         <file>Status-security-low-icon.png</file>
         <file>Status-security-medium-icon.png</file>
+        <file>manual/manual_en_EN.html</file>
+        <file>manual/manual1.png</file>
+        <file>manual/manual2.png</file>
+        <file>manual/manual3.png</file>
+        <file>manual/manual4.png</file>
+        <file>manual/manual_de_DE.html</file>
     </qresource>
 </RCC>

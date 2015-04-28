@@ -11,11 +11,14 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = mlock-gui
 TEMPLATE = app
 
-SOURCES += main.cpp mlockmainwindow.cpp
+SOURCES += main.cpp mlockmainwindow.cpp \
+    showmanualdialog.cpp
 
-HEADERS  += mlockmainwindow.h
+HEADERS  += mlockmainwindow.h \
+    showmanualdialog.h
 
-FORMS    += mlockmainwindow.ui
+FORMS    += mlockmainwindow.ui \
+    showmanualdialog.ui
 
 RESOURCES += mlock-gui.qrc
 

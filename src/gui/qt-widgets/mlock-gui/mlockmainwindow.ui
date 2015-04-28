@@ -87,7 +87,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>13</height>
+              <height>20</height>
              </size>
             </property>
            </spacer>
@@ -168,7 +168,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>13</height>
+              <height>20</height>
              </size>
             </property>
            </spacer>
@@ -361,7 +361,7 @@ p, li { white-space: pre-wrap; }
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>10</height>
+              <height>20</height>
              </size>
             </property>
            </spacer>
@@ -714,6 +714,8 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>He&amp;lp</string>
     </property>
+    <addaction name="action_Manual"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout_mlock"/>
    </widget>
    <addaction name="menuHilfe"/>
@@ -722,6 +724,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionAbout_mlock">
    <property name="text">
     <string>&amp;About mlock</string>
+   </property>
+  </action>
+  <action name="action_Manual">
+   <property name="text">
+    <string>&amp;Manual</string>
    </property>
   </action>
  </widget>

@@ -165,14 +165,12 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
         return err_file_read;
     }
     
-     off_t current_pos=0;
-     off_t eof_pos=0;
+    off_t current_pos=0;
+    off_t eof_pos=0;
      
-    //if (!out_opts->silent_mode){
-        fseeko(input_file, 0, SEEK_END); 
-        eof_pos   = ftello(input_file);
-        fseeko(input_file, 0, SEEK_SET);
-    //}
+    fseeko(input_file, 0, SEEK_END); 
+    eof_pos   = ftello(input_file);
+    fseeko(input_file, 0, SEEK_SET);
     
     unsigned char b_file_nonce[KEY_LEN - 8]= {0};
     memcpy(b_file_nonce, b_file_nonce_prefix, NONCE_PREFIX_LEN);
@@ -357,7 +355,6 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         c_sending_nonce  = base64_encode((const char *)b_sending_nonce_rnd, sizeof b_sending_nonce_rnd);
 
         base58_decode(b_rcpt_list_pk, (unsigned char*)c_rcpt_list[i]);
-        //  dump ("rcpt public ", b_rcpt_list_pk, 33);
         b_rcpt_list_pk[KEY_LEN]=0;
 
         if (crypto_box_easy((unsigned char*)b_crypt_block, (unsigned char*)c_file_info_json, 
@@ -367,7 +364,6 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
             goto free_encode_loop_on_failure;
         }
 
-        /////  dump ("fileinfo CRYPT ", b_crypt_block, file_info_len + 16 + 1);
         c_file_info_crypted  = base64_encode((const char *)b_crypt_block, file_info_len +16);
 
         snprintf(c_decrypt_info_item_json, sizeof c_decrypt_info_item_json-1, 
@@ -382,7 +378,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 	    ret_val = err_box;
             goto free_encode_loop_on_failure;
         }
-        //  dump ("decrypt_info_ CRYPT ", b_crypt_block, decrypt_info_len + 16 + 1);
+
         c_decrypt_item_crypted  = base64_encode((const char *)b_crypt_block, decrypt_info_len +16);
 
         snprintf(c_decrypt_info_array_item_json, sizeof c_decrypt_info_array_item_json-1, 
@@ -478,8 +474,6 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         goto free_decode_res;
     }
 
-    //printf("c_json_buffer: %s", c_json_buffer);
-
     json_header = json_parse (c_json_buffer, json_header_len );
 
     if (!json_header || json_header->type!=json_object) {
@@ -487,20 +481,18 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         goto free_decode_res;
     }
 
-    int b64_cnt, b_64_epem_cnt;
+    int b64_cnt, b_ephemeral_cnt;
 
     if (get_json_integer(json_header, "version")!=1) {
         printf("WARNING: minilock file version mismatch\n");
     }
 
-    b_ephemeral=get_json_b64_string(json_header, "ephemeral", &b_64_epem_cnt);
+    b_ephemeral=get_json_b64_string(json_header, "ephemeral", &b_ephemeral_cnt);
 
-    if (!b_ephemeral || b_64_epem_cnt != KEY_LEN) {
+    if (!b_ephemeral || b_ephemeral_cnt != KEY_LEN) {
          ret_val = err_format;
         goto free_decode_res;
     }
-
-    //dump("ephemeral", b_ephemeral, 32);
 
     json_value* json_decrypt_info = get_json_value (json_header, "decryptInfo");
     if (!json_decrypt_info) {
@@ -518,7 +510,6 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         int open_retval =crypto_box_open_easy(( unsigned char *)c_decoded_file_desc,
                                               (const unsigned char *)b_decrypt_info, b64_cnt,
                                               (const unsigned char *)b_nonce, b_ephemeral, b_my_sk);
-
         if (open_retval) {
             free (b_nonce);
             b_nonce=0;
@@ -526,8 +517,6 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
             b_decrypt_info=0;
             continue;
         }
-
-        //  printf("\nVAL crypto_box_open_easy  %d %s\n", open_retval, c_decoded_file_desc);
 
         json_file_desc = json_parse (c_decoded_file_desc, strlen(c_decoded_file_desc) );
 
@@ -570,7 +559,6 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
                             (const unsigned char *)b_file_info, b64_fileinfo_cnt,
                             (const unsigned char *)b_nonce,
                             b_sender_id, b_my_sk);
-        // printf("\nVAL crypto_box_open_easy  %d %s\n", open_fi_retval, c_decoded_file_path);
 
         if (open_fi_retval) {
             ret_val = err_open;
@@ -603,7 +591,6 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         
         unsigned char hash[KEY_LEN] = {0};
 
-
         if( blake2s_stream( input_file, hash, out_opts ) < 0 ) {
             ret_val = err_hash;
             goto exit_decode_loop_on_failure;
@@ -611,8 +598,8 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
             ret_val = err_hash;
             goto exit_decode_loop_on_failure;
         }
+        
         // calculating hash moves fp to the end
-     //   fseeko(input_file, 0, SEEK_END); 
         off_t eof_pos   = ftello(input_file);
         fseeko(input_file, crypt_block_start, SEEK_SET);
         error_code file_err_err = decode_file(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, out_opts);
