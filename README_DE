@@ -1,0 +1,130 @@
+-------------------------------------------------------------------------------
+---  MLOCK HANDBUCH - Version 0.8  ----------------------------- April 2015 ---
+-------------------------------------------------------------------------------
+
+OSI Certified Open Source Software
+
+-------------------------------------------------------------------------------
+
+mlock liest und schreibt verschlüsselte miniLock-Dateien (https://minilock.io/).
+
+INHALT:
+-------------------------------------------------------------------------------
+
+1. Übersicht
+2. Wie funktioniert's?
+3. Funktionen
+4. Plattformen
+5. Kontact
+
+
+1.  Übersicht
+-------------------------------------------------------------------------------
+
+mlock ist eine schnelle Implementierung der miniLock-Spezifikation. Trotz des 
+Namens (und im Gegensatz zum Original) kann mlock auch mit großen Dateien 
+umgehen.
+
+Eine kurze Zusammenfassung der miniLock-Eigenschaften (Quelle: https://minilock.io): 
+"Enter your miniLock passphrase on any computer, and you'll get access to your 
+miniLock ID. No key storage or management - just a single passphrase to access 
+your miniLock identity anywhere. miniLock uses modern cryptographic primitives 
+to accomplish this securely."
+
+Eine MiniLock-ID ist ein kurzer Public-Key der von einer geheimen Passphrase und 
+einer E-Mail Adresse abgeleitet wurde. Diese ID kann auf Webseiten, in 
+Mailsignaturen, auf Twitter oder sonstwo veröffentlicht werden, damit jedermann 
+in der Lage ist Inhalte für diese ID zu verschlüsseln. Nur ein Empfänger mit der 
+richtigen Passphrase/Mail-Kombination zur Erzeugung dieser ID kann die Daten 
+wieder entschlüsseln.
+
+Eine MiniLock-ID sieht wie folgt aus: 
+jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83
+
+Da diese IDs sehr bequem zu handhaben sind, ist kein aufwändiger Schlüsseltausch 
+mit Keyservern oder manuellen Dateikopien notwendig.
+
+Beim Verschlüsseln kann eine Liste von miniLock-IDs angegeben werden, um 
+mehreren Empfängern zu ermöglichen die Daten zu entschlüsseln. Es muss also 
+nicht eine separate Datei für jeden Empfänger erzeugt werden. MiniLock-Dateien 
+enthalten keine sichtbaren Hinweise auf Ihre Empfänger.
+
+Mehr Infos zu den kryptographischen Details: https://minilock.io
+
+
+2. Wie funktioniert's?
+-------------------------------------------------------------------------------
+
+A möchte etwas für B verschlüsseln. B gibt seine Mail-Adresse und Passphrase in
+mlock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.
+A verschlüsselt die Datei und gibt die MiniLock-ID von B als Empfänger-ID an.
+A sendet nun die verschlüsselte Datei an B, der sie mit seiner Passphrase/Mail-
+Kombination entschlüsseln kann.
+Wichtig hierbei ist, dass die Passphrase geheim bleibt - es werden nur die 
+MiniLock-IDs (=public keys) ausgetauscht.
+
+
+3.  Funktionen
+-------------------------------------------------------------------------------
+
+USAGE: mlock [OPTION]...
+mlock reads and writes encrypted miniLock files (https://minilock.io/)
+
+Available options:
+
+  -E, --encrypt <file>  Encrypt the given file (see -r)
+  -D, --decrypt <file>  Decrypt the given miniLock-file
+  -o, --output <file>   Override the target file name (assumes -D or -E)
+  -m, --mail <string>   User mail address (salt)
+  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)
+  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
+  -p, --pinentry        Use pinentry program to ask for the passphrase
+  -q, --quiet           Do not print progress information
+  -h, --help            Print this help screen
+  -v, --version         Print version information
+
+If neither -E nor -D is given, mlock exits after showing your miniLock ID.
+
+
+Beispiele:
+---------
+
+DATEIVERSCHLÜSSELUNG:
+
+mlock --encrypt libsodium-1.0.0.tar.gz --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Please enter your secret passphrase:
+Unlocking...
+Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
+Encrypting file libsodium-1.0.0.tar.gz...
+Calculating file hash...
+Task completed.
+
+Die verschlüsselte Datei ist libsodium-1.0.0.tar.gz.minilock
+Diese Datei kann vom Empänger EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX entschlüsselt werden.
+
+
+DATEIENTSCHLÜSSELUNG:
+
+mlock --decrypt libsodium-1.0.0.tar.gz.minilock --mail receiver@test.org
+Please enter your secret passphrase:
+Unlocking...
+Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Decrypting file libsodium-1.0.0.tar.gz.minilock...
+Calculating file hash...
+Writing to file libsodium-1.0.0.tar.gz...
+Task completed.
+
+
+4.  Plattformen
+-------------------------------------------------------------------------------
+
+mlock is currently available for Linux and Windows.
+
+
+5.  Kontakt
+-------------------------------------------------------------------------------
+
+Andre Simon
+andre.simon1@gmx.de
+http://www.andre-simon.de/
+http://wiki.andre-simon.de/

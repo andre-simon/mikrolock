@@ -1,14 +1,22 @@
 mlock ChangeLog
 
+01.05.2015
 
+mlock 0.8.1
+
+-Linux: fixed file open mode 
+
+---
 27.04.2015
 
 mlock 0.8
 
+-added README_DE and more icons/desktop integration files
 -CLI: added passphrase security hint
 -GUI: fixed UTF8 file path handling
 -GUI: added passphrase security notification icon
 -GUI: added manual
+-W32: added installer 
 
 ---
 17.04.2015

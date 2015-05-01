@@ -160,7 +160,7 @@ free_encode_write_file_error:
 error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t* b_file_key, uint8_t *c_input_file, struct output_options *out_opts) {
     error_code ret_val = err_failed;
 
-    FILE *input_file = fopen((char*)c_input_file, "r+b");
+    FILE *input_file = fopen((char*)c_input_file, "r");
     if(input_file == NULL) {
         return err_file_read;
     }
@@ -448,7 +448,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
     json_value * json_file_info =0;
     json_value * json_file_desc = 0;
 
-    FILE *input_file = fopen((char*)c_filename, "r+b");
+    FILE *input_file = fopen((char*)c_filename, "r");
     if(input_file == NULL) {
         return err_file_open;
     }

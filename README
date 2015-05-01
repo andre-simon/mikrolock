@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MLOCK MANUAL - Version 0.7  ------------------------------- April 2015 ---
+---  MLOCK MANUAL - Version 0.8  ------------------------------- April 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -12,9 +12,10 @@ CONTENT:
 -------------------------------------------------------------------------------
 
 1. Overview
-2. Features
-3. Platforms
-4. Contact
+2. How does it work?
+3. Features
+4. Platforms
+5. Contact
 
 
 1.  Overview
@@ -52,7 +53,19 @@ A minilock file does not contain any visible information about its recipients.
 Read more about the cryptographic details: https://minilock.io
 
 
-2.  Features
+2. How does it work?
+-------------------------------------------------------------------------------
+
+A wants to encrypt a file for B. B enters his mail address and passphrase into
+mlock to obtain his miniLock ID. He sends this ID to A.
+A encrypts the file and adds B's miniLock ID as recipient ID. A now sends the
+encrypted file to B, who is able to decrypt it using his passphrase/mail
+combination.
+It is important to keep the passphrase secret - only the miniLock IDs (=public
+keys) are being exchanged.
+
+
+3.  Features
 -------------------------------------------------------------------------------
 
 USAGE: mlock [OPTION]...
@@ -103,13 +116,13 @@ Writing to file libsodium-1.0.0.tar.gz...
 Task completed.
 
 
-3.  Platforms
+4.  Platforms
 -------------------------------------------------------------------------------
 
 mlock is currently available for Linux and Windows.
 
 
-4.  Contact
+5.  Contact
 -------------------------------------------------------------------------------
 
 Andre Simon
