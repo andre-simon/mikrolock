@@ -46,6 +46,8 @@ public:
 private:
     Ui::MlockMainWindow *ui;
 
+    bool startedWithFilArg;
+
     void dropEvent(QDropEvent* event);
     void dragEnterEvent(QDragEnterEvent *event);
 
@@ -76,6 +78,8 @@ private slots:
     void on_txtMail_textChanged();
     void on_actionAbout_mlock_triggered();
     void on_action_Manual_triggered();
+    void on_btnClearRecipients_clicked();
+    void on_btnOpenFileList_clicked();
 
   public slots:
     void handleResults(int);

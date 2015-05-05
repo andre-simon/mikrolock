@@ -72,7 +72,7 @@ It is important to keep the passphrase secret - only the miniLock IDs (=public k
 <p>
 After the program starts it asks for your mail adress and passphrase.
 With this information a key pair is generated (private and public key).
-To achieve a secure encryption, the passphrase needs to consist of several random words.
+To achieve a secure encryption, a passphrase less than 40 characters needs to consist of several random words.
 </p>
 
 <br><br>
@@ -88,7 +88,7 @@ It is also possible to enter Unicode characters:</p>
 The signal icon gives you following information:
 
 <ul>
-<li>red: the passphrase is too short or contains not enough space characters</li>
+<li>red: the passphrase is too short or does not contain enough words (separated by spaces)</li>
 <li>yellow: the passphrase will most likely be refused by the original MiniLock-Plugin for Chrome</li>
 <li>green: the passphrase offers sufficient security</li>
 </ul>
@@ -111,6 +111,8 @@ If a minilock file was selected, it will be automatically decrypted. Any other f
 
 <p>
 Using the upper list you can define up to 50 miniLock IDs of your file recipients.<br>
+Using &quot;Read file list&quot; you can import a text file which contains one miniLock ID per line.<br>
+The button &quot;Clear recipients&quot; will delete the ID entries.<br>
 After clicking &quot;Encrypt the file&quot; the minilock file will be stored in the previously defined destination directory.
 </p>
 
@@ -176,9 +178,9 @@ The Minilock-ID is defined as:</p>
 id := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( <a href="http://doc.libsodium.org/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret) + <a href="https://blake2.net" target="new">blake2</a>(secret) )
 </pre>
 <p>
-The JSON header of a miniLock file contains the sender's miniLock ID, the recipient's IDs, file hash and key of the encrypted input file.<br>
-This information is encrypted separately with each given recipient ID as public key using <a href="http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a>.<br>
-The input file is encrypted with <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a><br><br>
+The JSON header of a miniLock file contains the sender's miniLock ID, the recipient's IDs, file hash and key of the encrypted input file.<br><br>
+This information is encrypted separately with each given recipient ID as public key using <a href="http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a> (key exchange: Curve25519; encryption: XSalsa20 stream cipher; authentication: Poly1305 MAC).<br><br>
+The input file is encrypted with <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> (encryption: XSalsa20 stream cipher; authentication: Poly1305 MAC).<br><br>
 Read more about the cryptographic details and the file format: <a href="https://minilock.io">https://minilock.io</a>.
 </p>
 

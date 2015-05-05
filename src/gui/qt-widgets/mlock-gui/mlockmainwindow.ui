@@ -28,7 +28,7 @@
        <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -63,7 +63,7 @@
           <item>
            <widget class="QLineEdit" name="txtMail">
             <property name="toolTip">
-             <string>To remain compatible with the Chrome miniLock extension, enter a valid mail address.</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;To remain compatible with the Chrome miniLock extension, enter a valid mail address (you may enter anything as salt value).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="inputMask">
              <string/>
@@ -112,7 +112,7 @@
               <item>
                <widget class="QLineEdit" name="txtPassPhrase">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter a secret passphrase which consists of several random words. A weak passphrase may be declined by the original miniLock Chrome extension.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter a secret passphrase (minimum length: 20 characters). If the length does not exceed 40 characters, the passphrase must consist of at least five random words. A weak passphrase may be declined by the original miniLock Chrome extension.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="inputMask">
                  <string/>
@@ -177,6 +177,18 @@
            <widget class="QPushButton" name="btnUnlock">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
             </property>
             <property name="font">
              <font>
@@ -263,9 +275,12 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;mlock uses your email and passphrase to derive your &lt;span style=&quot; font-weight:600;&quot;&gt;miniLock ID&lt;/span&gt;.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Refer to &lt;a href=&quot;http://world.std.com/~reinhold/diceware.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Diceware&lt;/span&gt;&lt;/a&gt; for a method to generate good passphrases.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Refer to &lt;a href=&quot;http://www.diceware.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Diceware.com&lt;/span&gt;&lt;/a&gt; for a method to generate good passphrases.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="openExternalLinks">
              <bool>true</bool>
             </property>
            </widget>
@@ -428,7 +443,7 @@ p, li { white-space: pre-wrap; }
        </layout>
       </widget>
       <widget class="QWidget" name="page_3">
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
@@ -454,8 +469,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>385</width>
-               <height>201</height>
+               <width>340</width>
+               <height>166</height>
               </rect>
              </property>
             </widget>
@@ -482,6 +497,38 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QPushButton" name="btnOpenFileList">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open a text file which contains one miniLock ID per line and use the entries to replace the recipient IDs above.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Read list file</string>
+              </property>
+              <property name="icon">
+               <iconset resource="mlock-gui.qrc">
+                <normaloff>:/Actions-document-open-icon.png</normaloff>:/Actions-document-open-icon.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnClearRecipients">
+              <property name="toolTip">
+               <string>Clear the recipient list.</string>
+              </property>
+              <property name="text">
+               <string>Clear recipients</string>
+              </property>
+              <property name="icon">
+               <iconset resource="mlock-gui.qrc">
+                <normaloff>:/Actions-edit-clear-icon.png</normaloff>:/Actions-edit-clear-icon.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QCheckBox" name="cbOmitId">
             <property name="text">
              <string>Omit my ID</string>
@@ -499,7 +546,7 @@ p, li { white-space: pre-wrap; }
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>10</height>
+              <height>13</height>
              </size>
             </property>
            </spacer>
@@ -554,7 +601,7 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QLabel" name="label_11">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Encrypt your file!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Add the miniLock ID of each person which should be able to decrypt the file.&lt;/p&gt;&lt;p&gt;You can add up to 50 recipient IDs.&lt;/p&gt;&lt;p&gt;If you omit your own ID, you will not be able to decrypt the resulting file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Encrypt your file!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Add the miniLock ID of each person which should be able to decrypt the file.&lt;/p&gt;&lt;p&gt;You can add up to 50 recipient IDs.&lt;/p&gt;&lt;p&gt;If you omit your own ID, you will not be able to decrypt the resulting file.&lt;/p&gt;&lt;p&gt;A miniLock file does not give visible hints about the sender nor the recipients.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>

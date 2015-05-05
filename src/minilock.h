@@ -1,14 +1,14 @@
 #ifndef _MINILOCK_H
 #define _MINILOCK_H
 
-#define MLOCK_VERSION "0.8.1"
+#define MLOCK_VERSION "0.9"
 
 // for ftelloo: off_t
 #define _FILE_OFFSET_BITS 64
 
 #include "utils.h"
 
-enum error_code { err_ok, err_failed, err_open, err_box,  err_file_open, err_file_read, err_file_write, err_hash, err_format, err_no_rcpt,err_not_allowed};
+enum error_code { err_ok, err_failed, err_open, err_box,  err_file_open, err_file_read, err_file_write, err_hash, err_format, err_no_rcpt, err_not_allowed, err_file_empty, err_file_exists};
 typedef enum error_code error_code;
 
 

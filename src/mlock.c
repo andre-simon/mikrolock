@@ -99,12 +99,12 @@ int check_password(const char *c_passphrase){
 
   size_t len  = strlen(c_passphrase);
   
-  if (len<25) return 0;
-  
+  if (len<20) return 0;
+  if (len>40) return 1;
   
   const char * s  = c_passphrase;
   uint8_t i;
-  for (i=0; s[i]; s[i]==' ' ? i++ : *s++);
+  for (i=1; s[i]; s[i]==' ' && s[i-1]!=' ' ? i++ : *s++);
   return i > 3;
 }
 
@@ -272,7 +272,7 @@ int main(int argc, char **argv) {
     #endif
     
     if (!check_password( (const char*) c_user_passphrase)){
-        fprintf(stderr, "ERROR: the passphrase must consist of several random words\n");
+        fprintf(stderr, "ERROR: the passphrase must consist of several random words, separated by spaces\n");
         goto main_exit_on_failure;
     }
     
@@ -356,7 +356,7 @@ int main(int argc, char **argv) {
 	     fprintf(stderr, "ERROR: could not decrypt data\n");
 	      break;
 	    case err_box:
-	      fprintf(stderr, "ERROR: could not crypt data\n");
+	      fprintf(stderr, "ERROR: could not encrypt data\n");
 	      break;
 	    case err_hash:
 	      fprintf(stderr, "ERROR: could not hash data\n");
@@ -364,6 +364,12 @@ int main(int argc, char **argv) {
 	    case err_not_allowed:
 	      fprintf(stderr, "ERROR: not allowed to decrypt\n");
 	      break;
+	    case err_file_empty:
+	      fprintf(stderr, "ERROR: empty input file %s\n", c_input_file);
+	      break;
+	    case err_file_exists:
+		fprintf(stderr, "ERROR: output file exists %s\n", out_opts.c_final_out_name);
+		break;
 	  }
 	}
         printf("Task completed.\n");

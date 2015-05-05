@@ -65,7 +65,7 @@ Wichtig hierbei ist, dass die Passphrase geheim bleibt - es werden nur die MiniL
 <p>
 Nach dem Start des Programms werden eine Mail-Adresse und ein Password abgefragt.
 Aus diesen Informationen wird ein Schl&uuml;sselpaar gebildet (privater und &ouml;ffentlicher Schl&uuml;ssel).
-Damit die verschl&uuml;sselte Datei wirksam gesch&uuml;tzt ist, muss die Passphrase aus mehreren zuf&auml;llig gew&auml;hlten W&ouml;rtern bestehen.<br>
+Damit die verschl&uuml;sselte Datei wirksam gesch&uuml;tzt ist, muss eine Passphrase mit weniger als 40 Zeichen aus mehreren zuf&auml;llig gew&auml;hlten W&ouml;rtern bestehen.<br>
 </p>
 
 <br><br>
@@ -82,7 +82,7 @@ Hier k&ouml;nnen auch Unicode-Zeichen eingegeben werden:
 Das Ampel-Icon zeigt folgende Information an:
 
 <ul>
-<li>rot: die Passphrase ist zu kurz oder enth&auml;lt zuwenig Leerzeichen</li>
+<li>rot: die Passphrase ist zu kurz oder enth&auml;lt zuwenig durch Leerzeichen getrennte W&ouml;rter</li>
 <li>gelb: die Passphrase wird wahrscheinlich vom Original MiniLock-Plugin f&uuml;r Chrome abgewiesen</li>
 <li>grün: die Passphrase ist ausreichend sicher</li>
 </ul>
@@ -105,6 +105,8 @@ Wenn eine miniLock-Datei ausgew&auml;hlt wurde, wird diese automatisch entschl&u
 
 <p>
 In der oberen Liste k&ouml;nnen bis zu 50 miniLock-IDs der Datei-Empf&auml;nger angegeben werden.<br>
+Mit &quot;Lese Liste aus Datei&quot; wird eine Textdatei eingelesen, die pro Zeile eine MiniLock-ID enth&auml;lt.<br>
+Der Button &quot;Empf&auml;nger l&ouml;schen&quot; entfernt die Empf&auml;nger-IDs aus der Liste.<br>
 Nach dem Klick auf &quot;Datei verschl&uuml;sseln&quot; wird die miniLock-Datei im vorher angegebenen Zielverzeichnis abgelegt.
 </p>
 
@@ -172,9 +174,9 @@ Die MiniLock-ID wird wie folgt erzeugt:</p>
 id := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( <a href="http://doc.libsodium.org/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret) + <a href="https://blake2.net" target="new">blake2</a>(secret) )
 </pre>
 <p>
-Der JSON-Dateiheader der MiniLock-Dateien enth&auml;lt die MiniLock-ID des Senders, die IDs der Empf&auml;nger sowie Schl&uuml;ssel und Hashwert der verschl&uuml;sselten Eingabedatei.<br>
-Diese Informationen werden separat mit jeder angegebenen Empf&auml;nger-ID als Public-Key mittels <a href="http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a> verschl&uuml;sselt.<br>
-Die Eingabedatei wird mit <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> verschl&uuml;sselt. <br><br>
+Der JSON-Dateiheader der MiniLock-Dateien enth&auml;lt die MiniLock-ID des Senders, die IDs der Empf&auml;nger sowie Schl&uuml;ssel und Hashwert der verschl&uuml;sselten Eingabedatei.<br><br>
+Diese Informationen werden separat mit jeder angegebenen Empf&auml;nger-ID als Public-Key mittels <a href="http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a>  verschl&uuml;sselt (Schl&uuml;sseltausch: Curve25519; Verfahren: XSalsa20 stream cipher; Authentifizierung: Poly1305 MAC).<br><br>
+Die Eingabedatei wird mit <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> verschl&uuml;sselt (Verfahren: XSalsa20 stream cipher; Authentifizierung: Poly1305 MAC). <br><br>
 Mehr Infos zu den kryptographischen Eigenschaften und dem Dateiformat: <a href="https://minilock.io">https://minilock.io</a>.
 </p>
 

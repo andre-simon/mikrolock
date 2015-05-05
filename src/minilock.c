@@ -120,6 +120,12 @@ error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
                 snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s", b_decrypt_block);
             }
 
+            if (!access((const char *)out_opts->c_final_out_name, F_OK)){
+                exit_loop=1;
+                ret_val = err_file_exists;
+                goto free_encode_write_file_error;
+            }
+
             if (!out_opts->silent_mode)
                 printf("Writing to file %s...\n", out_opts->c_final_out_name);
             
@@ -172,6 +178,10 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     eof_pos   = ftello(input_file);
     fseeko(input_file, 0, SEEK_SET);
     
+    if (!eof_pos){
+     return err_file_empty;
+    }
+    
     unsigned char b_file_nonce[KEY_LEN - 8]= {0};
     memcpy(b_file_nonce, b_file_nonce_prefix, NONCE_PREFIX_LEN);
 
@@ -210,8 +220,9 @@ error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
             ret_val = err_ok;
         }
         
-        current_pos += num_read;
-
+        current_pos += num_read;	
+//	printf("eof_pos %zd\n", eof_pos);
+	
         out_opts->crypto_progress = current_pos*1.0 / eof_pos * 100;
         if (!out_opts->silent_mode) {
             printf("\rProgress %3.0f%%", out_opts->crypto_progress);
@@ -265,7 +276,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     if(output_file == NULL) {
         return err_file_write;
     }
-
+    
     //Reserve 4 bytes for the JSON header length
     uint8_t b_header[12] = {'m','i','n','i','L','o','c','k', 0, 0, 0, 0};
     fwrite(b_header, 1, sizeof b_header, output_file);
@@ -419,6 +430,11 @@ free_encode_res:
     free (c_file_nonce);
     free (c_file_hash);
     fclose(output_file);
+    
+    if (ret_val){
+      remove((char*)out_opts->c_final_out_name);
+    }
+    
     return ret_val;
 }
 

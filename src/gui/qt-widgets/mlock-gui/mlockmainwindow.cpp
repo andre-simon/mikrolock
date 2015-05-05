@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFileDialog>
 #include <QPixmap>
 #include <QDesktopWidget>
+#include <QDesktopServices>
 
 #include <QFileInfo>
 
@@ -70,10 +71,13 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
 
     this->setGeometry( QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter, this->size(),
                                            qApp->desktop()->availableGeometry() ));
+
+    startedWithFilArg  = false;
 }
 
 void MlockMainWindow::setInitialInputFile(QString file){
     inputFilename = file;
+    startedWithFilArg=true;
     statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
 }
 
@@ -82,12 +86,28 @@ void MlockMainWindow::on_txtPassPhrase_textChanged(){
 
     ui->lblSecIcon->setEnabled(!pp.isEmpty());
 
-    QString secLevel = (pp.length() < 25 || pp.count(QLatin1Char(' ')) < 3) ? "low": (pp.length()<40)? "medium":"high";
+    if (pp.length() < 20){
+        ui->lblSecIcon->setPixmap(QPixmap (":/Status-security-low-icon.png"));
+        ui->btnUnlock->setEnabled(false);
+        return;
+    }
+    if (pp.length() > 40){
+        ui->lblSecIcon->setPixmap(QPixmap (":/Status-security-high-icon.png"));
+        ui->btnUnlock->setEnabled(!ui->txtMail->text().isEmpty() );
+        return;
+    }
 
-    ui->lblSecIcon->setPixmap(QPixmap (":/Status-security-"+secLevel+"-icon.png"));
+    ui->lblSecIcon->setPixmap(QPixmap (":/Status-security-medium-icon.png"));
+
+    pp=pp.trimmed();
+    int wordCount=0;
+    for (int i=1;i<pp.length();i++){
+        if (pp[i]==' ' && pp[i-1]!=' ')
+            wordCount++;
+    }
 
     ui->btnUnlock->setEnabled(!ui->txtMail->text().isEmpty()
-                              && pp.length()>= 25 && pp.count(QLatin1Char(' ')) > 3 );
+                              && wordCount> 3 );
 }
 
 void MlockMainWindow::on_btnUnlock_clicked(){
@@ -232,6 +252,7 @@ void MlockMainWindow::handleResults(int result){
                                          tr("Decrypted"): tr("Encrypted")).arg(inputFilename).arg(timer.elapsed()/1000));
         QPixmap actionPix(":/Actions-dialog-ok-apply-icon.png");
         ui->lblCurrentAction->setPixmap(actionPix);
+        ui->btnSelInputFile->setEnabled(true); //if mlock-gui was called with file arg...
     } else {
         QPixmap actionPix(":/Actions-process-stop-icon.png");
         ui->lblCurrentAction->setPixmap(actionPix);
@@ -241,9 +262,11 @@ void MlockMainWindow::handleResults(int result){
         case err_failed:
             QMessageBox::critical(this, tr("Error") , tr("Unknown error."));
             break;
+
         case err_open:
             QMessageBox::critical(this, tr("Error") , tr("Could not decrypt the file."));
             break;
+
         case err_box:
             QMessageBox::critical(this, tr("Error") , tr("Could not encrypt the file."));
             break;
@@ -274,6 +297,14 @@ void MlockMainWindow::handleResults(int result){
 
         case err_not_allowed:
             QMessageBox::critical(this, tr("Error") , tr("You are not allowed to decrypt the file."));
+            break;
+
+        case err_file_empty:
+            QMessageBox::critical(this, tr("Error") , tr("Empty input file."));
+            break;
+
+        case err_file_exists:
+            QMessageBox::critical(this, tr("Error") , tr("Output file exists:\n%1").arg(QString((const char *)out_opts.c_final_out_name)).toLocal8Bit());
             break;
 
         default:
@@ -315,8 +346,9 @@ void MlockMainWindow::on_btnSelectDestDir_clicked()
               ui->txtDestDir->text().toLocal8Bit().data(),
               sizeof out_opts.c_override_out_name-1);
 
-      if (!inputFilename.isEmpty()) {
+      if (startedWithFilArg && !inputFilename.isEmpty()) {
           startFileProcessing(inputFilename.endsWith("minilock"));
+          startedWithFilArg=false;
         } else {
           ui->btnSelInputFile->setEnabled(true);
       }
@@ -414,6 +446,44 @@ void MlockMainWindow::on_action_Manual_triggered(){
          dialog.setHTMLSource(":/manual/manual_en_EN.html");
 
      dialog.exec();
+}
+
+void MlockMainWindow::on_btnClearRecipients_clicked()
+{
+    QLineEdit *leCurrentId;
+    for (int i=0; i<scrollAreaLayout->count(); i++){
+        leCurrentId = dynamic_cast<QLineEdit*>(scrollAreaLayout->itemAt(i)->widget());
+        leCurrentId->setText("");
+    }
+}
+
+void MlockMainWindow::on_btnOpenFileList_clicked()
+{
+    QString listFilename = QFileDialog::getOpenFileName(this, tr("Select the input file"), "", "*.*");
+
+    if (!listFilename.isEmpty()){
+        QFile f(listFilename);
+
+        if (f.open(QIODevice::ReadOnly))
+        {
+            on_btnClearRecipients_clicked();
+
+            QString data = f.readAll();
+            QStringList vals = data.split('\n');
+            QLineEdit *leCurrentId;
+            for (int i=0;i<vals.count() && i< 50;i++){
+
+                if (i> scrollAreaLayout->count()-1){
+                    QLineEdit* le =  new QLineEdit();
+                    scrollAreaLayout->addWidget(le);
+                }
+                leCurrentId = dynamic_cast<QLineEdit*>(scrollAreaLayout->itemAt(i)->widget());
+                leCurrentId->setText(vals[i].trimmed());
+            }
+
+            f.close();
+        }
+    }
 }
 
 void MlockMainWindow::dragEnterEvent(QDragEnterEvent *event)
