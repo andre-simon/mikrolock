@@ -1,10 +1,25 @@
 mlock ChangeLog
 
+05.05.2015
+
+mlock 0.9
+
+Bugs + suggestions sent by Bene & A. Sturthe
+
+-new errors if input file is empty or if output file exists
+-GUI: updated passphrase tooltips
+-GUI: fixed passphrase security notification
+-GUI: fixed encryption prompt after changing out directory
+-GUI: fixed diceware.com link clickability
+-GUI: added ID text file import and clear ID buttons
+-GUI: updated manual
+
+---
 01.05.2015
 
 mlock 0.8.1
 
--Linux: fixed file open mode 
+-Linux: fixed file open mode (thanks to Bene)
 
 ---
 27.04.2015
