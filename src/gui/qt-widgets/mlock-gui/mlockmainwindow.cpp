@@ -337,7 +337,7 @@ void MlockMainWindow::on_lbGoPreviousScreen_clicked(){
 
 void MlockMainWindow::on_btnSelectDestDir_clicked()
 {
-    QFileDialog dialog(this, tr("Select destination directory"), "");
+    QFileDialog dialog(NULL, tr("Select destination directory"), "");
     dialog.setFileMode(QFileDialog::Directory);
     if (dialog.exec() && !dialog.selectedFiles().empty()) {
       ui->txtDestDir->setText(QDir::toNativeSeparators(dialog.selectedFiles().at(0)));
@@ -357,7 +357,7 @@ void MlockMainWindow::on_btnSelectDestDir_clicked()
 
 void MlockMainWindow::on_btnSelInputFile_clicked()
 {
-    inputFilename = QFileDialog::getOpenFileName(this, tr("Select the input file"), "", "*.*");
+    inputFilename = QFileDialog::getOpenFileName(NULL, tr("Select the input file"), "", "*.*");
     startFileProcessing();
 }
 
@@ -459,7 +459,7 @@ void MlockMainWindow::on_btnClearRecipients_clicked()
 
 void MlockMainWindow::on_btnOpenFileList_clicked()
 {
-    QString listFilename = QFileDialog::getOpenFileName(this, tr("Select the input file"), "", "*.*");
+    QString listFilename = QFileDialog::getOpenFileName(NULL, tr("Select the input file"), "", "*");
 
     if (!listFilename.isEmpty()){
         QFile f(listFilename);
@@ -471,6 +471,7 @@ void MlockMainWindow::on_btnOpenFileList_clicked()
             QString data = f.readAll();
             QStringList vals = data.split('\n');
             QLineEdit *leCurrentId;
+
             for (int i=0;i<vals.count() && i< 50;i++){
 
                 if (i> scrollAreaLayout->count()-1){
@@ -478,7 +479,14 @@ void MlockMainWindow::on_btnOpenFileList_clicked()
                     scrollAreaLayout->addWidget(le);
                 }
                 leCurrentId = dynamic_cast<QLineEdit*>(scrollAreaLayout->itemAt(i)->widget());
-                leCurrentId->setText(vals[i].trimmed());
+
+                QStringList elems = vals[i].trimmed().split(QRegExp("[\\s\\,\\;\\|\\-\\/]"));
+
+                leCurrentId->setText(elems[0]);
+                if (elems.count()>1){
+                    elems.removeAt(0);
+                    leCurrentId->setToolTip(elems.join(" "));
+                }
             }
 
             f.close();

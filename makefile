@@ -48,6 +48,7 @@ install:
 	${INSTALL_DATA} ./man/mlock.1.gz ${DESTDIR}${man_dir}
 	${INSTALL_DATA} ./AUTHORS ${DESTDIR}${doc_dir}
 	${INSTALL_DATA} ./README ${DESTDIR}${doc_dir}
+	${INSTALL_DATA} ./README_DE ${DESTDIR}${doc_dir}
 	${INSTALL_DATA} ./ChangeLog ${DESTDIR}${doc_dir}
 	${INSTALL_DATA} ./COPYING ${DESTDIR}${doc_dir}
 	${INSTALL_DATA} ./INSTALL ${DESTDIR}${doc_dir}

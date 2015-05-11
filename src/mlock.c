@@ -335,16 +335,16 @@ int main(int argc, char **argv) {
 	    case err_ok:
 	      break;
 	    case  err_file_write:
-	      fprintf(stderr, "ERROR: could not write to file %s\n", out_opts.c_final_out_name);
+	      fprintf(stderr, "ERROR: could not write file: %s\n", out_opts.c_final_out_name);
 	      break;
 	    case err_file_open:
-	      fprintf(stderr, "ERROR: could not open file %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
+	      fprintf(stderr, "ERROR: could not open file: %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
 	      break;
 	    case err_file_read:  
-	      fprintf(stderr, "ERROR: could not read file %s\n", do_dec ? c_input_file :out_opts.c_final_out_name);
+	      fprintf(stderr, "ERROR: could not read file: %s\n", do_dec ? c_input_file :out_opts.c_final_out_name);
 	      break;
 	    case err_format:
-	      fprintf(stderr, "ERROR: invalid file format of %s\n", c_input_file);
+	      fprintf(stderr, "ERROR: invalid file format: %s\n", c_input_file);
 	      break;
 	    case err_no_rcpt:
 	      fprintf(stderr, "ERROR: no recipients defined\n");
@@ -365,10 +365,10 @@ int main(int argc, char **argv) {
 	      fprintf(stderr, "ERROR: not allowed to decrypt\n");
 	      break;
 	    case err_file_empty:
-	      fprintf(stderr, "ERROR: empty input file %s\n", c_input_file);
+	      fprintf(stderr, "ERROR: empty input file: %s\n", c_input_file);
 	      break;
 	    case err_file_exists:
-		fprintf(stderr, "ERROR: output file exists %s\n", out_opts.c_final_out_name);
+		fprintf(stderr, "ERROR: output file exists: %s\n", out_opts.c_final_out_name);
 		break;
 	  }
 	}

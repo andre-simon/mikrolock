@@ -166,7 +166,7 @@ free_encode_write_file_error:
 error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t* b_file_key, uint8_t *c_input_file, struct output_options *out_opts) {
     error_code ret_val = err_failed;
 
-    FILE *input_file = fopen((char*)c_input_file, "r");
+    FILE *input_file = fopen((char*)c_input_file, "rb"); // b needed for W32
     if(input_file == NULL) {
         return err_file_read;
     }
@@ -270,6 +270,10 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 
     } else {
         snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s.minilock", c_filename);
+    }
+
+    if (!access((const char *)out_opts->c_final_out_name, F_OK)){
+        return err_file_exists;
     }
 
     FILE *output_file = fopen((char*)out_opts->c_final_out_name, "w+b");
@@ -464,7 +468,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
     json_value * json_file_info =0;
     json_value * json_file_desc = 0;
 
-    FILE *input_file = fopen((char*)c_filename, "r");
+    FILE *input_file = fopen((char*)c_filename, "rb"); // b needed for W32
     if(input_file == NULL) {
         return err_file_open;
     }
