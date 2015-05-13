@@ -36,6 +36,8 @@
 #define BUF_READ_FILE_LEN 1048576/2
 #endif
 
+#define MAX_RCPT 50
+
 #define BUF_PATH_LEN 256
 #define BUF_DECRYPTINFO_ITEM_LEN 550
 
@@ -62,6 +64,7 @@ struct output_options  {
   float hash_progress;
   int task_mode;
   int silent_mode;
+  int random_outname;
 };
 
 int array_to_number(uint8_t* array, int size);

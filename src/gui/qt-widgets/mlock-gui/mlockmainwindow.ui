@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="acceptDrops">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="windowTitle">
    <string>mlock GUI</string>
@@ -74,6 +74,9 @@
             <property name="dragEnabled">
              <bool>false</bool>
             </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -122,6 +125,9 @@
                 </property>
                 <property name="echoMode">
                  <enum>QLineEdit::Password</enum>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -201,6 +207,9 @@
             </property>
             <property name="text">
              <string>Generate my miniLock ID</string>
+            </property>
+            <property name="autoDefault">
+             <bool>false</bool>
             </property>
             <property name="default">
              <bool>true</bool>
@@ -470,7 +479,7 @@ p, li { white-space: pre-wrap; }
                <x>0</x>
                <y>0</y>
                <width>340</width>
-               <height>166</height>
+               <height>141</height>
               </rect>
              </property>
             </widget>
@@ -532,6 +541,13 @@ p, li { white-space: pre-wrap; }
            <widget class="QCheckBox" name="cbOmitId">
             <property name="text">
              <string>Omit my ID</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbRandomFileName">
+            <property name="text">
+             <string>Generate a random filename</string>
             </property>
            </widget>
           </item>

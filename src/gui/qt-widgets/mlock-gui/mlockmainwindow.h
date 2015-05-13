@@ -16,6 +16,7 @@
 
 extern "C" {
 #include <sodium/crypto_pwhash_scryptsalsa208sha256.h>
+#include <sodium/randombytes.h>
 #include "utils.h"
 #include "minilock.h"
 }
@@ -38,6 +39,9 @@ public:
 
     static struct output_options out_opts;
 
+    static bool forceThreadStop;
+
+
     explicit MlockMainWindow(QWidget *parent = 0);
     ~MlockMainWindow();
 
@@ -47,6 +51,7 @@ private:
     Ui::MlockMainWindow *ui;
 
     bool startedWithFilArg;
+
 
     void dropEvent(QDropEvent* event);
     void dragEnterEvent(QDragEnterEvent *event);
@@ -80,6 +85,8 @@ private slots:
     void on_action_Manual_triggered();
     void on_btnClearRecipients_clicked();
     void on_btnOpenFileList_clicked();
+
+    void on_stackedWidget_currentChanged(int idx);
 
   public slots:
     void handleResults(int);

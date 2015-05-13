@@ -32,17 +32,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "showmanualdialog.h"
 
 // static data items shared with threads
-char* MlockMainWindow::c_rcpt_list[50]= {0};
+char* MlockMainWindow::c_rcpt_list[MAX_RCPT]= {0};
 unsigned int MlockMainWindow::num_rcpts=0;
 uint8_t MlockMainWindow::b_my_sk[KEY_LEN] = {0};
 uint8_t MlockMainWindow::b_my_pk[KEY_LEN + 1]= {0};
 uint8_t MlockMainWindow::c_minilock_id[KEY_LEN * 2]= {0};
 struct output_options MlockMainWindow::out_opts;
-
+bool MlockMainWindow::forceThreadStop=false;
 
 MlockMainWindow::MlockMainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MlockMainWindow)
+    ui(new Ui::MlockMainWindow),
+    startedWithFilArg(false)
 {
     ui->setupUi(this);
 
@@ -57,6 +58,7 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
     out_opts.crypto_progress=0.0;
     out_opts.hash_progress=0.0;
     out_opts.silent_mode=1;
+    out_opts.random_outname=0;
 
     QWidget *central = new QWidget();
 
@@ -72,13 +74,12 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
     this->setGeometry( QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter, this->size(),
                                            qApp->desktop()->availableGeometry() ));
 
-    startedWithFilArg  = false;
+
 }
 
 void MlockMainWindow::setInitialInputFile(QString file){
     inputFilename = file;
     startedWithFilArg=true;
-    statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
 }
 
 void MlockMainWindow::on_txtPassPhrase_textChanged(){
@@ -220,6 +221,8 @@ void MlockMainWindow::encrypt() {
 
     initProgressDisplay(true);
 
+    out_opts.random_outname =  ui->cbRandomFileName->isChecked();
+
     UpdateProgressBarThread *progressUpdate = new UpdateProgressBarThread(ui->progressBar);
     connect(progressUpdate, &UpdateProgressBarThread::finished, progressUpdate, &QObject::deleteLater);
     progressUpdate->start();
@@ -227,6 +230,7 @@ void MlockMainWindow::encrypt() {
     EncryptThread *workerThread = new EncryptThread(inputFilename);
     connect(workerThread, &EncryptThread::resultReady, this, &MlockMainWindow::handleResults);
     connect(workerThread, &EncryptThread::finished, workerThread, &QObject::deleteLater);
+
     workerThread->start();
 }
 
@@ -254,6 +258,8 @@ void MlockMainWindow::handleResults(int result){
         ui->lblCurrentAction->setPixmap(actionPix);
         ui->btnSelInputFile->setEnabled(true); //if mlock-gui was called with file arg...
     } else {
+        forceThreadStop=true;
+
         QPixmap actionPix(":/Actions-process-stop-icon.png");
         ui->lblCurrentAction->setPixmap(actionPix);
 
@@ -311,6 +317,7 @@ void MlockMainWindow::handleResults(int result){
             QMessageBox::critical(this, tr("Error") , tr("Undefined error."));
             break;
         }
+
     }
     this->setCursor(Qt::ArrowCursor);
     ui->btnEncrypt->setEnabled(true);
@@ -337,7 +344,7 @@ void MlockMainWindow::on_lbGoPreviousScreen_clicked(){
 
 void MlockMainWindow::on_btnSelectDestDir_clicked()
 {
-    QFileDialog dialog(NULL, tr("Select destination directory"), "");
+    QFileDialog dialog(this, tr("Select destination directory"), "");
     dialog.setFileMode(QFileDialog::Directory);
     if (dialog.exec() && !dialog.selectedFiles().empty()) {
       ui->txtDestDir->setText(QDir::toNativeSeparators(dialog.selectedFiles().at(0)));
@@ -357,7 +364,7 @@ void MlockMainWindow::on_btnSelectDestDir_clicked()
 
 void MlockMainWindow::on_btnSelInputFile_clicked()
 {
-    inputFilename = QFileDialog::getOpenFileName(NULL, tr("Select the input file"), "", "*.*");
+    inputFilename = QFileDialog::getOpenFileName(this, tr("Select the input file"), "", "*.*");
     startFileProcessing();
 }
 
@@ -399,7 +406,7 @@ void MlockMainWindow::on_btnAddRcpt_clicked()
 {
     QLineEdit* le =  new QLineEdit();
     scrollAreaLayout->addWidget(le);
-    if (scrollAreaLayout->count()==50) {
+    if (scrollAreaLayout->count()==MAX_RCPT) {
         ui->btnAddRcpt->setEnabled(false);
     }
 }
@@ -459,7 +466,7 @@ void MlockMainWindow::on_btnClearRecipients_clicked()
 
 void MlockMainWindow::on_btnOpenFileList_clicked()
 {
-    QString listFilename = QFileDialog::getOpenFileName(NULL, tr("Select the input file"), "", "*");
+    QString listFilename = QFileDialog::getOpenFileName(this, tr("Select the recipient list file"), "", "*");
 
     if (!listFilename.isEmpty()){
         QFile f(listFilename);
@@ -470,28 +477,60 @@ void MlockMainWindow::on_btnOpenFileList_clicked()
 
             QString data = f.readAll();
             QStringList vals = data.split('\n');
-            QLineEdit *leCurrentId;
 
-            for (int i=0;i<vals.count() && i< 50;i++){
+            QRegExp delimRE("[\\,\\;\\|\\-\\/]");
+
+            for (int i=0;i<vals.count() && i< MAX_RCPT;i++){
 
                 if (i> scrollAreaLayout->count()-1){
                     QLineEdit* le =  new QLineEdit();
                     scrollAreaLayout->addWidget(le);
                 }
-                leCurrentId = dynamic_cast<QLineEdit*>(scrollAreaLayout->itemAt(i)->widget());
 
-                QStringList elems = vals[i].trimmed().split(QRegExp("[\\s\\,\\;\\|\\-\\/]"));
+                QLineEdit *leCurrentId = dynamic_cast<QLineEdit*>(scrollAreaLayout->itemAt(i)->widget());
 
-                leCurrentId->setText(elems[0]);
-                if (elems.count()>1){
-                    elems.removeAt(0);
-                    leCurrentId->setToolTip(elems.join(" "));
+                QString line(vals[i]);
+                int delimPos = line.indexOf(delimRE);
+
+                if (delimPos<0){
+                    leCurrentId->setText(line.trimmed());
+                } else {
+                    leCurrentId->setText(line.mid(0,delimPos).trimmed());
+                    leCurrentId->setToolTip(line.mid(delimPos+1).replace(delimRE, ""));
                 }
             }
 
             f.close();
+
+            if (scrollAreaLayout->count()==MAX_RCPT) {
+                ui->btnAddRcpt->setEnabled(false);
+            }
         }
     }
+}
+
+void MlockMainWindow::on_stackedWidget_currentChanged(int idx)
+{
+    ui->progressBar->setVisible(false);
+    ui->lblCurrentAction->setVisible(false);
+    switch(idx){
+    case 0:
+        if (startedWithFilArg)
+            statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
+        else
+            statusBar()->showMessage(tr("Enter your mail adress and passphrase"));
+        break;
+    case 1:
+        statusBar()->showMessage(tr("Set input and output parameters"));
+        break;
+    case 2:
+        statusBar()->showMessage(tr("Set encryption options for %1").arg(inputFilename));
+        break;
+     default:
+        statusBar()->showMessage("");
+        break;
+    }
+    this->setAcceptDrops(idx==1);
 }
 
 void MlockMainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -516,6 +555,19 @@ void DecryptThread::run() {
 }
 
 void EncryptThread::run()  {
+
+    /*
+    QString encFileName(inFileName);
+
+
+    if (randomizeOutfile){
+        uint8_t  b_file_rnd[6]= {0};
+        char  c_b58_file_rnd[12]= {0};
+        randombytes_buf(b_file_rnd, sizeof b_file_rnd);
+        base58_encode((unsigned char *)c_b58_file_rnd,(const unsigned char *)b_file_rnd, sizeof b_file_rnd);
+        encFileName.sprintf("%s.minilock", c_b58_file_rnd);
+    }*/
+
     int result= minilock_encode((uint8_t*) inFileName.toLocal8Bit().data(), MlockMainWindow::c_minilock_id,
                                 MlockMainWindow::b_my_sk,
                                 MlockMainWindow::c_rcpt_list, MlockMainWindow::num_rcpts,
@@ -526,9 +578,13 @@ void EncryptThread::run()  {
 void UpdateProgressBarThread::run() {
 
    int percentage=0;
-   while (percentage<100){
+   MlockMainWindow::forceThreadStop=false;
+
+   while (percentage<100 &&!MlockMainWindow::forceThreadStop){
        percentage = (int)MlockMainWindow::out_opts.crypto_progress/2 + MlockMainWindow::out_opts.hash_progress/2;
        bar->setValue(percentage);
        QThread::msleep(200);
-    }
+   }
+   if (MlockMainWindow::forceThreadStop)
+       bar->setValue(0);
 }

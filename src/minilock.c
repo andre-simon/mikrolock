@@ -56,7 +56,7 @@ Wilhelm Busch
 #include "b58/base58.h"
 #include "utils.h"
 
-error_code decode_file(FILE* input_file, off_t crypt_block_start, off_t eof_pos, uint8_t* b_file_nonce_prefix,
+error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos, uint8_t* b_file_nonce_prefix,
                 uint8_t* b_file_key, struct output_options *out_opts) {
 
     unsigned char b_file_nonce[KEY_LEN-8]= {0};
@@ -163,7 +163,7 @@ free_encode_write_file_error:
 }
 
 
-error_code encode_file(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t* b_file_key, uint8_t *c_input_file, struct output_options *out_opts) {
+error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t* b_file_key, uint8_t *c_input_file, struct output_options *out_opts) {
     error_code ret_val = err_failed;
 
     FILE *input_file = fopen((char*)c_input_file, "rb"); // b needed for W32
@@ -259,17 +259,29 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         return err_no_rcpt;
     }
 
+    uint8_t  b_file_rnd[6]= {0};
+    char  c_b58_file_rnd[32]= {0};
+
+    if (out_opts->random_outname){
+        randombytes_buf(b_file_rnd, sizeof b_file_rnd);
+        base58_encode((unsigned char *)c_b58_file_rnd,(const unsigned char *)b_file_rnd, 6);
+    }
+
     if ( strlen((char*)out_opts->c_override_out_name) ) {
         if (out_opts->override_out_name_as_dir){
             char* delim=strrchr((char*)c_filename, '/');
-            char *fname= delim ? delim+1 : (char*)c_filename;
-            snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s.minilock", out_opts->c_override_out_name, fname);
+            char* fname= delim ? delim+1 : (char*)c_filename;
+            snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s.minilock", out_opts->c_override_out_name,  (char*)(out_opts->random_outname ? c_b58_file_rnd : fname) );
         }else {
             snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s", out_opts->c_override_out_name);
         }
 
     } else {
-        snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s.minilock", c_filename);
+        if (out_opts->random_outname )
+            snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s.minilock", c_b58_file_rnd  );
+        else
+            snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s.minilock", c_filename );
+
     }
 
     if (!access((const char *)out_opts->c_final_out_name, F_OK)){
@@ -339,7 +351,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     fwrite(b_json_header_len, 1, sizeof b_json_header_len, output_file);
     fseeko(output_file, crypt_block_start, SEEK_SET);
 
-    error_code file_err_err = encode_file(output_file, b_file_nonce_rnd, b_file_key_rnd, c_filename, out_opts);
+    error_code file_err_err = file_encode(output_file, b_file_nonce_rnd, b_file_key_rnd, c_filename, out_opts);
     if (file_err_err){
         ret_val = file_err_err;
         goto free_encode_res;
@@ -622,7 +634,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         // calculating hash moves fp to the end
         off_t eof_pos   = ftello(input_file);
         fseeko(input_file, crypt_block_start, SEEK_SET);
-        error_code file_err_err = decode_file(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, out_opts);
+        error_code file_err_err = file_decode(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, out_opts);
         if (file_err_err) {
             ret_val = file_err_err;
             goto exit_decode_loop_on_failure;

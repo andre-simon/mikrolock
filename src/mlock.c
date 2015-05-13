@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 
 #include <sodium/crypto_pwhash_scryptsalsa208sha256.h>
+#include <sodium/randombytes.h>
 
 #ifndef WIN32
 #include "pinentry/pinentry.h"
@@ -120,6 +121,7 @@ void print_help() {
 	printf("  -o, --output <file>   Override the target file name (assumes -D or -E)\n");
 	printf("  -m, --mail <string>   Mail address (salt)\n");
 	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)\n");
+	printf("  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)");
 	printf("  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)\n");
 	printf("  -p, --pinentry        Use pinentry program to ask for the passphrase\n");
 	printf("  -q, --quiet           Do not print progress information\n");
@@ -144,11 +146,13 @@ int main(int argc, char **argv) {
         printf("USAGE: mlock [OPTIONS]\n");
         return EXIT_FAILURE;
     }
+
+    //list of minilock IDs which can decrypt the file
+    char* c_rcpt_list[MAX_RCPT+1]= {0};
+
     uint8_t c_user_passphrase[256] = {0};
     uint8_t c_user_salt[256]  = {0};
     uint8_t c_input_file[BUF_PATH_LEN]  = {0};
-    //uint8_t c_override_out_name[BUF_PATH_LEN]  = {0};
-    //uint8_t c_final_out_name[BUF_PATH_LEN]  = {0};
     
     struct output_options out_opts;
     memset(out_opts.c_final_out_name, 0, sizeof out_opts.c_final_out_name);
@@ -158,6 +162,7 @@ int main(int argc, char **argv) {
     out_opts.crypto_progress=0.0;
     out_opts.hash_progress=0.0;
     out_opts.silent_mode=0;
+    out_opts.random_outname=0;
     
     int do_enc=0, do_dec=0;
 
@@ -169,8 +174,6 @@ int main(int argc, char **argv) {
     int exclude_me =0;
     int ret_val = EXIT_FAILURE;
 
-    //list of minilock IDs which can decrypt the file
-    char* c_rcpt_list[51]= {0};
     unsigned int num_rcpts=0;
 
     uint8_t b_cs[1];
@@ -189,10 +192,11 @@ int main(int argc, char **argv) {
             {"pinentry", no_argument,      0, 'p' },
             {"mail",    required_argument, 0, 'm' },
             {"rcpt",    required_argument, 0, 'r' },
+            {"random-name", no_argument,   0, 'R' },
             {0,         0,                 0, 0 }
         };
 
-        c = getopt_long(argc, argv, "E:D:o:qvhm:r:xp",
+        c = getopt_long(argc, argv, "E:D:o:qvhm:r:xpR",
                         long_options, &option_index);
         if (c == -1)
             break;
@@ -204,6 +208,10 @@ int main(int argc, char **argv) {
 
         case 'o':
             snprintf((char *)out_opts.c_override_out_name, sizeof out_opts.c_override_out_name-1, "%s", optarg);
+            break;
+
+        case 'R':
+            out_opts.random_outname=1;
             break;
 
         case 'v':
@@ -222,7 +230,7 @@ int main(int argc, char **argv) {
             break;
 
         case 'r':
-	    if (num_rcpts+1== sizeof c_rcpt_list) break;
+            if (num_rcpts+1== MAX_RCPT) break;
 	    
 	    if (strlen(optarg)>46) {
                 fprintf(stderr, "ERROR: invalid Minilock ID: %s\n", optarg);
@@ -314,6 +322,7 @@ int main(int argc, char **argv) {
 
     if (do_dec || do_enc) {
       
+        printf("Destination file: %s\n", out_opts.c_override_out_name);
         printf("%scrypting file %s...\n", do_enc ? "En" : "De", c_input_file);
 
 	if (do_enc && !exclude_me) {
