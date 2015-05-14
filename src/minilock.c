@@ -238,7 +238,6 @@ error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
         fwrite(b_crypt_block, 1, num_read + MAC_LEN, output_file);
 
         if ( ferror(output_file)) {
-           // fprintf(stderr, "ERROR: could not write output file\n"); // wenn ausserhalb kann name ausgegeben werden
 	    ret_val = err_file_write;
 	    break;
         }
@@ -269,15 +268,19 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 
     if ( strlen((char*)out_opts->c_override_out_name) ) {
         if (out_opts->override_out_name_as_dir){
-            char* delim=strrchr((char*)c_filename, '/');
-            char* fname= delim ? delim+1 : (char*)c_filename;
-            snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s.minilock", out_opts->c_override_out_name,  (char*)(out_opts->random_outname ? c_b58_file_rnd : fname) );
+            if (out_opts->random_outname) {
+                snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s.minilock", out_opts->c_override_out_name, c_b58_file_rnd );
+            } else {
+                char* delim=strrchr((char*)c_filename, '/');
+                char* fname= delim ? delim+1 : (char*)c_filename;
+                snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s.minilock", out_opts->c_override_out_name, fname );
+            }
         }else {
             snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s", out_opts->c_override_out_name);
         }
 
     } else {
-        if (out_opts->random_outname )
+        if (out_opts->random_outname)
             snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s.minilock", c_b58_file_rnd  );
         else
             snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s.minilock", c_filename );

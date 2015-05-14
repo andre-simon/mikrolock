@@ -21,5 +21,7 @@
         <file>manual/manual4.png</file>
         <file>manual/manual_de_DE.html</file>
         <file>Actions-edit-clear-icon.png</file>
+        <file>Status-mail-unread-new-icon.png</file>
+        <file>Status-mail-unread-icon.png</file>
     </qresource>
 </RCC>

@@ -50,6 +50,7 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
     ui->stackedWidget->setCurrentIndex(0);
     ui->lblCurrentAction->setVisible(false);
     ui->progressBar->setVisible(false);
+    ui->btnBrowseDestDir->setVisible(false);
 
     memset(out_opts.c_final_out_name, 0, sizeof out_opts.c_final_out_name);
     memset(out_opts.c_override_out_name, 0, sizeof out_opts.c_override_out_name);
@@ -71,6 +72,9 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
            scrollAreaLayout->addWidget(le);
     }
 
+    mailRE.setPattern("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+    mailRE.setPatternSyntax(QRegExp::RegExp);
+
     this->setGeometry( QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter, this->size(),
                                            qApp->desktop()->availableGeometry() ));
 
@@ -80,6 +84,7 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
 void MlockMainWindow::setInitialInputFile(QString file){
     inputFilename = file;
     startedWithFilArg=true;
+    statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
 }
 
 void MlockMainWindow::on_txtPassPhrase_textChanged(){
@@ -109,6 +114,25 @@ void MlockMainWindow::on_txtPassPhrase_textChanged(){
 
     ui->btnUnlock->setEnabled(!ui->txtMail->text().isEmpty()
                               && wordCount> 3 );
+ //   ui->btnUnlock->setAutoExclusive(true);
+}
+
+void MlockMainWindow::on_txtMail_textChanged()
+{
+    ui->txtPassPhrase->clear();
+    QString mail = ui->txtMail->text();
+    bool possiblyMailAddress = mail.contains('@');
+    ui->lblMailIcon->setEnabled(possiblyMailAddress);
+    ui->lblMailIcon->setToolTip(tr("You do not need to enter an email address here unless you want to use the Chrome miniLock extension."));
+    if (possiblyMailAddress){
+        if (mailRE.exactMatch(mail)){
+            ui->lblMailIcon->setPixmap(QPixmap (":/Status-mail-unread-icon.png"));
+            ui->lblMailIcon->setToolTip(tr("This mail address appears to be valid."));
+        } else {
+            ui->lblMailIcon->setPixmap(QPixmap (":/Status-mail-unread-new-icon.png"));
+            ui->lblMailIcon->setToolTip(tr("This mail address appears to be invalid."));
+        }
+     }
 }
 
 void MlockMainWindow::on_btnUnlock_clicked(){
@@ -165,6 +189,7 @@ void MlockMainWindow::initProgressDisplay(bool isEncryptMode)
     ui->lblCurrentAction->setVisible(true);
     ui->progressBar->setValue(0);
     ui->progressBar->setVisible(true);
+    ui->btnBrowseDestDir->setVisible(true);
     ui->btnEncrypt->setEnabled(false);
     out_opts.crypto_progress=0.0;
     out_opts.hash_progress=0.0;
@@ -253,7 +278,7 @@ void MlockMainWindow::handleResults(int result){
     if (result==0){
         statusBar()->showMessage(tr("%1 file %2 in %3s").arg(
                                      (ui->stackedWidget->currentIndex()==1) ?
-                                         tr("Decrypted"): tr("Encrypted")).arg(inputFilename).arg(timer.elapsed()/1000));
+                                         tr("Decrypted"): tr("Encrypted")).arg(inputFilename).arg(1 + timer.elapsed()/1000));
         QPixmap actionPix(":/Actions-dialog-ok-apply-icon.png");
         ui->lblCurrentAction->setPixmap(actionPix);
         ui->btnSelInputFile->setEnabled(true); //if mlock-gui was called with file arg...
@@ -423,11 +448,6 @@ void MlockMainWindow::on_txtDestDir_textChanged()
     }
 }
 
-void MlockMainWindow::on_txtMail_textChanged()
-{
-    ui->txtPassPhrase->clear();
-}
-
 void MlockMainWindow::on_actionAbout_mlock_triggered()
 {
     QMessageBox::about( this, "About mlock",
@@ -509,24 +529,34 @@ void MlockMainWindow::on_btnOpenFileList_clicked()
     }
 }
 
+void MlockMainWindow::on_btnBrowseDestDir_clicked()
+{
+    QDesktopServices::openUrl(QUrl("file:///"+ui->txtDestDir->text(), QUrl::TolerantMode));
+}
+
 void MlockMainWindow::on_stackedWidget_currentChanged(int idx)
 {
     ui->progressBar->setVisible(false);
     ui->lblCurrentAction->setVisible(false);
+    ui->btnBrowseDestDir->setVisible(false);
+
     switch(idx){
     case 0:
+        statusBar()->showMessage(tr("Enter your mail adress and passphrase"));
+        break;
+
+    case 1:
         if (startedWithFilArg)
             statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
         else
-            statusBar()->showMessage(tr("Enter your mail adress and passphrase"));
+            statusBar()->showMessage(tr("Set input and output parameters"));
         break;
-    case 1:
-        statusBar()->showMessage(tr("Set input and output parameters"));
-        break;
+
     case 2:
         statusBar()->showMessage(tr("Set encryption options for %1").arg(inputFilename));
         break;
-     default:
+
+    default:
         statusBar()->showMessage("");
         break;
     }
@@ -555,19 +585,6 @@ void DecryptThread::run() {
 }
 
 void EncryptThread::run()  {
-
-    /*
-    QString encFileName(inFileName);
-
-
-    if (randomizeOutfile){
-        uint8_t  b_file_rnd[6]= {0};
-        char  c_b58_file_rnd[12]= {0};
-        randombytes_buf(b_file_rnd, sizeof b_file_rnd);
-        base58_encode((unsigned char *)c_b58_file_rnd,(const unsigned char *)b_file_rnd, sizeof b_file_rnd);
-        encFileName.sprintf("%s.minilock", c_b58_file_rnd);
-    }*/
-
     int result= minilock_encode((uint8_t*) inFileName.toLocal8Bit().data(), MlockMainWindow::c_minilock_id,
                                 MlockMainWindow::b_my_sk,
                                 MlockMainWindow::c_rcpt_list, MlockMainWindow::num_rcpts,
@@ -583,7 +600,7 @@ void UpdateProgressBarThread::run() {
    while (percentage<100 &&!MlockMainWindow::forceThreadStop){
        percentage = (int)MlockMainWindow::out_opts.crypto_progress/2 + MlockMainWindow::out_opts.hash_progress/2;
        bar->setValue(percentage);
-       QThread::msleep(200);
+       QThread::msleep(150);
    }
    if (MlockMainWindow::forceThreadStop)
        bar->setValue(0);

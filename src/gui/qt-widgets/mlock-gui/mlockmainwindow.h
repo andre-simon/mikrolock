@@ -69,6 +69,8 @@ private:
     QTime timer;
     QVBoxLayout *scrollAreaLayout;
 
+    QRegExp mailRE;
+
 private slots:
     void on_txtPassPhrase_textChanged();
     void on_btnUnlock_clicked();
@@ -85,6 +87,7 @@ private slots:
     void on_action_Manual_triggered();
     void on_btnClearRecipients_clicked();
     void on_btnOpenFileList_clicked();
+    void on_btnBrowseDestDir_clicked();
 
     void on_stackedWidget_currentChanged(int idx);
 

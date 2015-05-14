@@ -71,7 +71,8 @@ It is important to keep the passphrase secret - only the miniLock IDs (=public k
 
 <p>
 After the program starts it asks for your mail adress and passphrase.
-With this information a key pair is generated (private and public key).
+With this information a key pair is generated (private and public key).<br>
+You do not need to enter a valid mail address unless you want to use the miniLock Chrome extension.<br>
 To achieve a secure encryption, a passphrase less than 40 characters needs to consist of several random words.
 </p>
 
@@ -85,15 +86,15 @@ It is also possible to enter Unicode characters:</p>
 <img src=":/manual/manual2.png"  border="0" alt="mlock GUI 1">
 
 <p>
+The mail icon shows whether the mail adress is valid.<br><br>
 The signal icon gives you following information:
-
 <ul>
 <li>red: the passphrase is too short or does not contain enough words (separated by spaces)</li>
 <li>yellow: the passphrase will most likely be refused by the original MiniLock-Plugin for Chrome</li>
 <li>green: the passphrase offers sufficient security</li>
 </ul>
 
-After clicking &quot;Generate my miniLock ID&quot; your ID will be shown near the window bottom. You are able to copy it nearby.<br><br>
+After clicking &quot;Generate my miniLock ID&quot; your ID will be shown at the window bottom. You are able to copy it nearby.<br><br>
 Now the input/output dialog is displayed:
 </p>
 
@@ -111,8 +112,18 @@ If a minilock file was selected, it will be automatically decrypted. Any other f
 
 <p>
 Using the upper list you can define up to 50 miniLock IDs of your file recipients.<br>
-Using &quot;Read file list&quot; you can import a text file which contains one miniLock ID per line.<br>
+Using &quot;Read list file&quot; you can import a text file which contains one miniLock ID per line. The recipient's names may be entered behind their IDs as follows:
+<pre>
+y5qBLmncv36r98tFMw5YVoc9SHkfLDg8Wz7zf9yrPYPh2 / Andre Simon
+8SmHNEEZiK1RgWoN9xryJb8opBky9Kh7txhmgb1RLrUrW ; Customer XYZ
+sVXHR7smwqXkSbphn8gdH3Ah6a1nvbYtuXPpxG6qKT321 - Schmidt
+ULgpTbP7isNNV6kgDbNVtQo5YRuUhc4N5AAEEbne9bjJi | Jane
+</pre>
+The information behind the separators will be displayed as tooltips.
+<br>
 The button &quot;Clear recipients&quot; will delete the ID entries.<br>
+The option &quot;Omit my ID&quot; removes the own miniLock-ID from the recipients.<br>
+Applying &quot;Generate a random output filename&quot; will save the encrypted file using a randomized name.<br><br>
 After clicking &quot;Encrypt the file&quot; the minilock file will be stored in the previously defined destination directory.
 </p>
 
@@ -130,6 +141,7 @@ Available options:
   -o, --output &lt;file&gt;   Override the target file name (assumes -D or -E)
   -m, --mail &lt;string&gt;   User mail address (salt)
   -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)
+  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
   -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
   -p, --pinentry        Use pinentry for passphrase input
   -q, --quiet           Do not print progress information

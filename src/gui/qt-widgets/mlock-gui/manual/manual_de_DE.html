@@ -64,8 +64,9 @@ Wichtig hierbei ist, dass die Passphrase geheim bleibt - es werden nur die MiniL
 
 <p>
 Nach dem Start des Programms werden eine Mail-Adresse und ein Password abgefragt.
-Aus diesen Informationen wird ein Schl&uuml;sselpaar gebildet (privater und &ouml;ffentlicher Schl&uuml;ssel).
-Damit die verschl&uuml;sselte Datei wirksam gesch&uuml;tzt ist, muss eine Passphrase mit weniger als 40 Zeichen aus mehreren zuf&auml;llig gew&auml;hlten W&ouml;rtern bestehen.<br>
+Aus diesen Informationen wird ein Schl&uuml;sselpaar gebildet (privater und &ouml;ffentlicher Schl&uuml;ssel).<br>
+Statt der Mail-Adresse kann auch ein anderer Wert angegeben werden, dies sollte man jedoch nur tun wenn man das miniLock Chrome-Plugin nicht nutzen m&ouml;chte.<br>
+Damit die verschl&uuml;sselte Datei wirksam gesch&uuml;tzt ist, muss eine Passphrase, die weniger als 40 Zeichen lang ist, aus mehreren zuf&auml;llig gew&auml;hlten W&ouml;rtern bestehen.<br>
 </p>
 
 <br><br>
@@ -76,10 +77,11 @@ Hier k&ouml;nnen auch Unicode-Zeichen eingegeben werden:
 </p>
 
 <br><br>
-<img src=":/manual/manual2.png"  border="0" alt="mlock GUI 1">
+<img src=":/manual/manual2.png"  border="0" alt="mlock GUI 2">
 
 <p>
-Das Ampel-Icon zeigt folgende Information an:
+Das Mail-Icon zeigt die G&uuml;ltigkeit der Mail-Adresse an.<br><br>
+Das Ampel-Icon neben dem Passwort zeigt folgende Information an:
 
 <ul>
 <li>rot: die Passphrase ist zu kurz oder enth&auml;lt zuwenig durch Leerzeichen getrennte W&ouml;rter</li>
@@ -88,25 +90,35 @@ Das Ampel-Icon zeigt folgende Information an:
 </ul>
 
 Nach dem Klick auf &quot;Meine miniLock-ID erzeugen&quot; wird die eigene ID im unteren Fensterrand angezeigt. Sie kann dort auch kopiert werden.<br><br>
-Nun wird der Ein- und Ausgabedialog angezeigt:
+Nun wird zum Ein- und Ausgabedialog gewechselt:
 </p>
 
 <br><br>
-<img src=":/manual/manual3.png"  border="0" alt="mlock GUI 1">
+<img src=":/manual/manual3.png"  border="0" alt="mlock GUI 3">
 
 <p>
 Hier wird das Ausgabeverzeichnis ausgew&auml;hlt und anschlie&szlig;end die Datei zur Ver- bzw. Entschl&uuml;sselung (sollte das Programm mit einer Datei als Argument aufgerufen worden sein, so wird dessen Pfad bereits in der Statusleiste angezeigt).<br>
-Man kann auch eine Datei auf das Programmfenster ziehen.<br>
-Wenn eine miniLock-Datei ausgew&auml;hlt wurde, wird diese automatisch entschl&uuml;sselt. Jede andere Datei wird im n&auml;chsten Dialog verschl&uuml;sselt:
+Man kann auch eine Datei auf das Programmfenster ziehen.<br><br>
+Wenn eine miniLock-Datei ausgew&auml;hlt wurde, wird diese automatisch entschl&uuml;sselt.<br>Jede andere Datei wird im n&auml;chsten Dialog verschl&uuml;sselt:
 </p>
 
 <br><br>
-<img src=":/manual/manual4.png"  border="0" alt="mlock GUI 1">
+<img src=":/manual/manual4.png"  border="0" alt="mlock GUI 4">
 
 <p>
 In der oberen Liste k&ouml;nnen bis zu 50 miniLock-IDs der Datei-Empf&auml;nger angegeben werden.<br>
-Mit &quot;Lese Liste aus Datei&quot; wird eine Textdatei eingelesen, die pro Zeile eine MiniLock-ID enth&auml;lt.<br>
+Mit &quot;Liste einlesen&quot; wird eine Textdatei importiert, die pro Zeile eine MiniLock-ID enth&auml;lt. Hinter den IDs k&ouml;nnen in der Datei die dazugehörigen Namen wie folgt eingetragen werden:
+<pre>
+y5qBLmncv36r98tFMw5YVoc9SHkfLDg8Wz7zf9yrPYPh2 / Andre Simon
+8SmHNEEZiK1RgWoN9xryJb8opBky9Kh7txhmgb1RLrUrW ; Customer XYZ
+sVXHR7smwqXkSbphn8gdH3Ah6a1nvbYtuXPpxG6qKT321 - Schmidt
+ULgpTbP7isNNV6kgDbNVtQo5YRuUhc4N5AAEEbne9bjJi | Jane
+</pre>
+Die Information hinter den Trennern wird nach dem Laden als Tooltip angezeigt.
+<br>
 Der Button &quot;Empf&auml;nger l&ouml;schen&quot; entfernt die Empf&auml;nger-IDs aus der Liste.<br>
+Die Option &quot;Meine ID auslassen&quot; entfernt die eigene miniLock-ID aus der Empf&auml;ngerliste.<br>
+Mit &quot;Zufallsnamen erzeugen&quot; wird die verschl&uuml;sselte Datei unter einem zuf&auml;llig gew&auml;hlten Namen gespeichert.<br><br>
 Nach dem Klick auf &quot;Datei verschl&uuml;sseln&quot; wird die miniLock-Datei im vorher angegebenen Zielverzeichnis abgelegt.
 </p>
 
@@ -126,6 +138,7 @@ Available options:
   -o, --output &lt;file&gt;   Override the target file name (assumes -D or -E)
   -m, --mail &lt;string&gt;   User mail address (salt)
   -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)
+  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
   -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
   -p, --pinentry        Use pinentry for passphrase input
   -q, --quiet           Do not print progress information

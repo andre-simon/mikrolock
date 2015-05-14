@@ -35,13 +35,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secret){
 
-  #ifdef WIN32
+#ifdef WIN32
   DWORD mode;
   HANDLE ih = GetStdHandle( STD_INPUT_HANDLE  );
 #endif
 
     if (is_secret){
-
 
     #ifndef WIN32
       // Catch the most popular signals.
@@ -59,12 +58,11 @@ void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secr
 	  fprintf(stderr,"ERROR Can't go to raw mode.\n");
       }
 
-    #else
+#else
 
       GetConsoleMode( ih, &mode );
       SetConsoleMode( ih, mode & ~(ENABLE_ECHO_INPUT) );
-    #endif
-
+#endif
     }
 
     printf("%s", prompt_txt);
@@ -74,11 +72,11 @@ void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secr
 	key &= 255;
 
     if( (is_secret &&
-             #ifndef WIN32
-                 (key == 0xd || key==0x03)
-             #else
+#ifndef WIN32
+                   (key == 0xd || key==0x03)
+#else
                    (key==0xa)
-             #endif
+#endif
              )
                 || (!is_secret && key==0x0a) ) /* ASCII RETURN / CTRL+C */
             break;
@@ -121,7 +119,7 @@ void print_help() {
 	printf("  -o, --output <file>   Override the target file name (assumes -D or -E)\n");
 	printf("  -m, --mail <string>   Mail address (salt)\n");
 	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)\n");
-	printf("  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)");
+	printf("  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)\n");
 	printf("  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)\n");
 	printf("  -p, --pinentry        Use pinentry program to ask for the passphrase\n");
 	printf("  -q, --quiet           Do not print progress information\n");
@@ -148,7 +146,7 @@ int main(int argc, char **argv) {
     }
 
     //list of minilock IDs which can decrypt the file
-    char* c_rcpt_list[MAX_RCPT+1]= {0};
+    char* c_rcpt_list[MAX_RCPT]= {0};
 
     uint8_t c_user_passphrase[256] = {0};
     uint8_t c_user_salt[256]  = {0};
@@ -187,11 +185,11 @@ int main(int argc, char **argv) {
             {"output",  required_argument, 0, 'o' },
             {"quiet",   no_argument,       0, 'q' },
             {"version", no_argument,       0, 'v' },
-            {"help", no_argument,          0, 'h' },
+            {"help",    no_argument,       0, 'h' },
             {"exclude-me", no_argument,    0, 'x' },
             {"pinentry", no_argument,      0, 'p' },
-            {"mail",    required_argument, 0, 'm' },
-            {"rcpt",    required_argument, 0, 'r' },
+            {"mail",     required_argument,0, 'm' },
+            {"rcpt",     required_argument,0, 'r' },
             {"random-name", no_argument,   0, 'R' },
             {0,         0,                 0, 0 }
         };
@@ -246,6 +244,7 @@ int main(int argc, char **argv) {
             snprintf(c_rcpt_list[num_rcpts], strlen(optarg)+1, "%s", optarg);
             num_rcpts++;
             break;
+
         case 'x':
             exclude_me = 1;
             break;
@@ -259,8 +258,10 @@ int main(int argc, char **argv) {
         case 'q':
             out_opts.silent_mode = 1;
             break;
+
         case  '?':
             goto main_exit_on_failure;
+
         default:
             break;
         }
@@ -283,8 +284,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "ERROR: the passphrase must consist of several random words, separated by spaces\n");
         goto main_exit_on_failure;
     }
-    
-    
+
     if (strlen( (const char*) c_user_passphrase)<40) {
       printf("WARNING: a weak passphrase may be declined by the original miniLock Chrome extension.\n");
     }
@@ -322,7 +322,6 @@ int main(int argc, char **argv) {
 
     if (do_dec || do_enc) {
       
-        printf("Destination file: %s\n", out_opts.c_override_out_name);
         printf("%scrypting file %s...\n", do_enc ? "En" : "De", c_input_file);
 
 	if (do_enc && !exclude_me) {
@@ -342,6 +341,7 @@ int main(int argc, char **argv) {
 	  
 	  switch (err_code){
 	    case err_ok:
+	      printf("Destination file: %s\n", out_opts.c_final_out_name);
 	      break;
 	    case  err_file_write:
 	      fprintf(stderr, "ERROR: could not write file: %s\n", out_opts.c_final_out_name);
@@ -350,7 +350,7 @@ int main(int argc, char **argv) {
 	      fprintf(stderr, "ERROR: could not open file: %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
 	      break;
 	    case err_file_read:  
-	      fprintf(stderr, "ERROR: could not read file: %s\n", do_dec ? c_input_file :out_opts.c_final_out_name);
+	      fprintf(stderr, "ERROR: could not read file: %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
 	      break;
 	    case err_format:
 	      fprintf(stderr, "ERROR: invalid file format: %s\n", c_input_file);
@@ -381,7 +381,6 @@ int main(int argc, char **argv) {
 		break;
 	  }
 	}
-        printf("Task completed.\n");
     }
     ret_val = EXIT_SUCCESS;
 

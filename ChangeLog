@@ -1,5 +1,20 @@
 mlock ChangeLog
 
+
+14.05.2015
+
+mlock 0.10
+
+Bugs + suggestions sent by Bene
+
+-CLI: added -R option
+-GUI: added random output filename checkbox
+-GUI: added recipient list tooltips
+-GUI: fixed statusbar update issues
+-GUI: allows drag and drop only in the input/output screen
+-GUI: added browse destination directory button
+
+---
 05.05.2015
 
 mlock 0.9
