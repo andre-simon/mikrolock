@@ -70,6 +70,7 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
 
     for(int i=0;i<5;i++){
            QLineEdit* le =  new QLineEdit();
+           le->setFont(QFont("Monospace"));
            scrollAreaLayout->addWidget(le);
     }
 
@@ -82,13 +83,9 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
 }
 
 void MlockMainWindow::setInitialInputFile(QString file){
-    if (!file.endsWith("minilock")){
-        QMessageBox::warning(this, tr("Invalid argument"), tr("%1 is not a minilock file.").arg(file));
-    } else {
-        inputFilename = file;
-        startedWithFilArg=true;
-        statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
-    }
+    inputFilename = file;
+    startedWithFilArg=true;
+    statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
 }
 
 void MlockMainWindow::on_txtPassPhrase_textChanged(){
@@ -377,11 +374,6 @@ void MlockMainWindow::on_btnSelectDestDir_clicked()
     dialog.setFileMode(QFileDialog::Directory);
     if (dialog.exec() && !dialog.selectedFiles().empty()) {
       ui->txtDestDir->setText(QDir::toNativeSeparators(dialog.selectedFiles().at(0)));
-
-      if (startedWithFilArg && !inputFilename.isEmpty()) {
-          startFileProcessing(inputFilename.endsWith("minilock"));
-          startedWithFilArg=false;
-      }
     }
 }
 
@@ -392,11 +384,11 @@ void MlockMainWindow::on_btnSelInputFile_clicked()
 }
 
 
-void MlockMainWindow::startFileProcessing(bool promptDecrypt)
+void MlockMainWindow::startFileProcessing(bool promptAction)
 {
     if (!inputFilename.isEmpty()) {
-        if (promptDecrypt &&  QMessageBox::question(this, tr("Decrypt given file"),
-                                                    tr("Decrypt %1\ninto %2 ?").arg(QFileInfo(inputFilename).fileName()).arg(ui->txtDestDir->text()),
+        if (promptAction &&  QMessageBox::question(this, tr("Process given file"),
+                                                    tr("%1 %2\ninto %3 ?").arg(inputFilename.endsWith(".minilock") ? tr("Decrypt"):tr("Encrypt")).arg(QFileInfo(inputFilename).fileName()).arg(ui->txtDestDir->text()),
                                                     QMessageBox::Yes|QMessageBox::No)== QMessageBox::No)
             return;
 
@@ -554,7 +546,7 @@ void MlockMainWindow::on_stackedWidget_currentChanged(int idx)
             statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
 
             if (!inputFilename.isEmpty()) {
-                startFileProcessing(inputFilename.endsWith("minilock"));
+                startFileProcessing(true);
                 startedWithFilArg=false;
             }
         } else {
