@@ -69,9 +69,7 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
     ui->scrollRcptList->setWidgetResizable(true);
 
     for(int i=0;i<5;i++){
-           QLineEdit* le =  new QLineEdit();
-           le->setFont(QFont("Monospace"));
-           scrollAreaLayout->addWidget(le);
+           addIDInputSlot();
     }
 
     mailRE.setPattern("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
@@ -192,6 +190,9 @@ void MlockMainWindow::initProgressDisplay(bool isEncryptMode)
     ui->progressBar->setVisible(true);
     ui->btnBrowseDestDir->setVisible(true);
     ui->btnEncrypt->setEnabled(false);
+    ui->btnSelectDestDir->setEnabled(false);
+    ui->btnSelInputFile->setEnabled(false);
+
     out_opts.crypto_progress=0.0;
     out_opts.hash_progress=0.0;
 }
@@ -200,9 +201,10 @@ void MlockMainWindow::decrypt(){
 
     initProgressDisplay(false);
 
-    UpdateProgressBarThread *progressUpdate = new UpdateProgressBarThread(ui->progressBar);
-    connect(progressUpdate, &UpdateProgressBarThread::finished, progressUpdate, &QObject::deleteLater);
-    progressUpdate->start();
+    UpdateProgressBarThread *progressUpdateThread = new UpdateProgressBarThread();
+    connect(progressUpdateThread, &UpdateProgressBarThread::finished, progressUpdateThread, &QObject::deleteLater);
+    connect(progressUpdateThread, &UpdateProgressBarThread::progress, this, &MlockMainWindow::updateProgress);
+    progressUpdateThread->start();
 
     DecryptThread *workerThread = new DecryptThread(inputFilename);
     connect(workerThread, &DecryptThread::resultReady, this, &MlockMainWindow::handleResults);
@@ -249,9 +251,10 @@ void MlockMainWindow::encrypt() {
 
     out_opts.random_outname =  ui->cbRandomFileName->isChecked();
 
-    UpdateProgressBarThread *progressUpdate = new UpdateProgressBarThread(ui->progressBar);
-    connect(progressUpdate, &UpdateProgressBarThread::finished, progressUpdate, &QObject::deleteLater);
-    progressUpdate->start();
+    UpdateProgressBarThread *progressUpdateThread = new UpdateProgressBarThread();
+    connect(progressUpdateThread, &UpdateProgressBarThread::finished, progressUpdateThread, &QObject::deleteLater);
+    connect(progressUpdateThread, &UpdateProgressBarThread::progress, this, &MlockMainWindow::updateProgress);
+    progressUpdateThread->start();
 
     EncryptThread *workerThread = new EncryptThread(inputFilename);
     connect(workerThread, &EncryptThread::resultReady, this, &MlockMainWindow::handleResults);
@@ -282,7 +285,7 @@ void MlockMainWindow::handleResults(int result){
                                          tr("Decrypted"): tr("Encrypted")).arg(inputFilename).arg(1 + timer.elapsed()/1000));
         QPixmap actionPix(":/Actions-dialog-ok-apply-icon.png");
         ui->lblCurrentAction->setPixmap(actionPix);
-        ui->btnSelInputFile->setEnabled(true); //if mlock-gui was called with file arg...
+        ui->btnSelInputFile->setEnabled(true);
     } else {
         forceThreadStop=true;
 
@@ -347,6 +350,13 @@ void MlockMainWindow::handleResults(int result){
     }
     this->setCursor(Qt::ArrowCursor);
     ui->btnEncrypt->setEnabled(true);
+    ui->btnSelectDestDir->setEnabled(true);
+    ui->btnSelInputFile->setEnabled(true);
+
+}
+
+void MlockMainWindow::updateProgress(int p){
+    ui->progressBar->setValue(p);
 }
 
 bool MlockMainWindow::checkMiniLockID(QString id)
@@ -419,8 +429,7 @@ void MlockMainWindow::dropEvent(QDropEvent* event)
 
 void MlockMainWindow::on_btnAddRcpt_clicked()
 {
-    QLineEdit* le =  new QLineEdit();
-    scrollAreaLayout->addWidget(le);
+    addIDInputSlot();
     if (scrollAreaLayout->count()==MAX_RCPT) {
         ui->btnAddRcpt->setEnabled(false);
     }
@@ -499,8 +508,7 @@ void MlockMainWindow::on_btnOpenFileList_clicked()
             for (int i=0;i<vals.count() && i< MAX_RCPT;i++){
 
                 if (i> scrollAreaLayout->count()-1){
-                    QLineEdit* le =  new QLineEdit();
-                    scrollAreaLayout->addWidget(le);
+                    addIDInputSlot();
                 }
 
                 QLineEdit *leCurrentId = dynamic_cast<QLineEdit*>(scrollAreaLayout->itemAt(i)->widget());
@@ -571,6 +579,17 @@ void MlockMainWindow::dragEnterEvent(QDragEnterEvent *event)
         event->acceptProposedAction();
         ui->lblDrop->setEnabled(true);
     }
+}
+
+void MlockMainWindow::addIDInputSlot()
+{
+    QLineEdit* le =  new QLineEdit();
+#ifdef WIN32
+    le->setFont(QFont("Courier New"));
+#else
+    le->setFont(QFont("Monospace"));
+#endif
+    scrollAreaLayout->addWidget(le);
 }
 
 void MlockMainWindow::writeSettings()
@@ -646,10 +665,10 @@ void UpdateProgressBarThread::run() {
    MlockMainWindow::forceThreadStop=false;
 
    while (percentage<100 &&!MlockMainWindow::forceThreadStop){
-       percentage = (int)MlockMainWindow::out_opts.crypto_progress/2 + MlockMainWindow::out_opts.hash_progress/2;
-       bar->setValue(percentage);
        QThread::msleep(150);
+       percentage = (int)MlockMainWindow::out_opts.crypto_progress/2 + MlockMainWindow::out_opts.hash_progress/2;
+       emit progress(percentage);
    }
    if (MlockMainWindow::forceThreadStop)
-       bar->setValue(0);
+       emit progress(0);
 }

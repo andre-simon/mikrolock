@@ -4,12 +4,15 @@ mlock ChangeLog
 
 mlock 0.11
 
-Bugs + suggestions sent by Bene
+Most bugs + suggestions sent by Bene
 
 -GUI: changed bad mail format icon
 -GUI: fixed layout issues
 -GUI: added drag and drop icon
 -GUI: save out dir and encryption options
+-GUI: fixed threading issue
+-W32 CLI: fixed hash progress output
+-W32 CLI: fixed stripping of destination filename
 
 ---
 14.05.2015

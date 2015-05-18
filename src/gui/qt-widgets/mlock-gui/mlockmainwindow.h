@@ -71,6 +71,7 @@ private:
     void dropEvent(QDropEvent* event);
     void dragEnterEvent(QDragEnterEvent *event);
 
+    void addIDInputSlot();
     bool checkMiniLockID(QString);
     QString unlock(QString, QString);
     QString localFilePath(QString);
@@ -113,6 +114,7 @@ private slots:
   public slots:
     void handleResults(int);
 
+    void updateProgress(int);
 };
 
 class DecryptThread : public QThread
@@ -150,15 +152,18 @@ signals:
 
 class UpdateProgressBarThread : public QThread
 {
-    QProgressBar *bar;
 
 public:
-    UpdateProgressBarThread(QProgressBar *b){
-       bar=b;
+    UpdateProgressBarThread(){
+
     }
 
     Q_OBJECT
     void run() Q_DECL_OVERRIDE ;
+
+
+signals:
+    void progress(const int s);
 };
 
 #endif // MLOCKMAINWINDOW_H

@@ -17,6 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// needs to stay for WIN32
+// for ftelloo: off_t
+#define _FILE_OFFSET_BITS 64
+
 #include "utils.h"
 
 #ifndef WIN32
@@ -137,6 +141,7 @@ void dump(const char *what, uint8_t *s, int len) {
     printf("\n");
 }
 
+
 int blake2s_stream( FILE *stream, void *resstream, struct output_options *out_opts ) {
 
     if (!out_opts->silent_mode)
@@ -166,7 +171,8 @@ int blake2s_stream( FILE *stream, void *resstream, struct output_options *out_op
             n = fread( buffer + sum, 1, buffer_length - sum, stream );
             sum += n;
             current_pos += n;
-            out_opts->hash_progress = current_pos*1.0 / eof_pos * 100;
+
+            out_opts->hash_progress = current_pos *1.0 / eof_pos * 100;
             if (!out_opts->silent_mode) {
                printf("\rProgress %3.0f%%", out_opts->hash_progress);
                fflush(stdout);

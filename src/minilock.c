@@ -196,6 +196,11 @@ error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     char b_read_buffer[BUF_READ_FILE_LEN] = {0};
     char *sep_pos = strrchr((const char*)c_input_file, '/'); //drop path
 
+#ifdef WIN32
+                if (!sep_pos)
+                    sep_pos = strrchr((const char*)c_input_file, '\\');
+#endif
+
     strncpy(b_read_buffer, (sep_pos) ? (const char*)sep_pos+1 : (const char*)c_input_file, BUF_PATH_LEN-1 );
     crypto_secretbox_easy((unsigned char*)b_crypt_block, (unsigned char*)b_read_buffer,
                           BUF_PATH_LEN, b_file_nonce, b_file_key);
@@ -272,6 +277,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
                 snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s.minilock", out_opts->c_override_out_name, c_b58_file_rnd );
             } else {
                 char* delim=strrchr((char*)c_filename, '/');
+
                 char* fname= delim ? delim+1 : (char*)c_filename;
                 snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s.minilock", out_opts->c_override_out_name, fname );
             }
@@ -484,6 +490,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
     json_value * json_file_desc = 0;
 
     FILE *input_file = fopen((char*)c_filename, "rb"); // b needed for W32
+
     if(input_file == NULL) {
         return err_file_open;
     }
@@ -625,6 +632,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         off_t crypt_block_start = ftello(input_file);
         
         unsigned char hash[KEY_LEN] = {0};
+
 
         if( blake2s_stream( input_file, hash, out_opts ) < 0 ) {
             ret_val = err_hash;
