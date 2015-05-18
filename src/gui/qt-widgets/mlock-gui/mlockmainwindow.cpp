@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPixmap>
 #include <QDesktopWidget>
 #include <QDesktopServices>
-
+#include <QSettings>
 #include <QFileInfo>
 
 #include "mlockmainwindow.h"
@@ -39,6 +39,7 @@ uint8_t MlockMainWindow::b_my_pk[KEY_LEN + 1]= {0};
 uint8_t MlockMainWindow::c_minilock_id[KEY_LEN * 2]= {0};
 struct output_options MlockMainWindow::out_opts;
 bool MlockMainWindow::forceThreadStop=false;
+
 
 MlockMainWindow::MlockMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -77,14 +78,17 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
 
     this->setGeometry( QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter, this->size(),
                                            qApp->desktop()->availableGeometry() ));
-
-
+    readSettings();
 }
 
 void MlockMainWindow::setInitialInputFile(QString file){
-    inputFilename = file;
-    startedWithFilArg=true;
-    statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
+    if (!file.endsWith("minilock")){
+        QMessageBox::warning(this, tr("Invalid argument"), tr("%1 is not a minilock file.").arg(file));
+    } else {
+        inputFilename = file;
+        startedWithFilArg=true;
+        statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
+    }
 }
 
 void MlockMainWindow::on_txtPassPhrase_textChanged(){
@@ -123,10 +127,10 @@ void MlockMainWindow::on_txtMail_textChanged()
     QString mail = ui->txtMail->text();
     bool possiblyMailAddress = mail.contains('@');
     ui->lblMailIcon->setEnabled(possiblyMailAddress);
+    ui->lblMailIcon->setPixmap(QPixmap (":/Status-mail-unread-icon.png"));
     ui->lblMailIcon->setToolTip(tr("You do not need to enter an email address here unless you want to use the Chrome miniLock extension."));
     if (possiblyMailAddress){
         if (mailRE.exactMatch(mail)){
-            ui->lblMailIcon->setPixmap(QPixmap (":/Status-mail-unread-icon.png"));
             ui->lblMailIcon->setToolTip(tr("This mail address appears to be valid."));
         } else {
             ui->lblMailIcon->setPixmap(QPixmap (":/Status-mail-unread-new-icon.png"));
@@ -374,22 +378,16 @@ void MlockMainWindow::on_btnSelectDestDir_clicked()
     if (dialog.exec() && !dialog.selectedFiles().empty()) {
       ui->txtDestDir->setText(QDir::toNativeSeparators(dialog.selectedFiles().at(0)));
 
-      strncpy((char*)out_opts.c_override_out_name,
-              ui->txtDestDir->text().toLocal8Bit().data(),
-              sizeof out_opts.c_override_out_name-1);
-
       if (startedWithFilArg && !inputFilename.isEmpty()) {
           startFileProcessing(inputFilename.endsWith("minilock"));
           startedWithFilArg=false;
-        } else {
-          ui->btnSelInputFile->setEnabled(true);
       }
     }
 }
 
 void MlockMainWindow::on_btnSelInputFile_clicked()
 {
-    inputFilename = QFileDialog::getOpenFileName(this, tr("Select the input file"), "", "*.*");
+    inputFilename = QFileDialog::getOpenFileName(this, tr("Select the input file"), "", "*");
     startFileProcessing();
 }
 
@@ -397,9 +395,8 @@ void MlockMainWindow::on_btnSelInputFile_clicked()
 void MlockMainWindow::startFileProcessing(bool promptDecrypt)
 {
     if (!inputFilename.isEmpty()) {
-
         if (promptDecrypt &&  QMessageBox::question(this, tr("Decrypt given file"),
-                                                    tr("Decrypt %1?").arg(inputFilename),
+                                                    tr("Decrypt %1\ninto %2 ?").arg(QFileInfo(inputFilename).fileName()).arg(ui->txtDestDir->text()),
                                                     QMessageBox::Yes|QMessageBox::No)== QMessageBox::No)
             return;
 
@@ -413,18 +410,19 @@ void MlockMainWindow::startFileProcessing(bool promptDecrypt)
 void MlockMainWindow::dropEvent(QDropEvent* event)
 {
 
+    ui->lblDrop->setEnabled(false);
     if (ui->txtDestDir->text().isEmpty()) return;
 
     QList<QUrl> urls = event->mimeData()->urls();
-       if (urls.isEmpty())
-           return;
+    if (urls.isEmpty())
+       return;
 
-       QString fileName = urls.first().toLocalFile();
-       if (!fileName.isEmpty())
-           inputFilename=fileName;
+    QString fileName = urls.first().toLocalFile();
+    if (!fileName.isEmpty())
+       inputFilename=fileName;
 
-       statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
-       startFileProcessing();
+    statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
+    startFileProcessing();
 }
 
 void MlockMainWindow::on_btnAddRcpt_clicked()
@@ -446,6 +444,12 @@ void MlockMainWindow::on_txtDestDir_textChanged()
     if (!ui->txtDestDir->text().endsWith(QDir::separator())) {
        ui->txtDestDir->setText(ui->txtDestDir->text() +  QDir::separator());
     }
+
+    ui->btnSelInputFile->setEnabled(!ui->txtDestDir->text().isEmpty());
+
+    strncpy((char*)out_opts.c_override_out_name,
+            ui->txtDestDir->text().toLocal8Bit().data(),
+            sizeof out_opts.c_override_out_name-1);
 }
 
 void MlockMainWindow::on_actionAbout_mlock_triggered()
@@ -546,11 +550,17 @@ void MlockMainWindow::on_stackedWidget_currentChanged(int idx)
         break;
 
     case 1:
-        if (startedWithFilArg)
+        if (startedWithFilArg){
             statusBar()->showMessage(tr("Input file %1").arg(inputFilename));
-        else
+
+            if (!inputFilename.isEmpty()) {
+                startFileProcessing(inputFilename.endsWith("minilock"));
+                startedWithFilArg=false;
+            }
+        } else {
             statusBar()->showMessage(tr("Set input and output parameters"));
-        break;
+       }
+            break;
 
     case 2:
         statusBar()->showMessage(tr("Set encryption options for %1").arg(inputFilename));
@@ -565,13 +575,59 @@ void MlockMainWindow::on_stackedWidget_currentChanged(int idx)
 
 void MlockMainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (event->mimeData()->hasFormat("text/uri-list"))
+    if (!ui->txtDestDir->text().isEmpty() && event->mimeData()->hasFormat("text/uri-list")){
         event->acceptProposedAction();
+        ui->lblDrop->setEnabled(true);
+    }
 }
+
+void MlockMainWindow::writeSettings()
+ {
+     QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                        "andre-simon.de", "mlock-gui");
+
+     settings.beginGroup("MainWindow");
+     settings.setValue("geometry", saveGeometry());
+     settings.setValue("windowState", saveState());
+     settings.endGroup();
+
+     settings.beginGroup("input");
+
+     settings.setValue("txtDestDir", ui->txtDestDir->text());
+     settings.setValue("cbOmitId", ui->cbOmitId->isChecked());
+     settings.setValue("cbRandomFileName", ui->cbRandomFileName->isChecked());
+
+     settings.endGroup();
+ }
+
+ void MlockMainWindow::readSettings()
+ {
+     QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                        "andre-simon.de", "mlock-gui");
+
+     //QMessageBox::information(this, "path", settings.fileName());
+     if (!QFile(settings.fileName()).exists()) return;
+
+     settings.beginGroup("MainWindow");
+
+     restoreGeometry(settings.value("geometry").toByteArray());
+     restoreState(settings.value("windowState").toByteArray());
+
+     settings.endGroup();
+
+     settings.beginGroup("input");
+
+     ui->txtDestDir->setText(settings.value("txtDestDir").toString());
+     ui->cbOmitId->setChecked(settings.value("cbOmitId").toBool());
+     ui->cbRandomFileName->setChecked(settings.value("cbRandomFileName").toBool());
+     settings.endGroup();
+ }
+
 
 MlockMainWindow::~MlockMainWindow()
 {
     freeMem(true);
+    writeSettings();
     delete ui;
 }
 

@@ -63,7 +63,7 @@ Wichtig hierbei ist, dass die Passphrase geheim bleibt - es werden nur die MiniL
 <h2>Die grafische Benutzeroberfl&auml;che</h2>
 
 <p>
-Nach dem Start des Programms werden eine Mail-Adresse und ein Password abgefragt.
+Nach dem Start des Programms werden eine Mail-Adresse und ein Passwort abgefragt.
 Aus diesen Informationen wird ein Schl&uuml;sselpaar gebildet (privater und &ouml;ffentlicher Schl&uuml;ssel).<br>
 Statt der Mail-Adresse kann auch ein anderer Wert angegeben werden, dies sollte man jedoch nur tun wenn man das miniLock Chrome-Plugin nicht nutzen m&ouml;chte.<br>
 Damit die verschl&uuml;sselte Datei wirksam gesch&uuml;tzt ist, muss eine Passphrase, die weniger als 40 Zeichen lang ist, aus mehreren zuf&auml;llig gew&auml;hlten W&ouml;rtern bestehen.<br>
@@ -80,16 +80,49 @@ Hier k&ouml;nnen auch Unicode-Zeichen eingegeben werden:
 <img src=":/manual/manual2.png"  border="0" alt="mlock GUI 2">
 
 <p>
-Das Mail-Icon zeigt die G&uuml;ltigkeit der Mail-Adresse an.<br><br>
-Das Ampel-Icon neben dem Passwort zeigt folgende Information an:
+Das <b>Mail-Icon</b> zeigt die G&uuml;ltigkeit der Mail-Adresse an:
 
-<ul>
-<li>rot: die Passphrase ist zu kurz oder enth&auml;lt zuwenig durch Leerzeichen getrennte W&ouml;rter</li>
-<li>gelb: die Passphrase wird wahrscheinlich vom Original MiniLock-Plugin f&uuml;r Chrome abgewiesen</li>
-<li>grün: die Passphrase ist ausreichend sicher</li>
-</ul>
+<table border="0">
+<tr>
+<td>
+<img src=":/Status-mail-unread-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+das Format der Mail-Adresse ist gültig
+</td>
+</tr><tr>
+<td>
+<img src=":/Status-mail-unread-new-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+das Format der Mail-Adresse ist nicht gültig
+</td>
+</tr>
+</table>
 
-Nach dem Klick auf &quot;Meine miniLock-ID erzeugen&quot; wird die eigene ID im unteren Fensterrand angezeigt. Sie kann dort auch kopiert werden.<br><br>
+<br><br>Das <b>Ampel-Icon</b> neben dem Passwort zeigt folgende Information an:
+
+<table border="0">
+<tr>
+<td>
+<img src=":/Status-security-low-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+die Passphrase ist zu kurz oder enth&auml;lt zuwenig durch Leerzeichen getrennte W&ouml;rter
+</td>
+</tr><tr>
+<td>
+<img src=":/Status-security-medium-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+die Passphrase wird wahrscheinlich vom Original MiniLock-Plugin f&uuml;r Chrome abgewiesen
+</td>
+</tr><tr>
+<td>
+<img src=":/Status-security-high-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+die Passphrase ist ausreichend sicher
+</td>
+</tr>
+</table>
+
+Nach dem Klick auf &quot;Meine miniLock-ID erzeugen&quot; wird die eigene ID am unteren Fensterrand angezeigt. Sie kann dort auch kopiert werden.<br><br>
 Nun wird zum Ein- und Ausgabedialog gewechselt:
 </p>
 
@@ -187,7 +220,7 @@ Die MiniLock-ID wird wie folgt erzeugt:</p>
 id := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( <a href="http://doc.libsodium.org/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret) + <a href="https://blake2.net" target="new">blake2</a>(secret) )
 </pre>
 <p>
-Der JSON-Dateiheader der MiniLock-Dateien enth&auml;lt die MiniLock-ID des Senders, die IDs der Empf&auml;nger sowie Schl&uuml;ssel und Hashwert der verschl&uuml;sselten Eingabedatei.<br><br>
+Der JSON-Dateiheader der MiniLock-Dateien enth&auml;lt die MiniLock-ID des Senders, die IDs der Empf&auml;nger sowie Schl&uuml;ssel (zuf&auml;llig erzeugt) und Hashwert der verschl&uuml;sselten Eingabedatei.<br><br>
 Diese Informationen werden separat mit jeder angegebenen Empf&auml;nger-ID als Public-Key mittels <a href="http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a>  verschl&uuml;sselt (Schl&uuml;sseltausch: Curve25519; Verfahren: XSalsa20 stream cipher; Authentifizierung: Poly1305 MAC).<br><br>
 Die Eingabedatei wird mit <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> verschl&uuml;sselt (Verfahren: XSalsa20 stream cipher; Authentifizierung: Poly1305 MAC). <br><br>
 Mehr Infos zu den kryptographischen Eigenschaften und dem Dateiformat: <a href="https://minilock.io">https://minilock.io</a>.

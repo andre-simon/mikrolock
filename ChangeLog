@@ -1,6 +1,17 @@
 mlock ChangeLog
 
+18.05.2015
 
+mlock 0.11
+
+Bugs + suggestions sent by Bene
+
+-GUI: changed bad mail format icon
+-GUI: fixed layout issues
+-GUI: added drag and drop icon
+-GUI: save out dir and encryption options
+
+---
 14.05.2015
 
 mlock 0.10

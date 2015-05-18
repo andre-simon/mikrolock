@@ -29,19 +29,13 @@ int ttyraw(int fd) {
     if(tcgetattr(fd, &oldtermios) < 0)
         return(-1);
     newtermios = oldtermios;
-
     newtermios.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-
     newtermios.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-
     newtermios.c_cflag &= ~(CSIZE | PARENB);
-
     newtermios.c_cflag |= CS8;
     /* Set 8 bits per character. */
-
     newtermios.c_oflag &= ~(OPOST);
     /* This includes things like expanding tabs to spaces. */
-
     newtermios.c_cc[VMIN] = 1;
     newtermios.c_cc[VTIME] = 0;
 
@@ -50,7 +44,6 @@ int ttyraw(int fd) {
         return(-1);
     return(0);
 }
-
 
 int ttyreset(int fd) {
     if(tcsetattr(fd, TCSAFLUSH, &oldtermios) < 0)
@@ -145,7 +138,7 @@ void dump(const char *what, uint8_t *s, int len) {
 }
 
 int blake2s_stream( FILE *stream, void *resstream, struct output_options *out_opts ) {
-  
+
     if (!out_opts->silent_mode)
         printf("Calculating file hash...\n");
       
@@ -160,15 +153,11 @@ int blake2s_stream( FILE *stream, void *resstream, struct output_options *out_op
     blake2s_init( S, KEY_LEN );
   
     off_t sum, n;
-    off_t eof_pos=0;
-    off_t current_pos=0;
-    
-  //  if (!silent_mode){
-        current_pos   = ftello(stream);
-        fseeko(stream, 0, SEEK_END); 
-        eof_pos   = ftello(stream);
-        fseeko(stream, current_pos, SEEK_SET);
-   // }
+    off_t current_pos= ftello(stream);
+    fseeko(stream, 0, SEEK_END);
+
+    off_t eof_pos   = ftello(stream);
+    fseeko(stream, current_pos, SEEK_SET);
 
     while( 1 ) {
         sum = 0;

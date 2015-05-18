@@ -1,3 +1,22 @@
+/*
+mlock reads and writes encrypted files in the minilock format
+
+Copyright (C) 2015 Andre Simon
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef MLOCKMAINWINDOW_H
 #define MLOCKMAINWINDOW_H
 
@@ -41,7 +60,6 @@ public:
 
     static bool forceThreadStop;
 
-
     explicit MlockMainWindow(QWidget *parent = 0);
     ~MlockMainWindow();
 
@@ -49,9 +67,6 @@ public:
 
 private:
     Ui::MlockMainWindow *ui;
-
-    bool startedWithFilArg;
-
 
     void dropEvent(QDropEvent* event);
     void dragEnterEvent(QDragEnterEvent *event);
@@ -65,6 +80,10 @@ private:
     void startFileProcessing(bool promptDecrypt=false);
     void initProgressDisplay(bool);
 
+    void readSettings();
+    void writeSettings();
+
+    bool startedWithFilArg;
     QString inputFilename;
     QTime timer;
     QVBoxLayout *scrollAreaLayout;
@@ -141,6 +160,5 @@ public:
     Q_OBJECT
     void run() Q_DECL_OVERRIDE ;
 };
-
 
 #endif // MLOCKMAINWINDOW_H

@@ -86,13 +86,49 @@ It is also possible to enter Unicode characters:</p>
 <img src=":/manual/manual2.png"  border="0" alt="mlock GUI 1">
 
 <p>
-The mail icon shows whether the mail adress is valid.<br><br>
-The signal icon gives you following information:
-<ul>
-<li>red: the passphrase is too short or does not contain enough words (separated by spaces)</li>
-<li>yellow: the passphrase will most likely be refused by the original MiniLock-Plugin for Chrome</li>
-<li>green: the passphrase offers sufficient security</li>
-</ul>
+
+The <b>mail icon</b> shows whether the mail adress is valid:
+
+<table border="0">
+<tr>
+<td>
+<img src=":/Status-mail-unread-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+the mail address appears to be valid
+</td>
+</tr><tr>
+<td>
+<img src=":/Status-mail-unread-new-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+the mail address appears to be invalid
+</td>
+</tr>
+</table>
+
+<br><br>
+The <b>signal icon</b> gives you following information::
+
+<table border="0">
+<tr>
+<td>
+<img src=":/Status-security-low-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+the passphrase is too short or does not contain enough words (separated by spaces)
+</td>
+</tr><tr>
+<td>
+<img src=":/Status-security-medium-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+the passphrase will most likely be refused by the original MiniLock-Plugin for Chrome
+</td>
+</tr><tr>
+<td>
+<img src=":/Status-security-high-icon.png"  border="0" alt="Icon 1" width="32">
+</td><td style="vertical-align:middle">
+the passphrase offers sufficient security
+</td>
+</tr>
+</table>
 
 After clicking &quot;Generate my miniLock ID&quot; your ID will be shown at the window bottom. You are able to copy it nearby.<br><br>
 Now the input/output dialog is displayed:
@@ -190,7 +226,7 @@ The Minilock-ID is defined as:</p>
 id := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( <a href="http://doc.libsodium.org/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret) + <a href="https://blake2.net" target="new">blake2</a>(secret) )
 </pre>
 <p>
-The JSON header of a miniLock file contains the sender's miniLock ID, the recipient's IDs, file hash and key of the encrypted input file.<br><br>
+The JSON header of a miniLock file contains the sender's miniLock ID, the recipient's IDs, file hash and the random key of the encrypted input file.<br><br>
 This information is encrypted separately with each given recipient ID as public key using <a href="http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a> (key exchange: Curve25519; encryption: XSalsa20 stream cipher; authentication: Poly1305 MAC).<br><br>
 The input file is encrypted with <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> (encryption: XSalsa20 stream cipher; authentication: Poly1305 MAC).<br><br>
 Read more about the cryptographic details and the file format: <a href="https://minilock.io">https://minilock.io</a>.

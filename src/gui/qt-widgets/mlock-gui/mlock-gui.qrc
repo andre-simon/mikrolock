@@ -23,5 +23,6 @@
         <file>Actions-edit-clear-icon.png</file>
         <file>Status-mail-unread-new-icon.png</file>
         <file>Status-mail-unread-icon.png</file>
+        <file>Actions-drop-icon.png</file>
     </qresource>
 </RCC>
