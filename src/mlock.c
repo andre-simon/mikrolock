@@ -107,6 +107,11 @@ int check_password(const char *c_passphrase){
   return i > 3;
 }
 
+void add_rcpt(char* id, char**c_rcpt_list, unsigned int* num_rcpts){
+    c_rcpt_list[*num_rcpts] = (char*)malloc(strlen(id)+1);
+    snprintf(c_rcpt_list[*num_rcpts], strlen(id)+1, "%s", id);
+    (*num_rcpts)++;
+}
 
 /******************************************************************************/
 
@@ -149,7 +154,8 @@ int main(int argc, char **argv) {
     }
 
     //list of minilock IDs which can decrypt the file
-    char* c_rcpt_list[MAX_RCPT]= {0};
+    // reserve one for own ID
+    char* c_rcpt_list[MAX_RCPT+1]= {0};
 
     uint8_t c_user_passphrase[256] = {0};
     uint8_t c_user_salt[256]  = {0};
@@ -174,8 +180,8 @@ int main(int argc, char **argv) {
 
     int exclude_me =0;
     int ret_val = EXIT_FAILURE;
-
     unsigned int num_rcpts=0;
+
     FILE *list_file=NULL;
 
     while (1) {
@@ -237,9 +243,7 @@ int main(int argc, char **argv) {
                 fprintf(stderr, "ERROR: invalid miniLock ID: %s\n", optarg);
                 goto main_exit_on_failure;
             }
-            c_rcpt_list[num_rcpts] = (char*)malloc(strlen(optarg)+1);
-            snprintf(c_rcpt_list[num_rcpts], strlen(optarg)+1, "%s", optarg);
-            num_rcpts++;
+            add_rcpt(optarg, c_rcpt_list,  &num_rcpts);
             break;
 
         case 'l':
@@ -254,9 +258,7 @@ int main(int argc, char **argv) {
             while (fgets(c_rcpt_line, sizeof c_rcpt_line -1, list_file)){
                 char *token = strtok(c_rcpt_line, " ,;/\r\n\t");
                 if (check_minilock_id((const unsigned char *)token) && num_rcpts < MAX_RCPT){
-                    c_rcpt_list[num_rcpts] = (char*)malloc(strlen(token)+1);
-                    snprintf(c_rcpt_list[num_rcpts], strlen(token)+1, "%s", token);
-                    num_rcpts++;
+                    add_rcpt(token, c_rcpt_list, &num_rcpts);
                 }
             }
             fclose(list_file);
@@ -344,70 +346,67 @@ int main(int argc, char **argv) {
       
         printf("%scrypting file %s...\n", do_enc ? "En" : "De", c_input_file);
 
-	if (do_enc && !exclude_me) {
-	  c_rcpt_list[num_rcpts] = malloc(strlen((char*)c_minilock_id)+1);
-	  sprintf(c_rcpt_list[num_rcpts], "%s", (char*)c_minilock_id);
-	  num_rcpts++;
-	}
+        if (do_enc && !exclude_me) {
+            add_rcpt((char*)c_minilock_id, c_rcpt_list,  &num_rcpts);
+        }
 
-	if (do_dec || do_enc){
-	  error_code err_code;
-	  if (do_dec) 
-	    err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk, &out_opts);
-	  else
-            err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, &out_opts);
-	
-	  sodium_memzero(b_my_sk, sizeof b_my_sk);
-	  
-	  switch (err_code){
-	    case err_ok:
-	      printf("Destination file: %s\n", out_opts.c_final_out_name);
-	      break;
-	    case  err_file_write:
-	      fprintf(stderr, "ERROR: could not write file: %s\n", out_opts.c_final_out_name);
-	      break;
-	    case err_file_open:
-	      fprintf(stderr, "ERROR: could not open file: %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
-	      break;
-	    case err_file_read:  
-	      fprintf(stderr, "ERROR: could not read file: %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
-	      break;
-	    case err_format:
-	      fprintf(stderr, "ERROR: invalid file format: %s\n", c_input_file);
-	      break;
-	    case err_no_rcpt:
-	      fprintf(stderr, "ERROR: no recipients defined\n");
-	      break;
-	    case  err_failed:
-	     fprintf(stderr, "ERROR: undefined error\n");
-	      break;
-	    case err_open:
-	     fprintf(stderr, "ERROR: could not decrypt data\n");
-	      break;
-	    case err_box:
-	      fprintf(stderr, "ERROR: could not encrypt data\n");
-	      break;
-	    case err_hash:
-	      fprintf(stderr, "ERROR: could not hash data\n");
-	      break;
-	    case err_not_allowed:
-	      fprintf(stderr, "ERROR: not allowed to decrypt\n");
-	      break;
-	    case err_file_empty:
-	      fprintf(stderr, "ERROR: empty input file: %s\n", c_input_file);
-	      break;
-	    case err_file_exists:
-		fprintf(stderr, "ERROR: output file exists: %s\n", out_opts.c_final_out_name);
-		break;
-	  }
-	}
+        if (do_dec || do_enc){
+            error_code err_code;
+            if (do_dec)
+                err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk, &out_opts);
+            else
+                err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, &out_opts);
+
+            sodium_memzero(b_my_sk, sizeof b_my_sk);
+
+            switch (err_code){
+            case err_ok:
+                printf("Destination file: %s\n", out_opts.c_final_out_name);
+                break;
+            case  err_file_write:
+                fprintf(stderr, "ERROR: could not write file: %s\n", out_opts.c_final_out_name);
+                break;
+            case err_file_open:
+                fprintf(stderr, "ERROR: could not open file: %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
+                break;
+            case err_file_read:
+                fprintf(stderr, "ERROR: could not read file: %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
+                break;
+            case err_format:
+                fprintf(stderr, "ERROR: invalid file format: %s\n", c_input_file);
+                break;
+            case err_no_rcpt:
+                fprintf(stderr, "ERROR: no recipients defined\n");
+                break;
+            case  err_failed:
+                fprintf(stderr, "ERROR: undefined error\n");
+                break;
+            case err_open:
+                fprintf(stderr, "ERROR: could not decrypt data\n");
+                break;
+            case err_box:
+                fprintf(stderr, "ERROR: could not encrypt data\n");
+                break;
+            case err_hash:
+                fprintf(stderr, "ERROR: could not hash data\n");
+                break;
+            case err_not_allowed:
+                fprintf(stderr, "ERROR: not allowed to decrypt\n");
+                break;
+            case err_file_empty:
+                fprintf(stderr, "ERROR: empty input file: %s\n", c_input_file);
+                break;
+            case err_file_exists:
+                fprintf(stderr, "ERROR: output file exists: %s\n", out_opts.c_final_out_name);
+                break;
+            }
+        }
     }
     ret_val = EXIT_SUCCESS;
 
 main_exit_on_failure:
-
     while (num_rcpts--) {
-       free(c_rcpt_list[num_rcpts]);
+            free(c_rcpt_list[num_rcpts]);
     }
     return ret_val;
 }

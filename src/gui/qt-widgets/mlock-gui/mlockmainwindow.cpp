@@ -32,7 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "showmanualdialog.h"
 
 // static data items shared with threads
-char* MlockMainWindow::c_rcpt_list[MAX_RCPT]= {0};
+// reserve one for own ID
+char* MlockMainWindow::c_rcpt_list[MAX_RCPT + 1]= {0};
+
 unsigned int MlockMainWindow::num_rcpts=0;
 uint8_t MlockMainWindow::b_my_sk[KEY_LEN] = {0};
 uint8_t MlockMainWindow::b_my_pk[KEY_LEN + 1]= {0};
