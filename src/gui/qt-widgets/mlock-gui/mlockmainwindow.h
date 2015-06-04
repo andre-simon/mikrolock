@@ -50,7 +50,7 @@ class MlockMainWindow : public QMainWindow
 
 public:
 
-    static char* c_rcpt_list[50];
+    static char* c_rcpt_list[MAX_RCPT];
     static unsigned int num_rcpts;
     static uint8_t b_my_sk[KEY_LEN] ;
     static uint8_t b_my_pk[KEY_LEN + 1];

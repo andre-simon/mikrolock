@@ -22,15 +22,22 @@ mlock is a fast native implementation of the minilock file format.
 Despite its name (and in contrast to the original implementation), it can also 
 handle BIG files.
 </p>
-<p>
 
+<p>
+The main goal of development is to provide an easy exchange of encrypted data
+using mail or cloud services. mlock is based on modern public key encryption
+without configuration or learning efforts. The miniLock file format may also be
+applied using the Chrome extension, this might help if corporate rules do not
+allow an installation of mlock.
+</p>
+
+<p>
 A short description of minilock's benefits (source: <a href="https://minilock.io">https://minilock.io</a>):
 <br>
 <i>&quot;
 Enter your miniLock passphrase on any computer, and you'll get access to your
 miniLock ID. No key storage or management — just a single passphrase to access
-your miniLock identity anywhere. miniLock uses modern cryptographic primitives
-to accomplish this securely.
+your miniLock identity anywhere.
 &quot;</i>
 
 <p>
@@ -147,7 +154,7 @@ If a minilock file was selected, it will be automatically decrypted. Any other f
 <img src=":/manual/manual4.png"  border="0" alt="mlock GUI 1">
 
 <p>
-Using the upper list you can define up to 50 miniLock IDs of your file recipients.<br>
+Using the upper list you can define up to 128 miniLock IDs of your file recipients.<br>
 Using &quot;Read list file&quot; you can import a text file which contains one miniLock ID per line. The recipient's names may be entered behind their IDs as follows:
 <pre>
 y5qBLmncv36r98tFMw5YVoc9SHkfLDg8Wz7zf9yrPYPh2 / Andre Simon
@@ -176,7 +183,7 @@ Available options:
   -D, --decrypt &lt;file&gt;  Decrypt the given miniLock file
   -o, --output &lt;file&gt;   Override the target file name (assumes -D or -E)
   -m, --mail &lt;string&gt;   User mail address (salt)
-  -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)
+  -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated up to 128x, assumes -E)
   -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
   -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
   -p, --pinentry        Use pinentry for passphrase input
@@ -197,7 +204,6 @@ Unlocking...
 Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
 Encrypting file libsodium-1.0.0.tar.gz...
 Calculating file hash...
-Task completed.
 </pre>
 
 <p>
@@ -215,20 +221,19 @@ Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Decrypting file libsodium-1.0.0.tar.gz.minilock...
 Calculating file hash...
 Writing to file libsodium-1.0.0.tar.gz...
-Task completed.
 </pre>
 </p>
 
 <h2>Applied crypto functions</h2>
 <p>
-The Minilock-ID is defined as:</p>
+A miniLock-ID is defined as:</p>
 <pre>secret := <a href="http://doc.libsodium.org/password_hashing/README.html#key-derivation" target="new">scrypt</a>(<a href="https://blake2.net" target="new">blake2</a>(passphrase), mail, 131072, 1)
 id := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( <a href="http://doc.libsodium.org/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret) + <a href="https://blake2.net" target="new">blake2</a>(secret) )
 </pre>
 <p>
 The JSON header of a miniLock file contains the sender's miniLock ID, the recipient's IDs, file hash and the random key of the encrypted input file.<br><br>
 This information is encrypted separately with each given recipient ID as public key using <a href="http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a> (key exchange: Curve25519; encryption: XSalsa20 stream cipher; authentication: Poly1305 MAC).<br><br>
-The input file is encrypted with <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> (encryption: XSalsa20 stream cipher; authentication: Poly1305 MAC).<br><br>
+The input file is encrypted using <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> (encryption: XSalsa20 stream cipher; authentication: Poly1305 MAC).<br><br>
 Read more about the cryptographic details and the file format: <a href="https://minilock.io">https://minilock.io</a>.
 </p>
 

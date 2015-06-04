@@ -1,5 +1,15 @@
 mlock ChangeLog
 
+
+04.06.2015
+
+mlock 0.12
+
+-increased allowed recipient ID count to 128
+-CLI: added --list option
+-GUI: fixed minor issues
+
+---
 18.05.2015
 
 mlock 0.11

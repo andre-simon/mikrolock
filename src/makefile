@@ -13,7 +13,8 @@ GUI_QT_DIR=./gui/qt-widgets/mlock-gui/
 
 OWASP_FLAGS=-Wextra  -fPIE -Wno-unused-parameter -Wformat=2 -Wformat-security -fstack-protector-all -Wstrict-overflow
 
-CFLAGS=-O2 -Wall ${OWASP_FLAGS} -std=gnu99 -I${LIBS} -I${LIBS}pinentry/pinentry
+# -fsigned-char needed for ARM
+CFLAGS=-O2 -Wall ${OWASP_FLAGS} -fsigned-char -std=gnu99 -I${LIBS} -I${LIBS}pinentry/pinentry
 
 LDFLAGS=-lm -lsodium
 

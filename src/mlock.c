@@ -118,13 +118,16 @@ void print_help() {
 	printf("  -D, --decrypt <file>  Decrypt the given miniLock file\n");
 	printf("  -o, --output <file>   Override the target file name (assumes -D or -E)\n");
 	printf("  -m, --mail <string>   Mail address (salt)\n");
-	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)\n");
-	printf("  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)\n");
-	printf("  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)\n");
+	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 128x, assumes -E)\n\n");
+	printf("  -h, --help            Print this help screen\n");
+	printf("  -l, --list <file>     Recipient list text file (contains one miniLock ID per line, max. 128 IDs)\n");
+	printf("                        ID descriptions may be added using these delimiters: space, ',', ';', '/'\n");
 	printf("  -p, --pinentry        Use pinentry program to ask for the passphrase\n");
 	printf("  -q, --quiet           Do not print progress information\n");
-	printf("  -h, --help            Print this help screen\n");
+	printf("  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)\n");
 	printf("  -v, --version         Print version information\n\n");
+	printf("  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)\n");
+
 	printf("If neither -E nor -D is given, mlock exits after showing your miniLock ID.\n");
 }
 
@@ -173,9 +176,7 @@ int main(int argc, char **argv) {
     int ret_val = EXIT_FAILURE;
 
     unsigned int num_rcpts=0;
-
-    uint8_t b_cs[1];
-    uint8_t b_rcpt_pk[KEY_LEN + 1]= {0};
+    FILE *list_file=NULL;
 
     while (1) {
         int option_index = 0;
@@ -191,10 +192,11 @@ int main(int argc, char **argv) {
             {"mail",     required_argument,0, 'm' },
             {"rcpt",     required_argument,0, 'r' },
             {"random-name", no_argument,   0, 'R' },
+            {"list",    required_argument, 0, 'l' },
             {0,         0,                 0, 0 }
         };
 
-        c = getopt_long(argc, argv, "E:D:o:qvhm:r:xpR",
+        c = getopt_long(argc, argv, "E:D:o:qvhm:r:xpRl:",
                         long_options, &option_index);
         if (c == -1)
             break;
@@ -205,7 +207,8 @@ int main(int argc, char **argv) {
             break;
 
         case 'o':
-            snprintf((char *)out_opts.c_override_out_name, sizeof out_opts.c_override_out_name-1, "%s", optarg);
+            snprintf((char *)out_opts.c_override_out_name, sizeof out_opts.c_override_out_name-1,
+                     "%s", optarg);
             break;
 
         case 'R':
@@ -229,21 +232,35 @@ int main(int argc, char **argv) {
 
         case 'r':
             if (num_rcpts+1== MAX_RCPT) break;
-	    
-	    if (strlen(optarg)>46) {
-                fprintf(stderr, "ERROR: invalid Minilock ID: %s\n", optarg);
-                goto main_exit_on_failure;
-            }
-            base58_decode(b_rcpt_pk, (const unsigned char*)optarg);
-            blake_2s_array(b_rcpt_pk, KEY_LEN , b_cs, sizeof b_cs);
-            if (b_cs[0]!=b_rcpt_pk[KEY_LEN]) {
-                fprintf(stderr, "ERROR: invalid Minilock ID: %s\n", optarg);
+
+            if (!check_minilock_id((const unsigned char*)optarg)) {
+                fprintf(stderr, "ERROR: invalid miniLock ID: %s\n", optarg);
                 goto main_exit_on_failure;
             }
             c_rcpt_list[num_rcpts] = (char*)malloc(strlen(optarg)+1);
             snprintf(c_rcpt_list[num_rcpts], strlen(optarg)+1, "%s", optarg);
             num_rcpts++;
             break;
+
+        case 'l':
+
+            list_file = fopen(optarg, "r");
+            if(list_file == NULL) {
+                fprintf(stderr, "ERROR: could not read rcpt list: %s\n", optarg);
+                goto main_exit_on_failure;
+            }
+
+            char c_rcpt_line[256]= {0};
+            while (fgets(c_rcpt_line, sizeof c_rcpt_line -1, list_file)){
+                char *token = strtok(c_rcpt_line, " ,;/\r\n\t");
+                if (check_minilock_id((const unsigned char *)token) && num_rcpts < MAX_RCPT){
+                    c_rcpt_list[num_rcpts] = (char*)malloc(strlen(token)+1);
+                    snprintf(c_rcpt_list[num_rcpts], strlen(token)+1, "%s", token);
+                    num_rcpts++;
+                }
+            }
+            fclose(list_file);
+          break;
 
         case 'x':
             exclude_me = 1;
@@ -281,7 +298,8 @@ int main(int argc, char **argv) {
     #endif
     
     if (!check_password( (const char*) c_user_passphrase)){
-        fprintf(stderr, "ERROR: the passphrase must consist of several random words, separated by spaces\n");
+        fprintf(stderr, "ERROR: passphrase check failed\n");
+        fprintf(stderr, "Minimum length: 20 chars. If shorter than 40 chars, the passphrase must consist of at least four words\n");
         goto main_exit_on_failure;
     }
 
@@ -311,6 +329,8 @@ int main(int argc, char **argv) {
 
     uint8_t b_my_pk[KEY_LEN + 1]= {0};
     uint8_t c_minilock_id[KEY_LEN * 2]= {0};
+    uint8_t b_cs[1];
+
     crypto_scalarmult_base(b_my_pk, b_my_sk);
 
     blake_2s_array(b_my_pk, KEY_LEN , b_cs, sizeof b_cs);
@@ -333,7 +353,7 @@ int main(int argc, char **argv) {
 	if (do_dec || do_enc){
 	  error_code err_code;
 	  if (do_dec) 
-            err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk,                               &out_opts);
+	    err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk, &out_opts);
 	  else
             err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, &out_opts);
 	

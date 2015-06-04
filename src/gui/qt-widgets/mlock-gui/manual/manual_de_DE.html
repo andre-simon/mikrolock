@@ -20,14 +20,22 @@ mlock liest und schreibt verschl&uuml;sselte miniLock-Dateien.
 mlock ist eine schnelle Implementierung der miniLock-Spezifikation.
 Trotz des Namens (und im Gegensatz zum Original) kann mlock auch mit gro&szlig;en Dateien umgehen.
 </p>
+
+<p>
+Hauptziel der Entwicklung ist ein unkomplizierter Austausch verschlüsselter
+Daten, z.B. durch E-Mail oder Cloud-Dienste. Die Verschlüsselung basiert auf
+modernen Public-Key Verfahren, jedoch ohne aufwändige Konfiguration und
+Einarbeitung. Das miniLock-Format kann durch die Chrome Erweiterung auch dann
+eingesetzt werden, wenn keine Software wie mlock installiert werden kann (Firmen-Richtlinien o.ä.).
+</p>
+
 <p>
 Eine kurze Zusammenfassung der miniLock-Eigenschaften (Quelle: <a href="https://minilock.io">https://minilock.io</a>):
 <br>
 <i>&quot;
 Enter your miniLock passphrase on any computer, and you'll get access to your
 miniLock ID. No key storage or management - just a single passphrase to access
-your miniLock identity anywhere. miniLock uses modern cryptographic primitives
-to accomplish this securely.
+your miniLock identity anywhere.
 &quot;</i>
 </p>
 
@@ -139,7 +147,7 @@ Wenn eine miniLock-Datei ausgew&auml;hlt wurde, wird diese automatisch entschl&u
 <img src=":/manual/manual4.png"  border="0" alt="mlock GUI 4">
 
 <p>
-In der oberen Liste k&ouml;nnen bis zu 50 miniLock-IDs der Datei-Empf&auml;nger angegeben werden.<br>
+In der oberen Liste k&ouml;nnen bis zu 128 miniLock-IDs der Datei-Empf&auml;nger angegeben werden.<br>
 Mit &quot;Liste einlesen&quot; wird eine Textdatei importiert, die pro Zeile eine MiniLock-ID enth&auml;lt. Hinter den IDs k&ouml;nnen in der Datei die dazugehörigen Namen wie folgt eingetragen werden:
 <pre>
 y5qBLmncv36r98tFMw5YVoc9SHkfLDg8Wz7zf9yrPYPh2 / Andre Simon
@@ -170,7 +178,7 @@ Available options:
   -D, --decrypt &lt;file&gt;  Decrypt the given miniLock file
   -o, --output &lt;file&gt;   Override the target file name (assumes -D or -E)
   -m, --mail &lt;string&gt;   User mail address (salt)
-  -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)
+  -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated up to 128x, assumes -E)
   -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
   -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
   -p, --pinentry        Use pinentry for passphrase input
@@ -191,7 +199,6 @@ Unlocking...
 Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
 Encrypting file libsodium-1.0.0.tar.gz...
 Calculating file hash...
-Task completed.
 </pre>
 
 <p>
@@ -209,7 +216,6 @@ Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Decrypting file libsodium-1.0.0.tar.gz.minilock...
 Calculating file hash...
 Writing to file libsodium-1.0.0.tar.gz...
-Task completed.
 </pre>
 </p>
 

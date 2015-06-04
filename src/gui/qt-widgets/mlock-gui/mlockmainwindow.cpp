@@ -503,9 +503,11 @@ void MlockMainWindow::on_btnOpenFileList_clicked()
             QString data = f.readAll();
             QStringList vals = data.split('\n');
 
+            vals.removeDuplicates();
+
             QRegExp delimRE("[\\,\\;\\|\\-\\/]");
 
-            for (int i=0;i<vals.count() && i< MAX_RCPT;i++){
+            for (int i=0; i<vals.count() && i< MAX_RCPT; i++){
 
                 if (i> scrollAreaLayout->count()-1){
                     addIDInputSlot();

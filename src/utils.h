@@ -36,7 +36,7 @@
 #define BUF_READ_FILE_LEN 1048576/2
 #endif
 
-#define MAX_RCPT 50
+#define MAX_RCPT 128
 
 #define BUF_PATH_LEN 256
 #define BUF_DECRYPTINFO_ITEM_LEN 550
@@ -78,6 +78,8 @@ uint8_t* base64_encode(const char *b_input, int in_len);
 uint8_t* base64_decode(const char *c_input, int* cnt);
 
 void dump(const char *what, uint8_t *s, int len);
+
+int check_minilock_id(const unsigned char* id);
 
 int blake2s_stream( FILE *stream, void *resstream,  struct output_options *out_opts);
 

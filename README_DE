@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MLOCK HANDBUCH - Version 0.10  ------------------------------ Mai 2015 ---
+---  MLOCK HANDBUCH - Version 0.12  ----------------------------- Juni 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -14,8 +14,9 @@ INHALT:
 1. Übersicht
 2. Wie funktioniert's?
 3. Funktionen
-4. Plattformen
-5. Kontact
+4. Verwendete Crypto-Funktionen
+5. Plattformen
+6. Kontakt
 
 
 1.  Übersicht
@@ -25,11 +26,17 @@ mlock ist eine schnelle Implementierung der miniLock-Spezifikation. Trotz des
 Namens (und im Gegensatz zum Original) kann mlock auch mit großen Dateien 
 umgehen.
 
+Hauptziel der Entwicklung ist ein unkomplizierter Austausch verschlüsselter
+Daten, z.B. durch E-Mail oder Cloud-Dienste. Die Verschlüsselung basiert auf
+modernen Public-Key Verfahren, jedoch ohne aufwändige Konfiguration und
+Einarbeitung. Das miniLock-Format kann durch die Chrome Erweiterung auch dann
+eingesetzt werden, wenn keine Software wie mlock installiert werden kann (Firmen-
+Richtlinien o.ä.).
+
 Eine kurze Zusammenfassung der miniLock-Eigenschaften (Quelle: https://minilock.io): 
 "Enter your miniLock passphrase on any computer, and you'll get access to your 
 miniLock ID. No key storage or management - just a single passphrase to access 
-your miniLock identity anywhere. miniLock uses modern cryptographic primitives 
-to accomplish this securely."
+your miniLock identity anywhere."
 
 Eine MiniLock-ID ist ein kurzer Public-Key der von einer geheimen Passphrase und 
 einer E-Mail Adresse abgeleitet wurde. Diese ID kann auf Webseiten, in 
@@ -48,8 +55,6 @@ Beim Verschlüsseln kann eine Liste von miniLock-IDs angegeben werden, um
 mehreren Empfängern zu ermöglichen die Daten zu entschlüsseln. Es muss also 
 nicht eine separate Datei für jeden Empfänger erzeugt werden. MiniLock-Dateien 
 enthalten keine sichtbaren Hinweise auf Ihre Empfänger.
-
-Mehr Infos zu den kryptographischen Details: https://minilock.io
 
 
 2. Wie funktioniert's?
@@ -90,21 +95,25 @@ If neither -E nor -D is given, mlock exits after showing your miniLock ID.
 Beispiele:
 ---------
 
-DATEIVERSCHLÜSSELUNG:
+VERSCHLÜSSELUNG:
 
 mlock --encrypt libsodium-1.0.0.tar.gz --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+
 Please enter your secret passphrase:
 Unlocking...
 Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
 Encrypting file libsodium-1.0.0.tar.gz...
+Progress 100%
 Calculating file hash...
-Task completed.
+Progress 100%
+Destination file: libsodium-1.0.0.tar.gz.minilock
 
 Die verschlüsselte Datei ist libsodium-1.0.0.tar.gz.minilock
-Diese Datei kann vom Empänger EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX entschlüsselt werden.
+Diese Datei kann vom Empänger EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+entschlüsselt werden.
 
 
-DATEIENTSCHLÜSSELUNG:
+ENTSCHLÜSSELUNG:
 
 mlock --decrypt libsodium-1.0.0.tar.gz.minilock --mail receiver@test.org
 Please enter your secret passphrase:
@@ -113,16 +122,45 @@ Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Decrypting file libsodium-1.0.0.tar.gz.minilock...
 Calculating file hash...
 Writing to file libsodium-1.0.0.tar.gz...
-Task completed.
 
 
-4.  Plattformen
+4. Verwendete Crypto-Funktionen
 -------------------------------------------------------------------------------
 
-mlock is currently available for Linux and Windows.
+Die MiniLock-ID wird wie folgt erzeugt:
+
+secret := scrypt(blake2(passphrase), mail, 131072, 1)
+id := base58(crypto_scalarmult_base(secret) + blake2(secret) )
+
+Der JSON-Dateiheader der MiniLock-Dateien enthält die MiniLock-ID des
+Senders, die IDs der Empfänger sowie Schlüssel (zufällig erzeugt) und
+Hashwert der verschlüsselten Eingabedatei.
+
+Diese Informationen werden separat mit jeder angegebenen Empfänger-ID als
+Public-Key mittels crypto_box_easy verschlüsselt
+(Schlüsseltausch: Curve25519; Verfahren: XSalsa20 stream cipher;
+Authentifizierung: Poly1305 MAC).
+
+Die Eingabedatei wird mit crypto_secretbox_easy verschlüsselt
+(Verfahren: XSalsa20 stream cipher; Authentifizierung: Poly1305 MAC).
+
+Mehr Infos zu den kryptographischen Eigenschaften und dem Dateiformat:
+https://minilock.io.
+
+http://doc.libsodium.org/password_hashing/README.html#key-derivation
+https://blake2.net
+https://en.wikipedia.org/wiki/Base58
+http://doc.libsodium.org/advanced/scalar_multiplication.html
+http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html
 
 
-5.  Kontakt
+5.  Plattformen
+-------------------------------------------------------------------------------
+
+mlock ist für Linux und Windows verfügbar.
+
+
+6.  Kontakt
 -------------------------------------------------------------------------------
 
 Andre Simon
