@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MLOCK MANUAL - Version 0.12  ------------------------------- June 2015 ---
+---  MLOCK MANUAL - Version 0.13  ------------------------------- June 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -77,16 +77,19 @@ mlock reads and writes encrypted miniLock files (https://minilock.io/)
 Available options:
 
   -E, --encrypt <file>  Encrypt the given file (see -r)
-  -D, --decrypt <file>  Decrypt the given miniLock-file
+  -D, --decrypt <file>  Decrypt the given miniLock file
   -o, --output <file>   Override the target file name (assumes -D or -E)
-  -m, --mail <string>   User mail address (salt)
-  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 50x, assumes -E)
-  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
-  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
+  -m, --mail <string>   Mail address (salt)
+  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated, assumes -E)
+
+  -h, --help            Print this help screen
+  -l, --list <file>     Recipient list text file (contains one miniLock ID per line)
+                        ID descriptions may be added using these delimiters: space or one of [,;/|-]
   -p, --pinentry        Use pinentry program to ask for the passphrase
   -q, --quiet           Do not print progress information
-  -h, --help            Print this help screen
+  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
   -v, --version         Print version information
+  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
 
 If neither -E nor -D is given, mlock exits after showing your miniLock ID.
 

@@ -53,7 +53,7 @@ install:
 	${INSTALL_DATA} ./COPYING ${DESTDIR}${doc_dir}
 	${INSTALL_DATA} ./INSTALL ${DESTDIR}${doc_dir}
 	${INSTALL_PROGRAM} ./src/mlock ${DESTDIR}${bin_dir}
-
+	
 	@echo
 	@echo "Done."
 	@echo "Type mlock --help or man mlock for instructions."

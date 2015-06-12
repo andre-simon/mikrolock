@@ -36,8 +36,6 @@
 #define BUF_READ_FILE_LEN 1048576/2
 #endif
 
-#define MAX_RCPT 128
-
 #define BUF_PATH_LEN 256
 #define BUF_DECRYPTINFO_ITEM_LEN 550
 

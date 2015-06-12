@@ -14,7 +14,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>mlock GUI</string>
+   <string>µlock GUI</string>
   </property>
   <property name="windowIcon">
    <iconset resource="mlock-gui.qrc">
@@ -747,7 +747,7 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Encrypt your file!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Add the miniLock ID of each person which should be able to decrypt the file.&lt;/p&gt;&lt;p&gt;You can add up to 128 recipient IDs.&lt;/p&gt;&lt;p&gt;If you omit your own ID, you will not be able to decrypt the resulting file.&lt;/p&gt;&lt;p&gt;A miniLock file does not give visible hints about the sender nor the recipients.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Encrypt your file!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Add the miniLock ID of each person which should be able to decrypt the file.&lt;/p&gt;&lt;p&gt;If you omit your own ID, you will not be able to decrypt the resulting file.&lt;/p&gt;&lt;p&gt;A miniLock file does not give visible hints about the sender nor the recipients.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>

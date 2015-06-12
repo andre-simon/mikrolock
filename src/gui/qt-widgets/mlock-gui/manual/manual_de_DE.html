@@ -147,7 +147,7 @@ Wenn eine miniLock-Datei ausgew&auml;hlt wurde, wird diese automatisch entschl&u
 <img src=":/manual/manual4.png"  border="0" alt="mlock GUI 4">
 
 <p>
-In der oberen Liste k&ouml;nnen bis zu 128 miniLock-IDs der Datei-Empf&auml;nger angegeben werden.<br>
+In der oberen Liste werden die miniLock-IDs der Datei-Empf&auml;nger angegeben.<br>
 Mit &quot;Liste einlesen&quot; wird eine Textdatei importiert, die pro Zeile eine MiniLock-ID enth&auml;lt. Hinter den IDs k&ouml;nnen in der Datei die dazugehörigen Namen wie folgt eingetragen werden:
 <pre>
 y5qBLmncv36r98tFMw5YVoc9SHkfLDg8Wz7zf9yrPYPh2 / Andre Simon
@@ -178,13 +178,16 @@ Available options:
   -D, --decrypt &lt;file&gt;  Decrypt the given miniLock file
   -o, --output &lt;file&gt;   Override the target file name (assumes -D or -E)
   -m, --mail &lt;string&gt;   User mail address (salt)
-  -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated up to 128x, assumes -E)
-  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
-  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
-  -p, --pinentry        Use pinentry for passphrase input
-  -q, --quiet           Do not print progress information
+  -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated, assumes -E)
+
   -h, --help            Print this help screen
+  -l, --list &lt;file&gt;     Recipient list text file (contains one miniLock ID per line)
+                        ID descriptions may be added using these delimiters: space or one of [,;/|-]
+  -p, --pinentry        Use pinentry program to ask for the passphrase
+  -q, --quiet           Do not print progress information
+  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
   -v, --version         Print version information
+  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
 
 If neither -E nor -D is given, mlock exits after showing your miniLock ID.
 </pre>
@@ -198,7 +201,10 @@ Please enter your secret passphrase:
 Unlocking...
 Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
 Encrypting file libsodium-1.0.0.tar.gz...
+Progress 100%
 Calculating file hash...
+Progress 100%
+Destination file: libsodium-1.0.0.tar.gz.minilock
 </pre>
 
 <p>
@@ -215,7 +221,10 @@ Unlocking...
 Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Decrypting file libsodium-1.0.0.tar.gz.minilock...
 Calculating file hash...
+Progress 100%
 Writing to file libsodium-1.0.0.tar.gz...
+Progress 100%
+Destination file: libsodium-1.0.0.tar.gz
 </pre>
 </p>
 

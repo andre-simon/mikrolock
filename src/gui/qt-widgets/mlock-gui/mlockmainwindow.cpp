@@ -32,10 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "showmanualdialog.h"
 
 // static data items shared with threads
-// reserve one for own ID
-char* MlockMainWindow::c_rcpt_list[MAX_RCPT + 1]= {0};
 
-unsigned int MlockMainWindow::num_rcpts=0;
+struct rcpt_list* MlockMainWindow::id_list=NULL;
 uint8_t MlockMainWindow::b_my_sk[KEY_LEN] = {0};
 uint8_t MlockMainWindow::b_my_pk[KEY_LEN + 1]= {0};
 uint8_t MlockMainWindow::c_minilock_id[KEY_LEN * 2]= {0};
@@ -216,12 +214,8 @@ void MlockMainWindow::decrypt(){
 
 void MlockMainWindow::encrypt() {
 
-    freeMem();
-
     if (!ui->cbOmitId->isChecked()){
-        c_rcpt_list[num_rcpts] = (char*)malloc(strlen((char*)c_minilock_id)+1);
-        snprintf(c_rcpt_list[num_rcpts], strlen((char*)c_minilock_id)+1, "%s",(char*)c_minilock_id);
-        num_rcpts++;
+        rcpt_list_add(&id_list, (char*)c_minilock_id);
     }
 
     QString rcptId;
@@ -229,24 +223,16 @@ void MlockMainWindow::encrypt() {
     for (int i=0; i<scrollAreaLayout->count(); i++){
         leCurrentId = dynamic_cast<QLineEdit*>(scrollAreaLayout->itemAt(i)->widget());
         rcptId = leCurrentId->text().trimmed();
+
         if (!rcptId.isEmpty()){
 
-            if (!checkMiniLockID(rcptId)){
+            if (!rcpt_list_add(&id_list, (char*)rcptId.toStdString().c_str())){
                 QMessageBox::critical(this, tr("Bad miniLock ID"), tr("The ID %1 is invalid.").arg(rcptId));
                 leCurrentId->selectAll();
                 leCurrentId->setFocus();
                 return;
             }
-
-            c_rcpt_list[num_rcpts] =  (char*)malloc(rcptId.size()+1);
-            snprintf(c_rcpt_list[num_rcpts], rcptId.size()+1, "%s",(char*)rcptId.toStdString().c_str());
-            num_rcpts++;
         }
-    }
-
-    if (num_rcpts==0){
-        QMessageBox::warning(this, tr("No recipients"), tr("You need to define some recipient IDs."));
-        return;
     }
 
     initProgressDisplay(true);
@@ -263,20 +249,6 @@ void MlockMainWindow::encrypt() {
     connect(workerThread, &EncryptThread::finished, workerThread, &QObject::deleteLater);
 
     workerThread->start();
-}
-
-
-void MlockMainWindow::freeMem(bool exitApp){
-    if (num_rcpts>0){
-        while (num_rcpts--  ) {
-            free(c_rcpt_list[num_rcpts]);
-        }
-    }
-    num_rcpts=0;
-
-    if (exitApp){
-        sodium_memzero( b_my_sk, sizeof b_my_sk);
-    }
 }
 
 void MlockMainWindow::handleResults(int result){
@@ -341,7 +313,8 @@ void MlockMainWindow::handleResults(int result){
             break;
 
         case err_file_exists:
-            QMessageBox::critical(this, tr("Error") , tr("Output file exists:\n%1").arg(QString((const char *)out_opts.c_final_out_name)).toLocal8Bit());
+            QMessageBox::critical(this, tr("Error") , tr("Output file exists:\n%1").
+                                  arg(QString((const char *)out_opts.c_final_out_name)).toLocal8Bit());
             break;
 
         default:
@@ -359,17 +332,6 @@ void MlockMainWindow::handleResults(int result){
 
 void MlockMainWindow::updateProgress(int p){
     ui->progressBar->setValue(p);
-}
-
-bool MlockMainWindow::checkMiniLockID(QString id)
-{
-    std::string std_id= id.toStdString();
-    uint8_t b_rcpt_pk[KEY_LEN + 1]= {0};
-    uint8_t b_cs[1];
-
-    base58_decode(b_rcpt_pk, (const unsigned char*)std_id.c_str());
-    blake_2s_array(b_rcpt_pk, KEY_LEN , b_cs, sizeof b_cs);
-    return  b_cs[0]==b_rcpt_pk[KEY_LEN];
 }
 
 void MlockMainWindow::on_lbGoPreviousScreen_clicked(){
@@ -400,7 +362,9 @@ void MlockMainWindow::startFileProcessing(bool promptAction)
 {
     if (!inputFilename.isEmpty()) {
         if (promptAction &&  QMessageBox::question(this, tr("Process given file"),
-                                                    tr("%1 %2\ninto %3 ?").arg(inputFilename.endsWith(".minilock") ? tr("Decrypt"):tr("Encrypt")).arg(QFileInfo(inputFilename).fileName()).arg(ui->txtDestDir->text()),
+                                                    tr("%1 %2\ninto %3 ?").arg(inputFilename.endsWith(".minilock") ?
+                                                                               tr("Decrypt") :
+                                                                               tr("Encrypt")).arg(QFileInfo(inputFilename).fileName()).arg(ui->txtDestDir->text()),
                                                     QMessageBox::Yes|QMessageBox::No)== QMessageBox::No)
             return;
 
@@ -432,9 +396,6 @@ void MlockMainWindow::dropEvent(QDropEvent* event)
 void MlockMainWindow::on_btnAddRcpt_clicked()
 {
     addIDInputSlot();
-    if (scrollAreaLayout->count()==MAX_RCPT) {
-        ui->btnAddRcpt->setEnabled(false);
-    }
 }
 
 void MlockMainWindow::on_btnEncrypt_clicked()
@@ -509,17 +470,14 @@ void MlockMainWindow::on_btnOpenFileList_clicked()
 
             QRegExp delimRE("[\\,\\;\\|\\-\\/]");
 
-            for (int i=0; i<vals.count() && i< MAX_RCPT; i++){
+            for (int i=0; i<vals.count(); i++){
 
                 if (i> scrollAreaLayout->count()-1){
                     addIDInputSlot();
                 }
-
                 QLineEdit *leCurrentId = dynamic_cast<QLineEdit*>(scrollAreaLayout->itemAt(i)->widget());
-
                 QString line(vals[i]);
                 int delimPos = line.indexOf(delimRE);
-
                 if (delimPos<0){
                     leCurrentId->setText(line.trimmed());
                 } else {
@@ -527,12 +485,7 @@ void MlockMainWindow::on_btnOpenFileList_clicked()
                     leCurrentId->setToolTip(line.mid(delimPos+1).replace(delimRE, ""));
                 }
             }
-
             f.close();
-
-            if (scrollAreaLayout->count()==MAX_RCPT) {
-                ui->btnAddRcpt->setEnabled(false);
-            }
         }
     }
 }
@@ -563,8 +516,8 @@ void MlockMainWindow::on_stackedWidget_currentChanged(int idx)
             }
         } else {
             statusBar()->showMessage(tr("Set input and output parameters"));
-       }
-            break;
+        }
+        break;
 
     case 2:
         statusBar()->showMessage(tr("Set encryption options for %1").arg(inputFilename));
@@ -583,6 +536,11 @@ void MlockMainWindow::dragEnterEvent(QDragEnterEvent *event)
         event->acceptProposedAction();
         ui->lblDrop->setEnabled(true);
     }
+}
+
+void MlockMainWindow::dragLeaveEvent(QDragLeaveEvent* event)
+{
+      ui->lblDrop->setEnabled(false);
 }
 
 void MlockMainWindow::addIDInputSlot()
@@ -641,7 +599,7 @@ void MlockMainWindow::writeSettings()
 
 MlockMainWindow::~MlockMainWindow()
 {
-    freeMem(true);
+    sodium_memzero( b_my_sk, sizeof b_my_sk);
     writeSettings();
     delete ui;
 }
@@ -658,8 +616,9 @@ void DecryptThread::run() {
 void EncryptThread::run()  {
     int result= minilock_encode((uint8_t*) inFileName.toLocal8Bit().data(), MlockMainWindow::c_minilock_id,
                                 MlockMainWindow::b_my_sk,
-                                MlockMainWindow::c_rcpt_list, MlockMainWindow::num_rcpts,
+                                MlockMainWindow::id_list,
                                 &MlockMainWindow::out_opts);
+    rcpt_list_free(&MlockMainWindow::id_list);
     emit resultReady(result);
 }
 

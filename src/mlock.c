@@ -107,11 +107,7 @@ int check_password(const char *c_passphrase){
   return i > 3;
 }
 
-void add_rcpt(char* id, char**c_rcpt_list, unsigned int* num_rcpts){
-    c_rcpt_list[*num_rcpts] = (char*)malloc(strlen(id)+1);
-    snprintf(c_rcpt_list[*num_rcpts], strlen(id)+1, "%s", id);
-    (*num_rcpts)++;
-}
+
 
 /******************************************************************************/
 
@@ -123,28 +119,29 @@ void print_help() {
 	printf("  -D, --decrypt <file>  Decrypt the given miniLock file\n");
 	printf("  -o, --output <file>   Override the target file name (assumes -D or -E)\n");
 	printf("  -m, --mail <string>   Mail address (salt)\n");
-	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated up to 128x, assumes -E)\n\n");
+	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated, assumes -E)\n\n");
 	printf("  -h, --help            Print this help screen\n");
-	printf("  -l, --list <file>     Recipient list text file (contains one miniLock ID per line, max. 128 IDs)\n");
-	printf("                        ID descriptions may be added using these delimiters: space, ',', ';', '/'\n");
+	printf("  -l, --list <file>     Recipient list text file (contains one miniLock ID per line)\n");
+	printf("                        ID descriptions may be added using these delimiters: space or one of [,;/-|]\n");
 	printf("  -p, --pinentry        Use pinentry program to ask for the passphrase\n");
 	printf("  -q, --quiet           Do not print progress information\n");
 	printf("  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)\n");
-	printf("  -v, --version         Print version information\n\n");
+	printf("  -v, --version         Print version information\n");
 	printf("  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)\n");
 
-	printf("If neither -E nor -D is given, mlock exits after showing your miniLock ID.\n");
+	printf("\nIf neither -E nor -D is given, mlock exits after showing your miniLock ID.\n");
 }
 
 void print_version(int show_license_info) {
         printf("mlock version " MLOCK_VERSION " Copyright 2014, 2015 Andre Simon\n");
 
-	if (show_license_info){
-	    printf("This program comes with ABSOLUTELY NO WARRANTY\n");
-	    printf("This is free software, and you are welcome to redistribute it\n");
-	    printf("under certain conditions listed in COPYING.\n\n");
-	}
+  if (show_license_info){
+    printf("This program comes with ABSOLUTELY NO WARRANTY\n");
+    printf("This is free software, and you are welcome to redistribute it\n");
+    printf("under certain conditions listed in COPYING.\n\n");
+  }
 }
+
 
 int main(int argc, char **argv) {
 
@@ -154,8 +151,7 @@ int main(int argc, char **argv) {
     }
 
     //list of minilock IDs which can decrypt the file
-    // reserve one for own ID
-    char* c_rcpt_list[MAX_RCPT+1]= {0};
+    struct rcpt_list* id_list=NULL;
 
     uint8_t c_user_passphrase[256] = {0};
     uint8_t c_user_salt[256]  = {0};
@@ -180,7 +176,6 @@ int main(int argc, char **argv) {
 
     int exclude_me =0;
     int ret_val = EXIT_FAILURE;
-    unsigned int num_rcpts=0;
 
     FILE *list_file=NULL;
 
@@ -237,13 +232,12 @@ int main(int argc, char **argv) {
             break;
 
         case 'r':
-            if (num_rcpts+1== MAX_RCPT) break;
 
-            if (!check_minilock_id((const unsigned char*)optarg)) {
+            if (!rcpt_list_add(&id_list, optarg)) {
                 fprintf(stderr, "ERROR: invalid miniLock ID: %s\n", optarg);
                 goto main_exit_on_failure;
             }
-            add_rcpt(optarg, c_rcpt_list,  &num_rcpts);
+            
             break;
 
         case 'l':
@@ -256,10 +250,13 @@ int main(int argc, char **argv) {
 
             char c_rcpt_line[256]= {0};
             while (fgets(c_rcpt_line, sizeof c_rcpt_line -1, list_file)){
-                char *token = strtok(c_rcpt_line, " ,;/\r\n\t");
-                if (check_minilock_id((const unsigned char *)token) && num_rcpts < MAX_RCPT){
-                    add_rcpt(token, c_rcpt_list, &num_rcpts);
-                }
+                char *token = strtok(c_rcpt_line, " ,;/-|\r\n\t");
+		if (!rcpt_list_add(&id_list, token)) {
+		  fprintf(stderr, "ERROR: invalid miniLock ID in %s: %s\n",  optarg,  token);
+		  fclose(list_file);
+		  goto main_exit_on_failure;
+		}
+
             }
             fclose(list_file);
           break;
@@ -347,7 +344,7 @@ int main(int argc, char **argv) {
         printf("%scrypting file %s...\n", do_enc ? "En" : "De", c_input_file);
 
         if (do_enc && !exclude_me) {
-            add_rcpt((char*)c_minilock_id, c_rcpt_list,  &num_rcpts);
+	  rcpt_list_add(&id_list, (char*)c_minilock_id);
         }
 
         if (do_dec || do_enc){
@@ -355,7 +352,7 @@ int main(int argc, char **argv) {
             if (do_dec)
                 err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk, &out_opts);
             else
-                err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, c_rcpt_list, num_rcpts, &out_opts);
+                err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, id_list, &out_opts);
 
             sodium_memzero(b_my_sk, sizeof b_my_sk);
 
@@ -370,7 +367,7 @@ int main(int argc, char **argv) {
                 fprintf(stderr, "ERROR: could not open file: %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
                 break;
             case err_file_read:
-                fprintf(stderr, "ERROR: could not read file: %s\n", do_dec ? c_input_file : out_opts.c_final_out_name);
+                fprintf(stderr, "ERROR: could not read file: %s\n", c_input_file);
                 break;
             case err_format:
                 fprintf(stderr, "ERROR: invalid file format: %s\n", c_input_file);
@@ -405,8 +402,6 @@ int main(int argc, char **argv) {
     ret_val = EXIT_SUCCESS;
 
 main_exit_on_failure:
-    while (num_rcpts--) {
-            free(c_rcpt_list[num_rcpts]);
-    }
+    rcpt_list_free(&id_list); 
     return ret_val;
 }

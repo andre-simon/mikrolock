@@ -255,12 +255,19 @@ error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     return ret_val;
 }
 
-error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b_my_sk, char**c_rcpt_list, int num_rcpts, struct output_options * out_opts) {
+error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b_my_sk, struct rcpt_list* id_list, struct output_options * out_opts) {
 
     int ret_val = err_failed;
 
-    if(num_rcpts==0) {
+    if(id_list==NULL) {
         return err_no_rcpt;
+    }
+    
+    unsigned int num_rcpts=0;
+    struct rcpt_list* current = id_list;
+    while (current != NULL) {
+      num_rcpts++;
+      current = current->next;
     }
 
     uint8_t  b_file_rnd[6]= {0};
@@ -326,7 +333,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     char     c_decrypt_info_item_json[1024] = {0};
     char     c_decrypt_info_array_item_json[1024] = {0};
 
-    int i=0;
+    //int i=0;
 
     randombytes_buf(b_ephemeral_rnd, sizeof b_ephemeral_rnd);
     randombytes_buf(b_file_key_rnd, sizeof b_file_key_rnd);
@@ -346,7 +353,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     off_t decrypt_info_block_start = ftello(output_file);
 
     //Reserve  bytes for the decryptInfo items
-    for (i=0; i<num_rcpts*BUF_DECRYPTINFO_ITEM_LEN + 2; i++) {
+    for (unsigned int i=0; i<num_rcpts*BUF_DECRYPTINFO_ITEM_LEN + 2; i++) {
         fwrite("\x20", 1, 1, output_file);
     }
 
@@ -385,12 +392,15 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     uint8_t b_rcpt_list_pk[KEY_LEN + 1]= {0};
     char b_crypt_block[1024] = {0};
     int exit_loop_on_error=0;
-    for (i=0; i<num_rcpts; i++) {
+    
+    current = id_list;
+    int rcpt_idx=0;
+    while (current != NULL) {
 
         randombytes_buf(b_sending_nonce_rnd, sizeof b_sending_nonce_rnd);
         c_sending_nonce  = base64_encode((const char *)b_sending_nonce_rnd, sizeof b_sending_nonce_rnd);
 
-        base58_decode(b_rcpt_list_pk, (unsigned char*)c_rcpt_list[i]);
+        base58_decode(b_rcpt_list_pk, (unsigned char*)current->id);
         b_rcpt_list_pk[KEY_LEN]=0;
 
         if (crypto_box_easy((unsigned char*)b_crypt_block, (unsigned char*)c_file_info_json, 
@@ -404,7 +414,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 
         snprintf(c_decrypt_info_item_json, sizeof c_decrypt_info_item_json-1, 
 		 "{\"senderID\":\"%s\",\"recipientID\":\"%s\",\"fileInfo\":\"%s\"}", 
-		 c_sender_id, c_rcpt_list[i], c_file_info_crypted);
+		 c_sender_id, current->id, c_file_info_crypted);
         int decrypt_info_len  = strlen(c_decrypt_info_item_json);
 
         //crypto_box_easy(ciphertext, MESSAGE, MESSAGE_LEN, nonce, bob_publickey, alice_secretkey);
@@ -418,7 +428,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         c_decrypt_item_crypted  = base64_encode((const char *)b_crypt_block, decrypt_info_len +16);
 
         snprintf(c_decrypt_info_array_item_json, sizeof c_decrypt_info_array_item_json-1, 
-		 "\"%s\":\"%s\"%c", c_sending_nonce, c_decrypt_item_crypted,  (num_rcpts >1 && i<num_rcpts-1) ? ',':'\x20' );
+		 "\"%s\":\"%s\"%c", c_sending_nonce, c_decrypt_item_crypted,  (num_rcpts >1 && current->next!=NULL) ? ',':'\x20' );
 
         int decrypt_info_array_item_len  = strlen(c_decrypt_info_array_item_json);
 
@@ -428,7 +438,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
             goto free_encode_loop_on_failure;
         }
 
-        fseeko(output_file, decrypt_info_block_start + i* BUF_DECRYPTINFO_ITEM_LEN, SEEK_SET);
+        fseeko(output_file, decrypt_info_block_start + rcpt_idx* BUF_DECRYPTINFO_ITEM_LEN, SEEK_SET);
 
         fwrite(c_decrypt_info_array_item_json, 1, decrypt_info_array_item_len , output_file);
 
@@ -436,8 +446,10 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 	    ret_val = err_file_write;
 	    exit_loop_on_error=1;
         } else {
-            if (i==num_rcpts-1) ret_val = err_ok;
+            if (current->next==NULL) ret_val = err_ok;
         }
+        
+        rcpt_idx++;
 
 free_encode_loop_on_failure:
         free(c_file_info_crypted);
@@ -447,6 +459,7 @@ free_encode_loop_on_failure:
         free (c_sending_nonce);
         c_sending_nonce=0;
 	if (exit_loop_on_error) break;
+	current = current->next;
     }
 
 free_encode_res:
@@ -675,4 +688,30 @@ free_decode_res:
     json_value_free (json_header);
     fclose(input_file);
     return ret_val;
+}
+
+int rcpt_list_add (struct rcpt_list** list, char* id){
+  
+    if (!check_minilock_id((unsigned char*)id))
+      return 0;
+  
+    struct rcpt_list* new_item = malloc(sizeof(struct rcpt_list));
+    
+    snprintf(new_item->id, sizeof new_item->id, "%s", id);
+    new_item->next = *list;
+    *list = new_item;
+    
+    return 1;
+}
+
+void rcpt_list_free (struct rcpt_list** list) {
+  struct rcpt_list* current  = *list;
+  struct rcpt_list* next = NULL;
+  
+  while (current != NULL) {
+      next = current->next;
+      free (current);
+      current = next; 
+  }
+  *list=NULL;
 }

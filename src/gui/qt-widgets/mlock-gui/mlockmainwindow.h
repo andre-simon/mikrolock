@@ -50,8 +50,9 @@ class MlockMainWindow : public QMainWindow
 
 public:
 
-    static char* c_rcpt_list[MAX_RCPT + 1];
-    static unsigned int num_rcpts;
+    //list of minilock IDs which can decrypt the file
+    static  struct rcpt_list* id_list;
+
     static uint8_t b_my_sk[KEY_LEN] ;
     static uint8_t b_my_pk[KEY_LEN + 1];
     static uint8_t c_minilock_id[KEY_LEN * 2];
@@ -70,14 +71,14 @@ private:
 
     void dropEvent(QDropEvent* event);
     void dragEnterEvent(QDragEnterEvent *event);
+    void dragLeaveEvent(QDragLeaveEvent* event);
 
     void addIDInputSlot();
-    bool checkMiniLockID(QString);
+
     QString unlock(QString, QString);
     QString localFilePath(QString);
     void decrypt();
     void encrypt();
-    void freeMem(bool exitApp=false);
     void startFileProcessing(bool promptDecrypt=false);
     void initProgressDisplay(bool);
 
