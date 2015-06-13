@@ -251,7 +251,7 @@ int main(int argc, char **argv) {
             char c_rcpt_line[256]= {0};
             while (fgets(c_rcpt_line, sizeof c_rcpt_line -1, list_file)){
                 char *token = strtok(c_rcpt_line, " ,;/-|\r\n\t");
-		if (!rcpt_list_add(&id_list, token)) {
+                if (!rcpt_list_add(&id_list, token)) {
 		  fprintf(stderr, "ERROR: invalid miniLock ID in %s: %s\n",  optarg,  token);
 		  fclose(list_file);
 		  goto main_exit_on_failure;
@@ -284,6 +284,7 @@ int main(int argc, char **argv) {
     }
 
     print_version(1);
+
     if(!strlen((const char*)c_user_salt)){
 	prompt_tty("Please enter your mail address:\n", c_user_salt, sizeof c_user_salt, 0);
     }
@@ -291,7 +292,9 @@ int main(int argc, char **argv) {
     #ifndef WIN32
     if (!use_pinentry ||  prompt_pinentry((const char*)c_user_salt, c_user_passphrase, sizeof c_user_passphrase)<0){
     #endif
+
       prompt_tty("Please enter your secret passphrase:\r\n", c_user_passphrase, sizeof c_user_passphrase, 1);
+
     #ifndef WIN32
     }
     #endif

@@ -77,7 +77,7 @@ uint8_t* base64_decode(const char *c_input, int* cnt);
 
 void dump(const char *what, uint8_t *s, int len);
 
-int check_minilock_id(const unsigned char* id);
+int check_minilock_id(const unsigned char* new_id);
 
 int blake2s_stream( FILE *stream, void *resstream,  struct output_options *out_opts);
 
