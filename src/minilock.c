@@ -56,7 +56,7 @@ Wilhelm Busch
 #include "b58/base58.h"
 #include "utils.h"
 
-error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos, uint8_t* b_file_nonce_prefix,
+error_code file_decode(FILE* input_file, off_t crypt_start_pos, off_t eof_pos, uint8_t* b_file_nonce_prefix,
                 uint8_t* b_file_key, struct output_options *out_opts) {
 
     unsigned char b_file_nonce[KEY_LEN-8]= {0};
@@ -68,7 +68,7 @@ error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
     int num_chunks=0;
     int chunk_len =0;
     error_code ret_val = err_failed;
-    off_t current_pos=crypt_block_start;
+    off_t current_pos=crypt_start_pos;
     memcpy(b_file_nonce, b_file_nonce_prefix, NONCE_PREFIX_LEN);
     while (!exit_loop) {
 
@@ -77,7 +77,7 @@ error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
             return err_file_read;
         }
 
-        chunk_len = array_to_number(b_block_len, 4) +MAC_LEN;
+        chunk_len = array_to_number(b_block_len, sizeof b_block_len) +MAC_LEN;
         
         uint8_t* b_chunk = (uint8_t*)malloc(chunk_len);
         uint8_t* b_decrypt_block= (uint8_t*)malloc(chunk_len);
@@ -87,11 +87,11 @@ error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
             return err_file_read;
         }
 
-        current_pos += (chunk_len + 4);
+        current_pos += (chunk_len +  sizeof b_block_len);
         number_to_array(b_nonce_cnt, sizeof b_nonce_cnt, num_chunks++);
 
 	//final chunk
-	if (eof_pos   == current_pos) {
+	if (eof_pos == current_pos) {
             b_nonce_cnt[7] |= 128;
             exit_loop=1;
             ret_val = err_ok;
@@ -105,11 +105,12 @@ error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
         if (file_err_retval) {
             exit_loop=1;
             ret_val = err_open;
-            goto free_encode_write_file_error;
+            goto free_decode_write_file_error;
         }
 
         if (num_chunks==1) {
-            
+
+            //first chunk contains filename
             if (strlen((char*)out_opts->c_override_out_name)){
                 if (out_opts->override_out_name_as_dir){
                    snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s", out_opts->c_override_out_name, b_decrypt_block);
@@ -123,7 +124,7 @@ error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
             if (!access((const char *)out_opts->c_final_out_name, F_OK)){
                 exit_loop=1;
                 ret_val = err_file_exists;
-                goto free_encode_write_file_error;
+                goto free_decode_write_file_error;
             }
 
             if (!out_opts->silent_mode)
@@ -133,13 +134,13 @@ error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
             if (!output_file) {
                 exit_loop=1;
                 ret_val = err_file_write;
-                goto free_encode_write_file_error;
+                goto free_decode_write_file_error;
             }
         } else {
             if (fwrite(b_decrypt_block, 1, chunk_len-MAC_LEN, output_file) < chunk_len-MAC_LEN) {
                 exit_loop=1;
                 ret_val = err_file_write;
-                goto free_encode_write_file_error;
+                goto free_decode_write_file_error;
             }
 
             out_opts->crypto_progress = current_pos*1.0 / eof_pos * 100;
@@ -149,7 +150,7 @@ error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos,
             }
         }
 
-free_encode_write_file_error:
+free_decode_write_file_error:
         sodium_memzero(b_decrypt_block, chunk_len);
         free(b_decrypt_block);
         free(b_chunk);
@@ -167,7 +168,7 @@ error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     error_code ret_val = err_failed;
 
     FILE *input_file = fopen((char*)c_input_file, "rb"); // b needed for W32
-    if(input_file == NULL) {
+    if (input_file == NULL) {
         return err_file_read;
     }
     
@@ -179,7 +180,7 @@ error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     fseeko(input_file, 0, SEEK_SET);
     
     if (!eof_pos){
-     return err_file_empty;
+        return err_file_empty;
     }
     
     unsigned char b_file_nonce[KEY_LEN - 8]= {0};
@@ -197,8 +198,7 @@ error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     char *sep_pos = strrchr((const char*)c_input_file, '/'); //drop path
 
 #ifdef WIN32
-                if (!sep_pos)
-                    sep_pos = strrchr((const char*)c_input_file, '\\');
+    if (!sep_pos) sep_pos = strrchr((const char*)c_input_file, '\\');
 #endif
 
     strncpy(b_read_buffer, (sep_pos) ? (const char*)sep_pos+1 : (const char*)c_input_file, BUF_PATH_LEN-1 );
@@ -209,6 +209,10 @@ error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
 
     fwrite(b_block_len, 1, sizeof b_block_len, output_file);
     fwrite(b_crypt_block, 1, BUF_PATH_LEN + MAC_LEN, output_file);
+
+    if (ferror(output_file)) {
+        return err_file_write;
+    }
 
     // Encode the file
     while (!exit_loop) {
@@ -242,7 +246,7 @@ error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
         fwrite(b_block_len, 1, sizeof b_block_len, output_file);
         fwrite(b_crypt_block, 1, num_read + MAC_LEN, output_file);
 
-        if ( ferror(output_file)) {
+	if (ferror(output_file)) {
 	    ret_val = err_file_write;
 	    break;
         }
@@ -275,7 +279,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 
     if (out_opts->random_outname){
         randombytes_buf(b_file_rnd, sizeof b_file_rnd);
-        base58_encode((unsigned char *)c_b58_file_rnd,(const unsigned char *)b_file_rnd, 6);
+        base58_encode((unsigned char *)c_b58_file_rnd,(const unsigned char *)b_file_rnd, sizeof b_file_rnd);
     }
 
     if ( strlen((char*)out_opts->c_override_out_name) ) {
@@ -288,7 +292,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
                 char* fname= delim ? delim+1 : (char*)c_filename;
                 snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s%s.minilock", out_opts->c_override_out_name, fname );
             }
-        }else {
+        } else {
             snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s", out_opts->c_override_out_name);
         }
 
@@ -297,7 +301,6 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
             snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s.minilock", c_b58_file_rnd  );
         else
             snprintf((char*)out_opts->c_final_out_name,  sizeof out_opts->c_final_out_name-1, "%s.minilock", c_filename );
-
     }
 
     if (!access((const char *)out_opts->c_final_out_name, F_OK)){
@@ -313,6 +316,10 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     uint8_t b_header[12] = {'m','i','n','i','L','o','c','k', 0, 0, 0, 0};
     fwrite(b_header, 1, sizeof b_header, output_file);
     fwrite("{\"version\":1,", 1, 13, output_file);
+
+    if (ferror(output_file)) {
+        return err_file_write;
+    }
 
     uint8_t  b_ephemeral_rnd[KEY_LEN]= {0};
     uint8_t  b_ephemeral_pk[KEY_LEN]= {0};
@@ -332,8 +339,6 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     char     c_file_info_json[BUF_PATH_LEN] = {0};
     char     c_decrypt_info_item_json[1024] = {0};
     char     c_decrypt_info_array_item_json[1024] = {0};
-
-    //int i=0;
 
     randombytes_buf(b_ephemeral_rnd, sizeof b_ephemeral_rnd);
     randombytes_buf(b_file_key_rnd, sizeof b_file_key_rnd);
@@ -359,22 +364,22 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 
     fwrite("}}", 1, 2 , output_file);
 
-    off_t crypt_block_start = ftello(output_file);
+    off_t crypt_start_pos = ftello(output_file);
     unsigned char b_json_header_len[4]= {0};
     // - magic len + len bytes + bin suffix after json header
-    number_to_array2(b_json_header_len, sizeof b_json_header_len, crypt_block_start - 12);
+    number_to_array2(b_json_header_len, sizeof b_json_header_len, crypt_start_pos - 12);
     fseeko(output_file, 8, SEEK_SET);
     fwrite(b_json_header_len, 1, sizeof b_json_header_len, output_file);
-    fseeko(output_file, crypt_block_start, SEEK_SET);
+    fseeko(output_file, crypt_start_pos, SEEK_SET);
 
-    error_code file_err_err = file_encode(output_file, b_file_nonce_rnd, b_file_key_rnd, c_filename, out_opts);
-    if (file_err_err){
-        ret_val = file_err_err;
+    error_code encode_err = file_encode(output_file, b_file_nonce_rnd, b_file_key_rnd, c_filename, out_opts);
+    if (encode_err){
+        ret_val = encode_err;
         goto free_encode_res;
     }
     sodium_memzero(b_file_key_rnd, sizeof b_file_key_rnd);
 
-    fseeko(output_file, crypt_block_start, SEEK_SET);
+    fseeko(output_file, crypt_start_pos, SEEK_SET);
 
     unsigned char b_hash[KEY_LEN] = {0};
     
@@ -642,7 +647,7 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
             goto exit_decode_loop_on_failure;
         }
 
-        off_t crypt_block_start = ftello(input_file);
+        off_t crypt_start_pos = ftello(input_file);
         
         unsigned char hash[KEY_LEN] = {0};
 
@@ -657,10 +662,10 @@ error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_
         
         // calculating hash moves fp to the end
         off_t eof_pos   = ftello(input_file);
-        fseeko(input_file, crypt_block_start, SEEK_SET);
-        error_code file_err_err = file_decode(input_file, crypt_block_start, eof_pos, b_file_nonce, b_file_key, out_opts);
-        if (file_err_err) {
-            ret_val = file_err_err;
+        fseeko(input_file, crypt_start_pos, SEEK_SET);
+        error_code encode_err = file_decode(input_file, crypt_start_pos, eof_pos, b_file_nonce, b_file_key, out_opts);
+        if (encode_err) {
+            ret_val = encode_err;
             goto exit_decode_loop_on_failure;
         }
         ret_val = err_ok;

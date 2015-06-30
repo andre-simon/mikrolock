@@ -21,7 +21,7 @@ struct rcpt_list {
   struct rcpt_list* next;
 };
 
-error_code file_decode(FILE* input_file, off_t crypt_block_start, off_t eof_pos, uint8_t* b_file_nonce_prefix,
+error_code file_decode(FILE* input_file, off_t crypt_start_pos, off_t eof_pos, uint8_t* b_file_nonce_prefix,
                 uint8_t* b_file_key, struct output_options* out_opts);
 
 error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t* b_file_key, uint8_t *c_input_file, struct output_options* out_opts);
