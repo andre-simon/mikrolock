@@ -1,12 +1,12 @@
 -------------------------------------------------------------------------------
----  MLOCK MANUAL - Version 0.13  ------------------------------- June 2015 ---
+---  MLOCK MANUAL - Version 0.14  ---------------- UTF-8 FILE --- June 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
 
 -------------------------------------------------------------------------------
 
-mlock reads and writes encrypted miniLock files (https://minilock.io/).
+µlock reads and writes encrypted miniLock files (https://minilock.io/).
 
 CONTENT:
 -------------------------------------------------------------------------------
@@ -21,15 +21,15 @@ CONTENT:
 1.  Overview
 -------------------------------------------------------------------------------
 
-mlock is a fast native implementation of the minilock file format.
+µlock is a fast native implementation of the minilock file format.
 Despite its name (and in contrast to the original implementation), it can also 
 handle BIG files.
 
 The main goal of development is to provide an easy exchange of encrypted data
-using mail or cloud services. mlock is based on modern public key encryption
+using mail or cloud services. µlock is based on modern public key encryption
 without configuration or learning efforts. The miniLock file format may also be
 applied using the Chrome extension, this might help if corporate rules do not
-allow an installation of mlock.
+allow an installation of µlock.
 
 A short description of minilock's benefits (source: https://minilock.io):
 
@@ -55,12 +55,14 @@ A minilock file does not contain any visible information about its recipients.
 
 Read more about the cryptographic details: https://minilock.io
 
+As µ is the metric symbol for "micro", µlock is pronounced "microlock".
+
 
 2. How does it work?
 -------------------------------------------------------------------------------
 
 A wants to encrypt a file for B. B enters his mail address and passphrase into
-mlock to obtain his miniLock ID. He sends this ID to A.
+µlock to obtain his miniLock ID. He sends this ID to A.
 A encrypts the file and adds B's miniLock ID as recipient ID. A now sends the
 encrypted file to B, who is able to decrypt it using his passphrase/mail
 combination.
@@ -99,33 +101,33 @@ Examples:
 
 ENCRYPTION
 
-mlock --encrypt libsodium-1.0.0.tar.gz --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+mlock --encrypt secret.data --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 
 Please enter your secret passphrase:
 Unlocking...
 Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
-Encrypting file libsodium-1.0.0.tar.gz...
+Encrypting file secret.data...
 Progress 100%
 Calculating file hash...
 Progress 100%
-Destination file: libsodium-1.0.0.tar.gz.minilock
+Destination file: secret.data.minilock
 
-The encrypted file is libsodium-1.0.0.tar.gz.minilock
+The encrypted file is secret.data.minilock
 This file can be decrypted by the receiver EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 
 
 DECRYPTION
 
-mlock --decrypt libsodium-1.0.0.tar.gz.minilock --mail receiver@test.org
+mlock --decrypt secret.data.minilock --mail receiver@test.org
 Please enter your secret passphrase:
 Unlocking...
 Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
-Decrypting file libsodium-1.0.0.tar.gz.minilock...
+Decrypting file secret.data.minilock...
 Calculating file hash...
 Progress 100%
-Writing to file libsodium-1.0.0.tar.gz...
+Writing to file secret.data...
 Progress 100%
-Destination file: libsodium-1.0.0.tar.gz
+Destination file: secret.data
 
 
 4. Applied crypto functions
@@ -160,7 +162,7 @@ http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html
 5.  Platforms
 -------------------------------------------------------------------------------
 
-mlock is currently available for Linux and Windows.
+µlock is currently available for Linux and Windows.
 
 
 6.  Contact

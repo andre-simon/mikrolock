@@ -418,9 +418,9 @@ void MlockMainWindow::on_txtDestDir_textChanged()
 
 void MlockMainWindow::on_actionAbout_mlock_triggered()
 {
-    QMessageBox::about( this, "About mlock",
-                        QString("mlock reads and writes encrypted minilock files.\n\n"
-                        "mlock GUI %1\n"
+    QMessageBox::about( this, "About µlock",
+                        QString("µlock reads and writes encrypted minilock files.\n\n"
+                        "µlock %1\n"
                         "(C) 2015 Andre Simon <andre.simon1 at gmx.de>\n\n"
                         "Minilock file format specification:\n"
                         "https://minilock.io\n\n"

@@ -1,11 +1,10 @@
-mlock installation instructions
+µlock installation instructions
 -------------------------------
 
 mlock requires the libsodium library (release 0.6.0).
 mlock-gui requires Qt5.
 
-1. Basic installation
-=====================
+Instructions:
 
  1. tar xjvf mlock-x.x.tar.bz2
  2. cd mlock-x.x

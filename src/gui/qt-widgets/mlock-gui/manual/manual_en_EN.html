@@ -1,7 +1,7 @@
 <!doctype html>
 <head>
 <meta charset="utf-8">
-<title>mlock - Reads and writes encrypted miniLock files</title>
+<title>µlock - Reads and writes encrypted miniLock files</title>
 
 <style type="text/css">
 
@@ -11,24 +11,25 @@
 <body>
 
 
-<h1>mlock manual</h1>
+<h1>µlock manual</h1>
 <p>
-mlock reads and writes encrypted miniLock files.
+µlock reads and writes encrypted miniLock files.
 </p>
 
 <h2>Overview</h2>
 <p>
-mlock is a fast native implementation of the minilock file format.
+µlock is a fast native implementation of the minilock file format.
 Despite its name (and in contrast to the original implementation), it can also 
-handle BIG files.
+handle BIG files.<br>
+As µ is the metric symbol for &quot;micro&quot;, µlock is pronounced &quot;micro lock&quot;.
 </p>
 
 <p>
 The main goal of development is to provide an easy exchange of encrypted data
-using mail or cloud services. mlock is based on modern public key encryption
-without configuration or learning efforts. The miniLock file format may also be
-applied using the Chrome extension, this might help if corporate rules do not
-allow an installation of mlock.
+using mail or cloud services. µlock is based on modern public key encryption
+without configuration or learning efforts.
+The miniLock file format is also understood by the Chrome browser extension of the same name, this might help if corporate rules do not
+allow an installation of µlock.
 </p>
 
 <p>
@@ -67,7 +68,7 @@ A minilock file does not contain any visible information about its recipients.
 
 <h2>How does it work?</h2>
 <p>
-A wants to encrypt a file for B. B enters his mail address and passphrase into mlock to obtain his miniLock ID. He sends this ID to A.<br>
+A wants to encrypt a file for B. B enters his mail address and passphrase into µlock to obtain his miniLock ID. He sends this ID to A.<br>
 A encrypts the file and adds B's miniLock ID as recipient ID. A now sends the encrypted file to B, who is able to decrypt it using his passphrase/mail combination.<br>
 It is important to keep the passphrase secret - only the miniLock IDs (=public keys) are being exchanged.
 </p>
@@ -84,13 +85,13 @@ To achieve a secure encryption, a passphrase less than 40 characters needs to co
 </p>
 
 <br><br>
-<img src=":/manual/manual1.png"  border="0" alt="mlock GUI 1">
+<img src=":/manual/manual1.png"  border="0" alt="µlock GUI 1">
 
 <p>
 It is also possible to enter Unicode characters:</p>
 
 <br><br>
-<img src=":/manual/manual2.png"  border="0" alt="mlock GUI 1">
+<img src=":/manual/manual2.png"  border="0" alt="µlock GUI 1">
 
 <p>
 
@@ -142,7 +143,7 @@ Now the input/output dialog is displayed:
 </p>
 
 <br><br>
-<img src=":/manual/manual3.png"  border="0" alt="mlock GUI 1">
+<img src=":/manual/manual3.png"  border="0" alt="µlock GUI 1">
 
 <p>
 Here you choose the destination directory and the file to encrypt or decrypt (if the program was called with a file as argument, its path is shown in the statusbar).<br>
@@ -151,7 +152,7 @@ If a minilock file was selected, it will be automatically decrypted. Any other f
 </p>
 
 <br><br>
-<img src=":/manual/manual4.png"  border="0" alt="mlock GUI 1">
+<img src=":/manual/manual4.png"  border="0" alt="µlock GUI 1">
 
 <p>
 Using the upper list you define the miniLock IDs of your file recipients.<br>
@@ -172,7 +173,7 @@ After clicking &quot;Encrypt the file&quot; the minilock file will be stored in 
 
 
 <h2>The command line interface</h2>
-<p>Apart from the graphical user interface, mlock also offers a command line executable.</p>
+<p>Apart from the graphical user interface, µlock also offers a command line executable.</p>
 <pre>
 USAGE: mlock [OPTION]...
 mlock reads and writes encrypted miniLock files (https://minilock.io/)
@@ -201,36 +202,49 @@ If neither -E nor -D is given, mlock exits after showing your miniLock ID.
 
 <h3>File encryption</h3>
 <pre>
-mlock --encrypt libsodium-1.0.0.tar.gz --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+mlock --encrypt secret.data --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Please enter your secret passphrase:
 Unlocking...
 Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
-Encrypting file libsodium-1.0.0.tar.gz...
+Encrypting file secret.data...
 Progress 100%
 Calculating file hash...
 Progress 100%
-Destination file: libsodium-1.0.0.tar.gz.minilock
+Destination file: secret.data.minilock
 </pre>
 
 <p>
-The encrypted file is libsodium-1.0.0.tar.gz.minilock<br>
+The encrypted file is secret.data.minilock<br>
 This file can be decrypted by the receiver EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 </p>
 
 <h3>File decryption</h3>
 
 <pre>
-mlock --decrypt libsodium-1.0.0.tar.gz.minilock --mail receiver@test.org
+mlock --decrypt secret.data.minilock --mail receiver@test.org
 Please enter your secret passphrase:
 Unlocking...
 Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
-Decrypting file libsodium-1.0.0.tar.gz.minilock...
+Decrypting file secret.data.minilock...
 Calculating file hash...
 Progress 100%
-Writing to file libsodium-1.0.0.tar.gz...
+Writing to file secret.data...
 Progress 100%
-Destination file: libsodium-1.0.0.tar.gz
+Destination file: secret.data
 </pre>
+</p>
+
+<h2>Compatibility with the miniLock browser extension</h2>
+<p>
+The miniLock file format was established by the miniLock Chrome browser extension.<br>
+While the produced files are interchangeable with each program, the accepted input to obtain a miniLock ID differs:
+</p>
+<ul>
+<li>miniLock accepts only valid mail addresses as salt; µlock accepts any value</li>
+<li>miniLock applies a passphrase entropy check; µlock may accept passphrases with lower entropy</li>
+</ul>
+<p>
+If you are going to use µlock and miniLock in parallel, choose a salt and passphrase which is accepted in both applications.
 </p>
 
 <h2>Applied crypto functions</h2>

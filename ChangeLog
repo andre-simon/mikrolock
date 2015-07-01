@@ -1,5 +1,14 @@
-mlock ChangeLog
+µlock ChangeLog                                               *** UTF8-FILE ***
 
+
+01.07.2015
+
+µlock 0.14
+
+-name changed to µlock (microlock)
+-minor documentation fixes
+
+---
 12.06.2015
 
 mlock 0.13
