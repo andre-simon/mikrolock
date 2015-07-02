@@ -1,5 +1,5 @@
 /*
-mlock reads and writes encrypted files in the minilock format
+mikrolock reads and writes encrypted files in the minilock format
 
 Copyright (C) 2014 Andre Simon
 
@@ -112,8 +112,8 @@ int check_password(const char *c_passphrase){
 /******************************************************************************/
 
 void print_help() {
-	printf("USAGE: mlock [OPTION]...\n");
-	printf("mlock reads and writes encrypted miniLock files (https://minilock.io/)\n\n");
+	printf("USAGE: mikrolock [OPTION]...\n");
+	printf("mikrolock reads and writes encrypted miniLock files (https://minilock.io/)\n\n");
 	printf("Available options:\n\n");
 	printf("  -E, --encrypt <file>  Encrypt the given file (see -r)\n");
 	printf("  -D, --decrypt <file>  Decrypt the given miniLock file\n");
@@ -129,11 +129,11 @@ void print_help() {
 	printf("  -v, --version         Print version information\n");
 	printf("  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)\n");
 
-	printf("\nIf neither -E nor -D is given, mlock exits after showing your miniLock ID.\n");
+	printf("\nIf neither -E nor -D is given, mikrolock exits after showing your miniLock ID.\n");
 }
 
 void print_version(int show_license_info) {
-        printf("mlock version " MLOCK_VERSION " Copyright 2014, 2015 Andre Simon\n");
+        printf("mikrolock " MIKROLOCK_VERSION " Copyright 2014, 2015 Andre Simon\n");
 
   if (show_license_info){
     printf("This program comes with ABSOLUTELY NO WARRANTY\n");
@@ -146,7 +146,7 @@ void print_version(int show_license_info) {
 int main(int argc, char **argv) {
 
     if (argc == 1) {
-        printf("USAGE: mlock [OPTIONS]\n");
+        printf("USAGE: mikrolock [OPTIONS]\n");
         return EXIT_FAILURE;
     }
 

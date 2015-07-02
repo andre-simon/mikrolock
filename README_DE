@@ -1,12 +1,13 @@
 -------------------------------------------------------------------------------
----  MLOCK HANDBUCH - Version 0.14  ------------- UTF-8-DATEI --- Juni 2015 ---
+---  MIKROLOCK HANDBUCH - Version 0.14  --------- UTF-8-DATEI --- Juli 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
 
 -------------------------------------------------------------------------------
 
-mlock liest und schreibt verschlüsselte miniLock-Dateien (https://minilock.io/).
+MikroLock liest und schreibt verschlüsselte miniLock-Dateien (https://minilock.io/).
+
 
 INHALT:
 -------------------------------------------------------------------------------
@@ -14,23 +15,24 @@ INHALT:
 1. Übersicht
 2. Wie funktioniert's?
 3. Funktionen
-4. Verwendete Crypto-Funktionen
-5. Plattformen
-6. Kontakt
+4. Kompatibilität mit der miniLock-Browsererweiterung
+5. Verwendete Crypto-Funktionen
+6. Plattformen
+7. Kontakt
 
 
 1.  Übersicht
 -------------------------------------------------------------------------------
 
-mlock ist eine schnelle Implementierung der miniLock-Spezifikation. Trotz des 
-Namens (und im Gegensatz zum Original) kann mlock auch mit großen Dateien 
+MikroLock ist eine schnelle Implementierung der miniLock-Spezifikation. Trotz des
+Namens (und im Gegensatz zum Original) kann MikroLock auch mit großen Dateien
 umgehen.
 
 Hauptziel der Entwicklung ist ein unkomplizierter Austausch verschlüsselter
 Daten, z.B. durch E-Mail oder Cloud-Dienste. Die Verschlüsselung basiert auf
 modernen Public-Key Verfahren, jedoch ohne aufwändige Konfiguration und
 Einarbeitung. Das miniLock-Format kann durch die Chrome Erweiterung auch dann
-eingesetzt werden, wenn keine Software wie mlock installiert werden kann (Firmen-
+eingesetzt werden, wenn keine Software wie MikroLock installiert werden kann (Firmen-
 Richtlinien o.ä.).
 
 Eine kurze Zusammenfassung der miniLock-Eigenschaften (Quelle: https://minilock.io): 
@@ -56,14 +58,12 @@ mehreren Empfängern zu ermöglichen die Daten zu entschlüsseln. Es muss also
 nicht eine separate Datei für jeden Empfänger erzeugt werden. MiniLock-Dateien 
 enthalten keine sichtbaren Hinweise auf Ihre Empfänger.
 
-Da µ das Symbol für die Präfix "Mikro"&quot;" ist, wird µlock dementsprechend wie "Mikrolock" ausgesprochen.
-
 
 2. Wie funktioniert's?
 -------------------------------------------------------------------------------
 
 A möchte etwas für B verschlüsseln. B gibt seine Mail-Adresse und Passphrase in
-mlock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.
+MikroLock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.
 A verschlüsselt die Datei und gibt die MiniLock-ID von B als Empfänger-ID an.
 A sendet nun die verschlüsselte Datei an B, der sie mit seiner Passphrase/Mail-
 Kombination entschlüsseln kann.
@@ -74,8 +74,8 @@ MiniLock-IDs (=public keys) ausgetauscht.
 3.  Funktionen
 -------------------------------------------------------------------------------
 
-USAGE: mlock [OPTION]...
-mlock reads and writes encrypted miniLock files (https://minilock.io/)
+USAGE: mikrolock [OPTION]...
+mikrolock reads and writes encrypted miniLock files (https://minilock.io/)
 
 Available options:
 
@@ -94,7 +94,7 @@ Available options:
   -v, --version         Print version information
   -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
 
-If neither -E nor -D is given, mlock exits after showing your miniLock ID.
+If neither -E nor -D is given, mikrolock exits after showing your miniLock ID.
 
 
 Beispiele:
@@ -102,7 +102,7 @@ Beispiele:
 
 VERSCHLÜSSELUNG:
 
-mlock --encrypt libsodium-1.0.0.tar.gz --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+mikrolock --encrypt libsodium-1.0.0.tar.gz --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 
 Please enter your secret passphrase:
 Unlocking...
@@ -120,7 +120,7 @@ entschlüsselt werden.
 
 ENTSCHLÜSSELUNG:
 
-mlock --decrypt libsodium-1.0.0.tar.gz.minilock --mail receiver@test.org
+mikrolock --decrypt libsodium-1.0.0.tar.gz.minilock --mail receiver@test.org
 Please enter your secret passphrase:
 Unlocking...
 Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
@@ -129,7 +129,24 @@ Calculating file hash...
 Writing to file libsodium-1.0.0.tar.gz...
 
 
-4. Verwendete Crypto-Funktionen
+4. Kompatibilität mit der miniLock-Browsererweiterung
+-------------------------------------------------------------------------------
+
+Das miniLock Dateiformat wurde mit der Chrome-Erweiterung miniLock eingeführt.
+MiniLock-Dateien können mit beiden Programmen verarbeitet werden, allerdings
+unterscheiden sich die akzeptierten Eingaben zur Erzeugung der miniLock-ID:
+
+ * miniLock nimmt nur gültige Mailadressen als Salt-Wert an; MikroLock jedoch
+   jeden Wert
+
+ * miniLock prüft die Mindest-Entropie der Passphrase; MikroLock könnte auch
+   eine Passphrase mit geringerer Entropie akzeptieren
+
+Sollten Sie MikroLock und miniLock gleichzeitig benutzen wollen, prüfen Sie
+ob Salt und Passphrase in beiden Programmen gültige Eingaben sind.
+
+
+5. Verwendete Crypto-Funktionen
 -------------------------------------------------------------------------------
 
 Die MiniLock-ID wird wie folgt erzeugt:
@@ -159,13 +176,13 @@ http://doc.libsodium.org/advanced/scalar_multiplication.html
 http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html
 
 
-5.  Plattformen
+6.  Plattformen
 -------------------------------------------------------------------------------
 
-mlock ist für Linux und Windows verfügbar.
+MikroLock ist für Linux und Windows verfügbar.
 
 
-6.  Kontakt
+7.  Kontakt
 -------------------------------------------------------------------------------
 
 Andre Simon

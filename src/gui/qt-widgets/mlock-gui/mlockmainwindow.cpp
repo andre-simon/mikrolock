@@ -1,5 +1,5 @@
 /*
-mlock reads and writes encrypted files in the minilock format
+mikrolock reads and writes encrypted files in the minilock format
 
 Copyright (C) 2015 Andre Simon
 
@@ -418,16 +418,16 @@ void MlockMainWindow::on_txtDestDir_textChanged()
 
 void MlockMainWindow::on_actionAbout_mlock_triggered()
 {
-    QMessageBox::about( this, "About µlock",
-                        QString("µlock reads and writes encrypted minilock files.\n\n"
-                        "µlock %1\n"
+    QMessageBox::about( this, "About MikroLock",
+                        QString("MikroLock reads and writes encrypted minilock files.\n\n"
+                        "MikroLock %1\n"
                         "(C) 2015 Andre Simon <andre.simon1 at gmx.de>\n\n"
                         "Minilock file format specification:\n"
                         "https://minilock.io\n\n"
                         "Built with Qt version %2\n\n"
                         "Icons are based on the KDE Oxygen icon theme\n\n"
                         "Released under the terms of the GNU GPL license.\n\n"
-                        ).arg(MLOCK_VERSION).arg(QString(qVersion ())) );
+                        ).arg(MIKROLOCK_VERSION).arg(QString(qVersion ())) );
 }
 
 void MlockMainWindow::on_action_Manual_triggered(){

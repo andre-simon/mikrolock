@@ -1,7 +1,7 @@
 #ifndef _MINILOCK_H
 #define _MINILOCK_H
 
-#define MLOCK_VERSION "0.13"
+#define MIKROLOCK_VERSION "0.14"
 
 // for ftelloo: off_t
 #define _FILE_OFFSET_BITS 64
@@ -21,10 +21,10 @@ struct rcpt_list {
   struct rcpt_list* next;
 };
 
+error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t* b_file_key, uint8_t *c_input_file, struct output_options* out_opts);
+
 error_code file_decode(FILE* input_file, off_t crypt_start_pos, off_t eof_pos, uint8_t* b_file_nonce_prefix,
                 uint8_t* b_file_key, struct output_options* out_opts);
-
-error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t* b_file_key, uint8_t *c_input_file, struct output_options* out_opts);
 
 error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b_my_sk, struct rcpt_list* id_list, struct output_options* out_opts);
 

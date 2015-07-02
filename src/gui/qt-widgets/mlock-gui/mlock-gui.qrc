@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>mlock.png</file>
         <file>Actions-dialog-ok-apply-icon.png</file>
         <file>Actions-document-decrypt-icon.png</file>
         <file>Actions-document-encrypt-icon.png</file>
@@ -24,5 +23,6 @@
         <file>Status-mail-unread-new-icon.png</file>
         <file>Status-mail-unread-icon.png</file>
         <file>Actions-drop-icon.png</file>
+        <file>mikrolock.png</file>
     </qresource>
 </RCC>

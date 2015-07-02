@@ -1,7 +1,7 @@
 <!doctype html>
 <head>
 <meta charset="utf-8">
-<title>µlock - Liest und schreibt verschl&uuml;sselte miniLock-Dateien</title>
+<title>MikroLock - Liest und schreibt verschl&uuml;sselte miniLock-Dateien</title>
 
 <style type="text/css">
 
@@ -10,16 +10,15 @@
 
 <body>
 
-<h1>µlock</h1>
+<h1>MikroLock</h1>
 <p>
-µlock liest und schreibt verschl&uuml;sselte miniLock-Dateien.
+MikroLock liest und schreibt verschl&uuml;sselte miniLock-Dateien.
 </p>
 
 <h2>&Uuml;bersicht</h2>
 <p>
-µlock ist eine schnelle Implementierung der miniLock-Spezifikation.
-Trotz des Namens (und im Gegensatz zum Original) kann µlock auch mit gro&szlig;en Dateien umgehen.<br>
-Da µ das Symbol für die Präfix &quot;Mikro&quot; ist, wird µlock dementsprechend wie &quot;Mikrolock&quot; ausgesprochen.
+MikroLock ist eine schnelle Implementierung der miniLock-Spezifikation.
+Trotz des Namens (und im Gegensatz zum Original) kann MikroLock auch mit gro&szlig;en Dateien umgehen.
 </p>
 
 <p>
@@ -27,7 +26,7 @@ Hauptziel der Entwicklung ist ein unkomplizierter Austausch verschlüsselter
 Daten, z.B. durch E-Mail oder Cloud-Dienste. Die Verschlüsselung basiert auf
 modernen Public-Key Verfahren, jedoch ohne aufwändige Konfiguration und
 Einarbeitung. Das miniLock-Format kann durch die gleichnamige Chrome-Erweiterung auch dann
-eingesetzt werden, wenn keine Software wie µlock installiert werden kann (Firmen-Richtlinien o.ä.).
+eingesetzt werden, wenn keine Software wie MikroLock installiert werden kann (Firmen-Richtlinien o.ä.).
 </p>
 
 <p>
@@ -63,7 +62,7 @@ MiniLock-Dateien enthalten keine sichtbaren Hinweise auf Ihre Empf&auml;nger.
 
 <h2>Wie funktioniert's?</h2>
 <p>
-A  m&ouml;chte etwas f&uuml;r B verschl&uuml;sseln. B gibt seine Mail-Adresse und Passphrase in µlock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.<br>
+A  m&ouml;chte etwas f&uuml;r B verschl&uuml;sseln. B gibt seine Mail-Adresse und Passphrase in MikroLock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.<br>
 A verschl&uuml;sselt die Datei und gibt die MiniLock-ID von B als Empf&auml;nger-ID an. A sendet nun die verschl&uuml;sselte Datei an B, der sie mit seiner Passphrase/Mail-Kombination entschl&uuml;sseln kann.<br>
 Wichtig hierbei ist, dass die Passphrase geheim bleibt - es werden nur die MiniLock-IDs (=public keys) ausgetauscht.
 </p>
@@ -79,14 +78,14 @@ Damit die verschl&uuml;sselte Datei wirksam gesch&uuml;tzt ist, muss eine Passph
 </p>
 
 <br><br>
-<img src=":/manual/manual1.png"  border="0" alt="µlock GUI 1">
+<img src=":/manual/manual1.png"  border="0" alt="MikroLock GUI 1">
 
 <p>
 Hier k&ouml;nnen auch Unicode-Zeichen eingegeben werden:
 </p>
 
 <br><br>
-<img src=":/manual/manual2.png"  border="0" alt="µlock GUI 2">
+<img src=":/manual/manual2.png"  border="0" alt="MikroLock GUI 2">
 
 <p>
 Das <b>Mail-Icon</b> zeigt die G&uuml;ltigkeit der Mail-Adresse an:
@@ -136,7 +135,7 @@ Nun wird zum Ein- und Ausgabedialog gewechselt:
 </p>
 
 <br><br>
-<img src=":/manual/manual3.png"  border="0" alt="µlock GUI 3">
+<img src=":/manual/manual3.png"  border="0" alt="MikroLock GUI 3">
 
 <p>
 Hier wird das Ausgabeverzeichnis ausgew&auml;hlt und anschlie&szlig;end die Datei zur Ver- bzw. Entschl&uuml;sselung (sollte das Programm mit einer Datei als Argument aufgerufen worden sein, so wird dessen Pfad bereits in der Statusleiste angezeigt).<br>
@@ -145,7 +144,7 @@ Wenn eine miniLock-Datei ausgew&auml;hlt wurde, wird diese automatisch entschl&u
 </p>
 
 <br><br>
-<img src=":/manual/manual4.png"  border="0" alt="µlock GUI 4">
+<img src=":/manual/manual4.png"  border="0" alt="MikroLock GUI 4">
 
 <p>
 In der oberen Liste werden die miniLock-IDs der Datei-Empf&auml;nger angegeben.<br>
@@ -167,11 +166,11 @@ Nach dem Klick auf &quot;Datei verschl&uuml;sseln&quot; wird die miniLock-Datei 
 
 <h2>Die Kommandozeilenversion</h2>
 <p>
-Neben der grafischen Oberfl&auml;che gibt es auch eine Kommandozeilenversion von µlock.
+Neben der grafischen Oberfl&auml;che gibt es auch eine Kommandozeilenversion von MikroLock.
 </p>
 <pre>
-USAGE: mlock [OPTION]...
-mlock reads and writes encrypted miniLock files (https://minilock.io/)
+USAGE: mikrolock [OPTION]...
+mikrolock reads and writes encrypted miniLock files (https://minilock.io/)
 
 Available options:
 
@@ -190,14 +189,14 @@ Available options:
   -v, --version         Print version information
   -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
 
-If neither -E nor -D is given, mlock exits after showing your miniLock ID.
+If neither -E nor -D is given, mikrolock exits after showing your miniLock ID.
 </pre>
 
 <h2>Beispiele der Kommandozeilenversion</h2>
 
 <h3>Verschl&uuml;sselung</h3>
 <pre>
-mlock --encrypt secret.data --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+mikrolock --encrypt secret.data --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Please enter your secret passphrase:
 Unlocking...
 Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
@@ -216,7 +215,7 @@ Diese Datei kann vom Emp&auml;nger EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 <h3>Entschl&uuml;sselung</h3>
 
 <pre>
-mlock --decrypt secret.data.minilock --mail receiver@test.org
+mikrolock --decrypt secret.data.minilock --mail receiver@test.org
 Please enter your secret passphrase:
 Unlocking...
 Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
@@ -235,11 +234,11 @@ Das miniLock Dateiformat wurde mit der Chrome-Erweiterung miniLock eingeführt.<
 MiniLock-Dateien können mit beiden Programmen verarbeitet werden, allerdings unterscheiden sich die akzeptierten Eingaben zur Erzeugung der miniLock-ID:
 </p>
 <ul>
-<li>miniLock nimmt nur gültige Mailadressen als Salt-Wert an; µlock nimmt jeden Wert</li>
-<li>miniLock prüft die Mindest-Entropie der Passphrase; µlock könnte auch eine Passphrase mit geringerer Entropie akzeptieren</li>
+<li>miniLock nimmt nur gültige Mailadressen als Salt-Wert an; MikroLock nimmt jeden Wert</li>
+<li>miniLock prüft die Mindest-Entropie der Passphrase; MikroLock könnte auch eine Passphrase mit geringerer Entropie akzeptieren</li>
 </ul>
 <p>
-Sollten Sie µlock und miniLock gleichzeitig benutzen wollen, prüfen Sie ob Salt und Passphrase in beiden Programmen gültige Eingaben sind.
+Sollten Sie MikroLock und miniLock gleichzeitig benutzen wollen, prüfen Sie ob Salt und Passphrase in beiden Programmen gültige Eingaben sind.
 </p>
 
 <h2>Verwendete Crypto-Funktionen</h2>

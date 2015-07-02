@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=MikroLock
+Type=Application
+Comment=MikroLock reads and writes encrypted miniLock files.
+Exec=mikrolock-gui
+TryExec=mikrolock-gui
+Icon=mikrolock
+Categories=Utility;TextTools;
+StartupNotify=true

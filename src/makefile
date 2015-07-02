@@ -1,5 +1,5 @@
-# Simple Makefile for mlock
-# This file will compile the mlock binary.
+# Simple Makefile for mikrolock
+# This file will compile the mikrolock binary.
 # See INSTALL for instructions.
 
 CC=gcc
@@ -7,7 +7,6 @@ CC=gcc
 LIBS=libs/
 
 QMAKE=qmake-qt5
-
 
 GUI_QT_DIR=./gui/qt-widgets/mlock-gui/
 
@@ -19,7 +18,7 @@ CFLAGS=-O2 -Wall ${OWASP_FLAGS} -fsigned-char -std=gnu99 -I${LIBS} -I${LIBS}pine
 LDFLAGS=-lm -lsodium
 
 # cmdline user interface
-CLI_OBJECTS=mlock.o
+CLI_OBJECTS=mikrolock.o
 
 # Qt user interface
 GUI_OBJECTS:=${GUI_QT_DIR}main.cpp ${GUI_QT_DIR}mlockmainwindow.cpp
@@ -29,8 +28,7 @@ CORE_OBJECTS=minilock.o utils.o ${LIBS}b58/base58.o ${LIBS}json/json.o ${LIBS}li
         ${LIBS}libb64/cdecode.o  \
         ${LIBS}pinentry/pinentry.o
 
-EXECUTABLE=mlock
-
+EXECUTABLE=mikrolock
 
 cli: lib$(EXECUTABLE).a ${CLI_OBJECTS}
 	${CC} -o $(EXECUTABLE) ${CLI_OBJECTS} -L. -l$(EXECUTABLE) ${LDFLAGS}
@@ -43,9 +41,9 @@ gui-qt: lib$(EXECUTABLE).a ${GUI_OBJECTS}
 
 clean:
 	@rm -f *.o
-	@rm -f ./mlock
+	@rm -f ./mikrolock
 	@rm -f *.a
-	@rm -f gui/qt-widgets/mlock-gui/mlock-gui
+	@rm -f gui/qt-widgets/mlock-gui/mikrolock-gui
 	@rm -f gui/qt-widgets/mlock-gui/*.o
 	@rm -f gui/qt-widgets/mlock-gui/qrc_*.cpp
 	@rm -f gui/qt-widgets/mlock-gui/moc_*.cpp

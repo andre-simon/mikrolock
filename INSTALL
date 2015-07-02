@@ -1,13 +1,13 @@
-µlock installation instructions
+MikroLock installation instructions
 -------------------------------
 
-mlock requires the libsodium library (release 0.6.0).
-mlock-gui requires Qt5.
+mikrolock requires the libsodium library (release 0.6.0).
+mikrolock-gui requires Qt5.
 
 Instructions:
 
- 1. tar xjvf mlock-x.x.tar.bz2
- 2. cd mlock-x.x
+ 1. tar xjvf mikrolock-x.x.tar.bz2
+ 2. cd mikrolock-x.x
  3. make
     make gui (optional, requires Qt5)
  4. make install (install binary and documentation files)
