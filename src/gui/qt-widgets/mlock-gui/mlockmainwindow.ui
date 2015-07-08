@@ -52,7 +52,7 @@
             <item>
              <widget class="QLineEdit" name="txtMail">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;To remain compatible with the Chrome miniLock extension, enter a valid mail address (you may enter anything as salt value).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter your mail address (or any other value) as salt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="inputMask">
                <string/>
@@ -132,7 +132,7 @@
             <item>
              <widget class="QLineEdit" name="txtPassPhrase">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter a secret passphrase (minimum length: 20 characters). If the length does not exceed 40 characters, the passphrase must consist of at least five random words. A weak passphrase may be declined by the original miniLock Chrome extension.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter a secret passphrase (minimum length: 20 characters). If the length does not exceed 40 characters, the passphrase must consist of at least five random words.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="inputMask">
                <string/>
@@ -394,7 +394,7 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QLineEdit" name="txtDestDir">
             <property name="toolTip">
-             <string>Enter the directory to store the encrypted or decrypted file.</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your destination directory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="readOnly">
              <bool>true</bool>

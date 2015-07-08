@@ -19,8 +19,7 @@ MikroLock reads and writes encrypted miniLock files.
 <h2>Overview</h2>
 <p>
 MikroLock is a fast native implementation of the minilock file format.
-Despite its name (and in contrast to the original implementation), it can also 
-handle BIG files.
+Despite its name (and in contrast to the original Chrome extension), it can also handle BIG files.
 </p>
 
 <p>
@@ -36,7 +35,7 @@ A short description of minilock's benefits (source: <a href="https://minilock.io
 <br>
 <i>&quot;
 Enter your miniLock passphrase on any computer, and you'll get access to your
-miniLock ID. No key storage or management — just a single passphrase to access
+miniLock ID. No key storage or management - just a single passphrase to access
 your miniLock identity anywhere.
 &quot;</i>
 
@@ -120,13 +119,13 @@ The <b>signal icon</b> gives you following information::
 <td>
 <img src=":/Status-security-low-icon.png"  border="0" alt="Icon 1" width="32">
 </td><td style="vertical-align:middle">
-the passphrase is too short or does not contain enough words (separated by spaces)
+the passphrase is too short (minimum length: 20 characters)
 </td>
 </tr><tr>
 <td>
 <img src=":/Status-security-medium-icon.png"  border="0" alt="Icon 1" width="32">
 </td><td style="vertical-align:middle">
-the passphrase will most likely be refused by the original MiniLock-Plugin for Chrome
+the passphrase needs to consist of at least five words. It might be refused by the original MiniLock-Plugin for Chrome
 </td>
 </tr><tr>
 <td>
@@ -155,7 +154,7 @@ If a minilock file was selected, it will be automatically decrypted. Any other f
 
 <p>
 Using the upper list you define the miniLock IDs of your file recipients.<br>
-Using &quot;Read list file&quot; you can import a text file which contains one miniLock ID per line. The recipient's names may be entered behind their IDs as follows:
+Press &quot;Read list file&quot; to import a text file which contains one miniLock ID per line. The recipient's names may be entered behind their IDs as follows:
 <pre>
 y5qBLmncv36r98tFMw5YVoc9SHkfLDg8Wz7zf9yrPYPh2 / Andre Simon
 8SmHNEEZiK1RgWoN9xryJb8opBky9Kh7txhmgb1RLrUrW ; Customer XYZ
@@ -163,9 +162,9 @@ sVXHR7smwqXkSbphn8gdH3Ah6a1nvbYtuXPpxG6qKT321 - Schmidt
 ULgpTbP7isNNV6kgDbNVtQo5YRuUhc4N5AAEEbne9bjJi | Jane
 </pre>
 The information behind the separators will be displayed as tooltips.
-<br>
+<br><br>
 The button &quot;Clear recipients&quot; will delete the ID entries.<br>
-The option &quot;Omit my ID&quot; removes the own miniLock-ID from the recipients.<br>
+The option &quot;Omit my ID&quot; removes your own miniLock-ID from the recipients, preventing you from opening the encrypted file.<br>
 Applying &quot;Generate a random output filename&quot; will save the encrypted file using a randomized name.<br><br>
 After clicking &quot;Encrypt the file&quot; the minilock file will be stored in the previously defined destination directory.
 </p>

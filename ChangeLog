@@ -1,6 +1,13 @@
 MikroLock ChangeLog
 
 
+08.07.2015
+
+MikroLock 0.15
+
+-GUI: ignores own miniLock ID also in recipient list if "Omit my ID" is checked
+
+---
 02.07.2015
 
 MikroLock 0.14

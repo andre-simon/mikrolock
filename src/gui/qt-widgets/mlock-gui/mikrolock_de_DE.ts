@@ -64,13 +64,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="mlockmainwindow.ui" line="55"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;To remain compatible with the Chrome miniLock extension, enter a valid mail address (you may enter anything as salt value).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Um mit der miniLock Chrome Erweiterung kompatibel zu bleiben, solltest Du eine gültige Mail-Adresse eingeben (es ist aber jeder andere Wert erlaubt).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter your mail address (or any other value) as salt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;To remain compatible with the Chrome miniLock extension, enter a valid mail address (you may enter anything as salt value).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+        <translation>Gib deine Mail-Adresse (oder einen anderen Wert) als Salt ein.</translation>
     </message>
     <message>
         <location filename="mlockmainwindow.ui" line="135"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter a secret passphrase (minimum length: 20 characters). If the length does not exceed 40 characters, the passphrase must consist of at least five random words. A weak passphrase may be declined by the original miniLock Chrome extension.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gib ein geheimes Passwort ein (Mindestlänge: 20 Zeichen). Wenn die Länge unter 40 Zeichen bleibt, muss das Passwort aus mind. 5 zufällig gewählten Wörtern bestehen. Ein schwaches Passwort könnte von der miniLock Chrome-Erweiterung abgelehnt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter a secret passphrase (minimum length: 20 characters). If the length does not exceed 40 characters, the passphrase must consist of at least five random words.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter a secret passphrase (minimum length: 20 characters). If the length does not exceed 40 characters, the passphrase must consist of at least five random words. A weak passphrase may be declined by the original miniLock Chrome extension.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gib ein geheimes Passwort ein (Mindestlänge: 20 Zeichen). Wenn die Länge unter 40 Zeichen bleibt, muss das Passwort aus mind. 5 zufällig gewählten Wörtern bestehen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mlockmainwindow.ui" line="302"/>
@@ -112,9 +114,13 @@ p, li { white-space: pre-wrap; }
         <translation>Wähle das  Ausgabeverzeichnis</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="397"/>
         <source>Enter the directory to store the encrypted or decrypted file.</source>
-        <translation>Gib das Ausgabeverzeichnis ein.</translation>
+        <translation type="vanished">Gib das Ausgabeverzeichnis ein.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="397"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your destination directory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies ist das Ausgabeverzeichnis.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mlockmainwindow.ui" line="426"/>
@@ -123,7 +129,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="mlockmainwindow.ui" line="429"/>
-        <location filename="mlockmainwindow.cpp" line="356"/>
+        <location filename="mlockmainwindow.cpp" line="361"/>
         <source>Select the input file</source>
         <translation>Wähle die Eingabedatei</translation>
     </message>
@@ -240,20 +246,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="mlockmainwindow.cpp" line="86"/>
-        <location filename="mlockmainwindow.cpp" line="392"/>
-        <location filename="mlockmainwindow.cpp" line="511"/>
+        <location filename="mlockmainwindow.cpp" line="397"/>
+        <location filename="mlockmainwindow.cpp" line="516"/>
         <source>Input file %1</source>
         <translation>Eingabedatei %1</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="154"/>
+        <location filename="mlockmainwindow.cpp" line="96"/>
+        <source>The passphrase is too short (minimum: 20 characters).</source>
+        <translation>Das Passwort ist zu kurz (Mindestlänge: 20 Zeichen).</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.cpp" line="102"/>
+        <source>The passphrase is strong.</source>
+        <translation>Das Passwort ist ausreichend sicher.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.cpp" line="109"/>
+        <source>The passphrase must consist of at least five random words. It may be declined by the original miniLock Chrome extension.</source>
+        <translation>Das Passwort muss aus mindestens fünf Wörtern bestehen. Es könnte vom Original MiniLock-Plugin für Chrome abgewiesen werden.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.cpp" line="130"/>
+        <source>You do not need to enter an email address here unless you intend to use the Chrome miniLock extension.</source>
+        <translation>Du musst hier keine gültige Mailadresse angeben wenn die miniLock Chrome-Erweiterung nicht ebenfalls genutzt werden soll.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.cpp" line="158"/>
         <source>Scrypt error</source>
         <translation>Scrypt Fehler</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="126"/>
         <source>You do not need to enter an email address here unless you want to use the Chrome miniLock extension.</source>
-        <translation>Du musst hier keine Mail-Adresse angeben, wenn du nicht auch das Chrome miniLock-Plugin benutzen willst.</translation>
+        <translation type="vanished">Du musst hier keine Mail-Adresse angeben, wenn du nicht auch das Chrome miniLock-Plugin benutzen willst.</translation>
     </message>
     <message>
         <source>Invalid argument</source>
@@ -264,42 +289,42 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">%1 ist keine minilock-Datei.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="129"/>
+        <location filename="mlockmainwindow.cpp" line="133"/>
         <source>This mail address appears to be valid.</source>
         <translation>Die Mail-Adresse scheint gültig zu sein.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="132"/>
+        <location filename="mlockmainwindow.cpp" line="136"/>
         <source>This mail address appears to be invalid.</source>
         <translation>Die Mail-Adresse scheint ungültig zu sein.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="154"/>
+        <location filename="mlockmainwindow.cpp" line="158"/>
         <source>Key derivation failed</source>
         <translation>Schlüsselerzeugung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="181"/>
+        <location filename="mlockmainwindow.cpp" line="185"/>
         <source>%1 file %2...</source>
         <translation>%1 Datei %2...</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="183"/>
+        <location filename="mlockmainwindow.cpp" line="187"/>
         <source>Decrypting</source>
         <translation>Entschlüssele</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="183"/>
+        <location filename="mlockmainwindow.cpp" line="187"/>
         <source>Encrypting</source>
         <translation>Verschlüssele</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="230"/>
+        <location filename="mlockmainwindow.cpp" line="235"/>
         <source>Bad miniLock ID</source>
         <translation>Ungültige MiniLock ID</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="230"/>
+        <location filename="mlockmainwindow.cpp" line="235"/>
         <source>The ID %1 is invalid.</source>
         <translation>Die ID %1 ist ungültig.</translation>
     </message>
@@ -312,128 +337,128 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Du musst einige Empfänger IDs angeben.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="257"/>
+        <location filename="mlockmainwindow.cpp" line="262"/>
         <source>%1 file %2 in %3s</source>
         <translation>Datei %2 wurde in  %3s %1</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="259"/>
+        <location filename="mlockmainwindow.cpp" line="264"/>
         <source>Decrypted</source>
         <translation>entschlüsselt</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="259"/>
+        <location filename="mlockmainwindow.cpp" line="264"/>
         <source>Encrypted</source>
         <translation>verschlüsselt</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="272"/>
-        <location filename="mlockmainwindow.cpp" line="276"/>
-        <location filename="mlockmainwindow.cpp" line="280"/>
-        <location filename="mlockmainwindow.cpp" line="284"/>
-        <location filename="mlockmainwindow.cpp" line="288"/>
-        <location filename="mlockmainwindow.cpp" line="292"/>
-        <location filename="mlockmainwindow.cpp" line="296"/>
-        <location filename="mlockmainwindow.cpp" line="300"/>
-        <location filename="mlockmainwindow.cpp" line="304"/>
-        <location filename="mlockmainwindow.cpp" line="308"/>
-        <location filename="mlockmainwindow.cpp" line="312"/>
-        <location filename="mlockmainwindow.cpp" line="316"/>
+        <location filename="mlockmainwindow.cpp" line="277"/>
+        <location filename="mlockmainwindow.cpp" line="281"/>
+        <location filename="mlockmainwindow.cpp" line="285"/>
+        <location filename="mlockmainwindow.cpp" line="289"/>
+        <location filename="mlockmainwindow.cpp" line="293"/>
+        <location filename="mlockmainwindow.cpp" line="297"/>
+        <location filename="mlockmainwindow.cpp" line="301"/>
+        <location filename="mlockmainwindow.cpp" line="305"/>
+        <location filename="mlockmainwindow.cpp" line="309"/>
+        <location filename="mlockmainwindow.cpp" line="313"/>
+        <location filename="mlockmainwindow.cpp" line="317"/>
         <location filename="mlockmainwindow.cpp" line="321"/>
+        <location filename="mlockmainwindow.cpp" line="326"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="272"/>
+        <location filename="mlockmainwindow.cpp" line="277"/>
         <source>Unknown error.</source>
         <translation>Unbekannter Fehler.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="276"/>
+        <location filename="mlockmainwindow.cpp" line="281"/>
         <source>Could not decrypt the file.</source>
         <translation>Konnte Datei nicht entschlüsseln.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="280"/>
+        <location filename="mlockmainwindow.cpp" line="285"/>
         <source>Could not encrypt the file.</source>
         <translation>Konnte Datei nicht verschlüsseln.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="284"/>
+        <location filename="mlockmainwindow.cpp" line="289"/>
         <source>Could not open the file.</source>
         <translation>Konnte Datei nicht öffnen.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="288"/>
+        <location filename="mlockmainwindow.cpp" line="293"/>
         <source>Could not read the file.</source>
         <translation>Konnte Datei nicht lesen.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="292"/>
+        <location filename="mlockmainwindow.cpp" line="297"/>
         <source>Could not write the file.</source>
         <translation>Konnte Datei nicht schreiben.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="296"/>
+        <location filename="mlockmainwindow.cpp" line="301"/>
         <source>Could not calculate the hash of the file.</source>
         <translation>Konnte den Hashwert der Datei nicht bestimmen.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="300"/>
+        <location filename="mlockmainwindow.cpp" line="305"/>
         <source>Illegal minilock file format.</source>
         <translation>Ungültiges miniLock Dateiformat.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="304"/>
+        <location filename="mlockmainwindow.cpp" line="309"/>
         <source>No recipients defined.</source>
         <translation>Keine Empfänger angegeben.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="308"/>
+        <location filename="mlockmainwindow.cpp" line="313"/>
         <source>You are not allowed to decrypt the file.</source>
         <translation>Du darfst diese Datei nicht öffnen.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="312"/>
+        <location filename="mlockmainwindow.cpp" line="317"/>
         <source>Empty input file.</source>
         <translation>Leere Eingabedatei.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="316"/>
+        <location filename="mlockmainwindow.cpp" line="321"/>
         <source>Output file exists:
 %1</source>
         <translation>Datei existiert bereits:
 %1</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="321"/>
+        <location filename="mlockmainwindow.cpp" line="326"/>
         <source>Undefined error.</source>
         <translation>Undefinierter Fehler.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="347"/>
+        <location filename="mlockmainwindow.cpp" line="352"/>
         <source>Select destination directory</source>
         <translation>Wähle das Ausgabevereichnis</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="364"/>
+        <location filename="mlockmainwindow.cpp" line="369"/>
         <source>Process given file</source>
         <translation>Verarbeite die angegebene Datei</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="365"/>
+        <location filename="mlockmainwindow.cpp" line="370"/>
         <source>%1 %2
 into %3 ?</source>
         <translation>%1 %2
 in %3 ?</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="366"/>
+        <location filename="mlockmainwindow.cpp" line="371"/>
         <source>Decrypt</source>
         <translation>Entschlüssele</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="367"/>
+        <location filename="mlockmainwindow.cpp" line="372"/>
         <source>Encrypt</source>
         <translation>Verschlüssele</translation>
     </message>
@@ -453,22 +478,22 @@ entschlüsseln?</translation>
         <translation type="vanished">%1 entschlüsseln?</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="457"/>
+        <location filename="mlockmainwindow.cpp" line="462"/>
         <source>Select the recipient list file</source>
         <translation>Wähle die Empfängerliste aus</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="506"/>
+        <location filename="mlockmainwindow.cpp" line="511"/>
         <source>Enter your mail adress and passphrase</source>
         <translation>Gib deine Mail-Adresse und das Passwort ein</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="518"/>
+        <location filename="mlockmainwindow.cpp" line="523"/>
         <source>Set input and output parameters</source>
         <translation>Setze Ein- und Ausgabeoptionen</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="523"/>
+        <location filename="mlockmainwindow.cpp" line="528"/>
         <source>Set encryption options for %1</source>
         <translation>Setze Verschlüsselungsoptionen für %1</translation>
     </message>
@@ -477,7 +502,8 @@ entschlüsseln?</translation>
     <name>ShowManualDialog</name>
     <message>
         <location filename="showmanualdialog.ui" line="14"/>
-        <source>mlock manual</source>
+        <source>MikroLock manual</source>
+        <oldsource>mlock manual</oldsource>
         <translation>mlock Handbuch</translation>
     </message>
 </context>

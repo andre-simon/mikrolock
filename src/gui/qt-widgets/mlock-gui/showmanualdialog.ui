@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>mlock manual</string>
+   <string>MikroLock manual</string>
   </property>
   <property name="windowIcon">
    <iconset resource="mlock-gui.qrc">
-    <normaloff>:/mlock.png</normaloff>:/mlock.png</iconset>
+    <normaloff>:/mikrolock.png</normaloff>:/mikrolock.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

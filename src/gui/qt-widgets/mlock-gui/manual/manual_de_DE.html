@@ -18,7 +18,7 @@ MikroLock liest und schreibt verschl&uuml;sselte miniLock-Dateien.
 <h2>&Uuml;bersicht</h2>
 <p>
 MikroLock ist eine schnelle Implementierung der miniLock-Spezifikation.
-Trotz des Namens (und im Gegensatz zum Original) kann MikroLock auch mit gro&szlig;en Dateien umgehen.
+Trotz des Namens (und im Gegensatz zur Original Chrome-Erweiterung) kann MikroLock auch mit gro&szlig;en Dateien umgehen.
 </p>
 
 <p>
@@ -26,17 +26,15 @@ Hauptziel der Entwicklung ist ein unkomplizierter Austausch verschlüsselter
 Daten, z.B. durch E-Mail oder Cloud-Dienste. Die Verschlüsselung basiert auf
 modernen Public-Key Verfahren, jedoch ohne aufwändige Konfiguration und
 Einarbeitung. Das miniLock-Format kann durch die gleichnamige Chrome-Erweiterung auch dann
-eingesetzt werden, wenn keine Software wie MikroLock installiert werden kann (Firmen-Richtlinien o.ä.).
+eingesetzt werden, wenn keine Software wie MikroLock installiert werden darf (Firmen-Richtlinien o.ä.).
 </p>
 
 <p>
 Eine kurze Zusammenfassung der miniLock-Eigenschaften (Quelle: <a href="https://minilock.io">https://minilock.io</a>):
 <br>
-<i>&quot;
-Enter your miniLock passphrase on any computer, and you'll get access to your
+<i>&quot;Enter your miniLock passphrase on any computer, and you'll get access to your
 miniLock ID. No key storage or management - just a single passphrase to access
-your miniLock identity anywhere.
-&quot;</i>
+your miniLock identity anywhere.&quot;</i>
 </p>
 
 <p>
@@ -71,7 +69,7 @@ Wichtig hierbei ist, dass die Passphrase geheim bleibt - es werden nur die MiniL
 <h2>Die grafische Benutzeroberfl&auml;che</h2>
 
 <p>
-Nach dem Start des Programms werden eine Mail-Adresse und ein Passwort abgefragt.
+Nach dem Start des Programms werden eine Mail-Adresse und eine Passphrase abgefragt.
 Aus diesen Informationen wird ein Schl&uuml;sselpaar gebildet (privater und &ouml;ffentlicher Schl&uuml;ssel).<br>
 Statt der Mail-Adresse kann auch ein anderer Wert angegeben werden, dies sollte man jedoch nur tun wenn man das miniLock Chrome-Plugin nicht nutzen m&ouml;chte.<br>
 Damit die verschl&uuml;sselte Datei wirksam gesch&uuml;tzt ist, muss eine Passphrase, die weniger als 40 Zeichen lang ist, aus mehreren zuf&auml;llig gew&auml;hlten W&ouml;rtern bestehen.<br>
@@ -106,20 +104,20 @@ das Format der Mail-Adresse ist nicht gültig
 </tr>
 </table>
 
-<br><br>Das <b>Ampel-Icon</b> neben dem Passwort zeigt folgende Information an:
+<br><br>Das <b>Ampel-Icon</b> neben der Passphrase zeigt folgende Information an:
 
 <table border="0">
 <tr>
 <td>
 <img src=":/Status-security-low-icon.png"  border="0" alt="Icon 1" width="32">
 </td><td style="vertical-align:middle">
-die Passphrase ist zu kurz oder enth&auml;lt zuwenig durch Leerzeichen getrennte W&ouml;rter
+die Passphrase ist zu kurz (Mindestl&auml;nge: 20 Zeichen)
 </td>
 </tr><tr>
 <td>
 <img src=":/Status-security-medium-icon.png"  border="0" alt="Icon 1" width="32">
 </td><td style="vertical-align:middle">
-die Passphrase wird wahrscheinlich vom Original MiniLock-Plugin f&uuml;r Chrome abgewiesen
+die Passphrase muss aus mindestens f&uuml;nf W&ouml;rtern bestehen. Sie k&ouml;nnte vom Original MiniLock-Plugin f&uuml;r Chrome abgewiesen werden
 </td>
 </tr><tr>
 <td>
@@ -156,8 +154,8 @@ sVXHR7smwqXkSbphn8gdH3Ah6a1nvbYtuXPpxG6qKT321 - Schmidt
 ULgpTbP7isNNV6kgDbNVtQo5YRuUhc4N5AAEEbne9bjJi | Jane
 </pre>
 Die Information hinter den Trennern wird nach dem Laden als Tooltip angezeigt.
-<br>
-Der Button &quot;Empf&auml;nger l&ouml;schen&quot; entfernt die Empf&auml;nger-IDs aus der Liste.<br>
+<br><br>
+Der Button &quot;Empf&auml;nger l&ouml;schen&quot; entfernt alle Empf&auml;nger-IDs.<br>
 Die Option &quot;Meine ID auslassen&quot; entfernt die eigene miniLock-ID aus der Empf&auml;ngerliste.<br>
 Mit &quot;Zufallsnamen erzeugen&quot; wird die verschl&uuml;sselte Datei unter einem zuf&auml;llig gew&auml;hlten Namen gespeichert.<br><br>
 Nach dem Klick auf &quot;Datei verschl&uuml;sseln&quot; wird die miniLock-Datei im vorher angegebenen Zielverzeichnis abgelegt.

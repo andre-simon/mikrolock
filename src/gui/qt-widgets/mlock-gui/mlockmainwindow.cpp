@@ -93,16 +93,20 @@ void MlockMainWindow::on_txtPassPhrase_textChanged(){
 
     if (pp.length() < 20){
         ui->lblSecIcon->setPixmap(QPixmap (":/Status-security-low-icon.png"));
+        ui->lblSecIcon->setToolTip(tr("The passphrase is too short (minimum: 20 characters)."));
         ui->btnUnlock->setEnabled(false);
         return;
     }
     if (pp.length() > 40){
         ui->lblSecIcon->setPixmap(QPixmap (":/Status-security-high-icon.png"));
+        ui->lblSecIcon->setToolTip(tr("The passphrase is strong."));
         ui->btnUnlock->setEnabled(!ui->txtMail->text().isEmpty() );
         return;
     }
 
     ui->lblSecIcon->setPixmap(QPixmap (":/Status-security-medium-icon.png"));
+
+    ui->lblSecIcon->setToolTip(tr("The passphrase must consist of at least five random words. It may be declined by the original miniLock Chrome extension."));
 
     pp=pp.trimmed();
     int wordCount=0;
@@ -123,7 +127,7 @@ void MlockMainWindow::on_txtMail_textChanged()
     bool possiblyMailAddress = mail.contains('@');
     ui->lblMailIcon->setEnabled(possiblyMailAddress);
     ui->lblMailIcon->setPixmap(QPixmap (":/Status-mail-unread-icon.png"));
-    ui->lblMailIcon->setToolTip(tr("You do not need to enter an email address here unless you want to use the Chrome miniLock extension."));
+    ui->lblMailIcon->setToolTip(tr("You do not need to enter an email address here unless you intend to use the Chrome miniLock extension."));
     if (possiblyMailAddress){
         if (mailRE.exactMatch(mail)){
             ui->lblMailIcon->setToolTip(tr("This mail address appears to be valid."));
@@ -224,7 +228,8 @@ void MlockMainWindow::encrypt() {
         leCurrentId = dynamic_cast<QLineEdit*>(scrollAreaLayout->itemAt(i)->widget());
         rcptId = leCurrentId->text().trimmed();
 
-        if (!rcptId.isEmpty()){
+        // prevent user mistakes
+        if (!rcptId.isEmpty() && !(ui->cbOmitId->isChecked() && rcptId == ui->lblMyId->text()) ){
 
             if (!rcpt_list_add(&id_list, (char*)rcptId.toStdString().c_str())){
                 QMessageBox::critical(this, tr("Bad miniLock ID"), tr("The ID %1 is invalid.").arg(rcptId));
