@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MIKROLOCK HANDBUCH - Version 0.14  --------- UTF-8-DATEI --- Juli 2015 ---
+---  MIKROLOCK HANDBUCH - Version 0.15  --------- UTF-8-DATEI --- Juli 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -40,11 +40,11 @@ Eine kurze Zusammenfassung der miniLock-Eigenschaften (Quelle: https://minilock.
 miniLock ID. No key storage or management - just a single passphrase to access 
 your miniLock identity anywhere."
 
-Eine MiniLock-ID ist ein kurzer Public-Key der von einer geheimen Passphrase und 
+Eine MiniLock-ID ist ein kurzer Public-Key der von einem geheimen Passwort und 
 einer E-Mail Adresse abgeleitet wurde. Diese ID kann auf Webseiten, in 
 Mailsignaturen, auf Twitter oder sonstwo veröffentlicht werden, damit jedermann 
 in der Lage ist Inhalte für diese ID zu verschlüsseln. Nur ein Empfänger mit der 
-richtigen Passphrase/Mail-Kombination zur Erzeugung dieser ID kann die Daten 
+richtigen Passwort/Mail-Kombination zur Erzeugung dieser ID kann die Daten 
 wieder entschlüsseln.
 
 Eine MiniLock-ID sieht wie folgt aus: 
@@ -62,12 +62,12 @@ enthalten keine sichtbaren Hinweise auf Ihre Empfänger.
 2. Wie funktioniert's?
 -------------------------------------------------------------------------------
 
-A möchte etwas für B verschlüsseln. B gibt seine Mail-Adresse und Passphrase in
-MikroLock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.
+A möchte etwas für B verschlüsseln. B gibt seine Mail-Adresse und sein Passwort
+in MikroLock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.
 A verschlüsselt die Datei und gibt die MiniLock-ID von B als Empfänger-ID an.
-A sendet nun die verschlüsselte Datei an B, der sie mit seiner Passphrase/Mail-
+A sendet nun die verschlüsselte Datei an B, der sie mit seiner Passwort/Mail-
 Kombination entschlüsseln kann.
-Wichtig hierbei ist, dass die Passphrase geheim bleibt - es werden nur die 
+Wichtig hierbei ist, dass das Passwort geheim bleibt - es werden nur die 
 MiniLock-IDs (=public keys) ausgetauscht.
 
 
@@ -139,11 +139,11 @@ unterscheiden sich die akzeptierten Eingaben zur Erzeugung der miniLock-ID:
  * miniLock nimmt nur gültige Mailadressen als Salt-Wert an; MikroLock jedoch
    jeden Wert
 
- * miniLock prüft die Mindest-Entropie der Passphrase; MikroLock könnte auch
-   eine Passphrase mit geringerer Entropie akzeptieren
+ * miniLock prüft die Mindest-Entropie des Passworts; MikroLock könnte auch
+   ein Passwort mit geringerer Entropie akzeptieren
 
-Sollten Sie MikroLock und miniLock gleichzeitig benutzen wollen, prüfen Sie
-ob Salt und Passphrase in beiden Programmen gültige Eingaben sind.
+Sollten Sie MikroLock und miniLock im Wechsel benutzen wollen, prüfen Sie
+ob Salt und Passwort in beiden Programmen gültige Eingaben sind.
 
 
 5. Verwendete Crypto-Funktionen
@@ -151,8 +151,9 @@ ob Salt und Passphrase in beiden Programmen gültige Eingaben sind.
 
 Die MiniLock-ID wird wie folgt erzeugt:
 
-secret := scrypt(blake2(passphrase), mail, 131072, 1)
-id := base58(crypto_scalarmult_base(secret) + blake2(secret) )
+secret_key := scrypt(blake2(passphrase), mail, 131072, 1)
+public_key := crypto_scalarmult_base(secret_key) 
+miniLock id := base58( public_key + blake2(public_key) )
 
 Der JSON-Dateiheader der MiniLock-Dateien enthält die MiniLock-ID des
 Senders, die IDs der Empfänger sowie Schlüssel (zufällig erzeugt) und
@@ -169,7 +170,7 @@ Die Eingabedatei wird mit crypto_secretbox_easy verschlüsselt
 Mehr Infos zu den kryptographischen Eigenschaften und dem Dateiformat:
 https://minilock.io.
 
-http://doc.libsodium.org/password_hashing/README.html#key-derivation
+https://doc.libsodium.org/password_hashing/index.html
 https://blake2.net
 https://en.wikipedia.org/wiki/Base58
 http://doc.libsodium.org/advanced/scalar_multiplication.html

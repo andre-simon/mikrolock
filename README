@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MIKROLOCK MANUAL - Version 0.14  ------------ UTF-8 FILE --- July 2015 ---
+---  MIKROLOCK MANUAL - Version 0.15  ------------ UTF-8 FILE --- July 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -154,8 +154,9 @@ passphrase which is accepted in both applications.
 
 A miniLock-ID is defined as:
 
-secret := scrypt(blake2(passphrase), mail, 131072, 1)
-id := base58( crypto_scalarmult_base(secret) + blake2(secret) )
+secret_key := scrypt(blake2(passphrase), mail, 131072, 1)
+public_key := crypto_scalarmult_base(secret_key) 
+miniLock id := base58( public_key + blake2(public_key) )
 
 The JSON header of a miniLock file contains the sender's miniLock ID,
 the recipient's IDs, file hash and the random key of the encrypted input file.
@@ -171,11 +172,11 @@ The input file is encrypted using crypto_secretbox_easy
 Read more about the cryptographic details and the file format:
 https://minilock.io.
 
-http://doc.libsodium.org/password_hashing/README.html#key-derivation
+https://doc.libsodium.org/password_hashing/index.html
 https://blake2.net
 https://en.wikipedia.org/wiki/Base58
-http://doc.libsodium.org/advanced/scalar_multiplication.html
-http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html
+https://doc.libsodium.org/advanced/scalar_multiplication.html
+https://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html
 
 
 6.  Platforms

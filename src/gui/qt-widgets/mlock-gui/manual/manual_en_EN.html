@@ -248,8 +248,9 @@ If you are going to use MikroLock and miniLock in parallel, choose a salt and pa
 <h2>Applied crypto functions</h2>
 <p>
 A miniLock-ID is defined as:</p>
-<pre>secret := <a href="http://doc.libsodium.org/password_hashing/README.html#key-derivation" target="new">scrypt</a>(<a href="https://blake2.net" target="new">blake2</a>(passphrase), mail, 131072, 1)
-id := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( <a href="http://doc.libsodium.org/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret) + <a href="https://blake2.net" target="new">blake2</a>(secret) )
+<pre>secret_key := <a href="https://doc.libsodium.org/password_hashing/index.html" target="new">scrypt</a>(<a href="https://blake2.net" target="new">blake2</a>(passphrase), mail, 131072, 1)
+public_key := <a href="http://doc.libsodium.org/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret_key)
+miniLock id := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( public_key + <a href="https://blake2.net" target="new">blake2</a>(public_key) )
 </pre>
 <p>
 The JSON header of a miniLock file contains the sender's miniLock ID, the recipient's IDs, file hash and the random key of the encrypted input file.<br><br>

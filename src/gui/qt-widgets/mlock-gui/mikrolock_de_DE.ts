@@ -156,7 +156,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="mlockmainwindow.ui" line="631"/>
         <source>Add miniLock ID</source>
-        <translation>ID hinzufügen</translation>
+        <translation>MiniLock-ID hinzufügen</translation>
     </message>
     <message>
         <location filename="mlockmainwindow.ui" line="650"/>
@@ -504,7 +504,7 @@ entschlüsseln?</translation>
         <location filename="showmanualdialog.ui" line="14"/>
         <source>MikroLock manual</source>
         <oldsource>mlock manual</oldsource>
-        <translation>mlock Handbuch</translation>
+        <translation>MikroLock Handbuch</translation>
     </message>
 </context>
 </TS>
