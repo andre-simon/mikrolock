@@ -6,7 +6,8 @@ OSI Certified Open Source Software
 
 -------------------------------------------------------------------------------
 
-MikroLock reads and writes encrypted miniLock files (https://minilock.io/).
+MikroLock combines modern cryptography and ease of use. It is based on the open
+miniLock file format (https://minilock.io/).
 
 
 CONTENT:
@@ -34,17 +35,12 @@ without configuration or learning efforts. The miniLock file format may also be
 applied using the Chrome extension, this might help if corporate rules do not
 allow an installation of MikroLock.
 
-A short description of minilock's benefits (source: https://minilock.io):
-
-"Enter your miniLock passphrase on any computer, and you'll get access to your
-miniLock ID. No key storage or management — just a single passphrase to access
-your miniLock identity anywhere.
-
-A minilock ID is a short public key derived from a secret passphrase and an
-E-mail address. This ID may be published on websites, mail signatures, twitter
-etc. to enable anyone to encrypt data for this ID. Only the receiver who
-applies the correct mail and passphrase to derive the same ID can decrypt the
-content.
+The key element of encryption is the miniLock-ID, which can be calculated on 
+any computer, based on a mail address and a passphrase.
+This minilock ID is a short public key to be published on websites, mail
+signatures, twitter etc. to enable anyone to encrypt data for this ID. 
+Only the receiver who applies the correct mail and passphrase to derive the 
+same ID can decrypt the content.
 
 A minilock ID looks like this: jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83
 

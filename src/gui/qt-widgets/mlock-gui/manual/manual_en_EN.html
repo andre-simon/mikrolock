@@ -13,7 +13,8 @@
 
 <h1>MikroLock manual</h1>
 <p>
-MikroLock reads and writes encrypted miniLock files.
+MikroLock combines modern cryptography and ease of use. It is based on the open
+miniLock file format (<a href="https://minilock.io">https://minilock.io/</a>).
 </p>
 
 <h2>Overview</h2>
@@ -31,19 +32,12 @@ allow an installation of MikroLock.
 </p>
 
 <p>
-A short description of minilock's benefits (source: <a href="https://minilock.io">https://minilock.io</a>):
-<br>
-<i>&quot;
-Enter your miniLock passphrase on any computer, and you'll get access to your
-miniLock ID. No key storage or management - just a single passphrase to access
-your miniLock identity anywhere.
-&quot;</i>
-
-<p>
-A minilock ID is a short public key derived from a secret passphrase and an
-E-mail address. This ID may be published on websites, mail signatures, twitter
-etc. to enable anyone to encrypt data for this ID. Only the receiver who
-applies the correct mail and passphrase to derive this ID can decrypt the content.
+The key element of encryption is the miniLock-ID, which can be calculated on 
+any computer, based on a mail address and a passphrase.
+This minilock ID is a short public key to be published on websites, mail
+signatures, twitter etc. to enable anyone to encrypt data for this ID. 
+Only the receiver who applies the correct mail and passphrase to derive the 
+same ID can decrypt the content.
 </p>
 
 <p>

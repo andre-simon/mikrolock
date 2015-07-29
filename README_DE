@@ -6,7 +6,8 @@ OSI Certified Open Source Software
 
 -------------------------------------------------------------------------------
 
-MikroLock liest und schreibt verschlüsselte miniLock-Dateien (https://minilock.io/).
+MikroLock verbindet moderne Verschlüsselung mit einfacher Bedienung. Es basiert
+auf dem offenen miniLock Dateiformat (https://minilock.io/).
 
 
 INHALT:
@@ -24,26 +25,22 @@ INHALT:
 1.  Übersicht
 -------------------------------------------------------------------------------
 
-MikroLock ist eine schnelle Implementierung der miniLock-Spezifikation. Trotz des
-Namens (und im Gegensatz zum Original) kann MikroLock auch mit großen Dateien
-umgehen.
+MikroLock ist eine schnelle Implementierung der miniLock-Spezifikation 
+(https://minilock.io/). Trotz des Namens (und im Gegensatz zum Original) kann 
+MikroLock auch mit großen Dateien umgehen.
 
 Hauptziel der Entwicklung ist ein unkomplizierter Austausch verschlüsselter
 Daten, z.B. durch E-Mail oder Cloud-Dienste. Die Verschlüsselung basiert auf
 modernen Public-Key Verfahren, jedoch ohne aufwändige Konfiguration und
 Einarbeitung. Das miniLock-Format kann durch die Chrome Erweiterung auch dann
-eingesetzt werden, wenn keine Software wie MikroLock installiert werden kann (Firmen-
-Richtlinien o.ä.).
+eingesetzt werden, wenn keine Software wie MikroLock installiert werden kann 
+(Firmen-Richtlinien o.ä.).
 
-Eine kurze Zusammenfassung der miniLock-Eigenschaften (Quelle: https://minilock.io): 
-"Enter your miniLock passphrase on any computer, and you'll get access to your 
-miniLock ID. No key storage or management - just a single passphrase to access 
-your miniLock identity anywhere."
-
-Eine MiniLock-ID ist ein kurzer Public-Key der von einem geheimen Passwort und 
-einer E-Mail Adresse abgeleitet wurde. Diese ID kann auf Webseiten, in 
-Mailsignaturen, auf Twitter oder sonstwo veröffentlicht werden, damit jedermann 
-in der Lage ist Inhalte für diese ID zu verschlüsseln. Nur ein Empfänger mit der 
+Dreh- und Angelpunkt der Verschlüsselung ist die miniLock-ID, die durch Eingabe
+von Mail-Adresse und Passwort auf jedem PC berechnet werden kann. 
+Diese MiniLock-ID ist ein kurzer Public-Key, der auf Webseiten, in Mailsigna-
+turen, auf Twitter oder sonstwo veröffentlicht wird, damit jedermann in der Lage
+ist Inhalte für diese ID zu verschlüsseln. Nur ein Empfänger mit der 
 richtigen Passwort/Mail-Kombination zur Erzeugung dieser ID kann die Daten 
 wieder entschlüsseln.
 
@@ -55,7 +52,7 @@ mit Keyservern oder manuellen Dateikopien notwendig.
 
 Beim Verschlüsseln kann eine Liste von miniLock-IDs angegeben werden, um 
 mehreren Empfängern zu ermöglichen die Daten zu entschlüsseln. Es muss also 
-nicht eine separate Datei für jeden Empfänger erzeugt werden. MiniLock-Dateien 
+keine separate Datei für jeden Empfänger erzeugt werden. MiniLock-Dateien 
 enthalten keine sichtbaren Hinweise auf Ihre Empfänger.
 
 

@@ -17,7 +17,8 @@ p {
 
 <h1>MikroLock</h1>
 <p>
-MikroLock liest und schreibt verschl&uuml;sselte miniLock-Dateien.
+MikroLock verbindet moderne Verschl&uuml;sselung mit einfacher Bedienung. Es basiert
+auf dem offenen miniLock Dateiformat (<a href="https://minilock.io">https://minilock.io/</a>).
 </p>
 
 <h2>&Uuml;bersicht</h2>
@@ -27,24 +28,17 @@ Trotz des Namens (und im Gegensatz zur Original Chrome-Erweiterung) kann MikroLo
 </p>
 
 <p>
-Hauptziel der Entwicklung ist ein unkomplizierter Austausch verschlüsselter
-Daten, z.B. durch E-Mail oder Cloud-Dienste. Die Verschlüsselung basiert auf
-modernen Public-Key Verfahren, jedoch ohne aufwändige Konfiguration und
+Hauptziel der Entwicklung ist ein unkomplizierter Austausch verschl&uuml;sselter
+Daten, z.B. durch E-Mail oder Cloud-Dienste. Die Verschl&uuml;sselung basiert auf
+modernen Public-Key Verfahren, jedoch ohne aufw&auml;ndige Konfiguration und
 Einarbeitung. Das miniLock-Format kann durch die gleichnamige Chrome-Erweiterung auch dann
-eingesetzt werden, wenn keine Software wie MikroLock installiert werden darf (Firmen-Richtlinien o.ä.).
+eingesetzt werden, wenn keine Software wie MikroLock installiert werden darf (Firmen-Richtlinien o.&auml;.).
 </p>
 
 <p>
-Eine kurze Zusammenfassung der miniLock-Eigenschaften (Quelle: <a href="https://minilock.io">https://minilock.io</a>):
-<br>
-<i>&quot;Enter your miniLock passphrase on any computer, and you'll get access to your
-miniLock ID. No key storage or management - just a single passphrase to access
-your miniLock identity anywhere.&quot;</i>
-</p>
-
-<p>
-Eine MiniLock-ID  ist ein kurzer Public-Key der von einem geheimen Passwort und einer E-Mail Adresse abgeleitet wurde.
-Diese ID kann  auf Webseiten, in Mailsignaturen, auf Twitter oder sonstwo ver&ouml;ffentlicht werden, damit jedermann in der Lage ist Inhalte für diese ID zu verschl&uuml;sseln.
+Dreh- und Angelpunkt der Verschl&uuml;sselung ist die miniLock-ID, die durch Eingabe
+von Mail-Adresse und Passwort auf jedem PC berechnet werden kann. 
+Diese MiniLock-ID  ist ein kurzer Public-Key der auf Webseiten, in Mailsignaturen, auf Twitter oder sonstwo ver&ouml;ffentlicht wird, damit jedermann in der Lage ist Inhalte f&uuml;r diese ID zu verschl&uuml;sseln.
 Nur ein Empf&auml;nger mit  der richtigen Passwort/Mail-Kombination zur Erzeugung dieser ID kann die Daten wieder entschl&uuml;sseln.
 </p>
 
@@ -99,13 +93,13 @@ Das <b>Mail-Icon</b> zeigt die G&uuml;ltigkeit der Mail-Adresse an:
 <td>
 <img src=":/Status-mail-unread-icon.png"  border="0" alt="Icon 1" width="32">
 </td><td style="vertical-align:middle">
-das Format der Mail-Adresse ist gültig
+das Format der Mail-Adresse ist g&uuml;ltig
 </td>
 </tr><tr>
 <td>
 <img src=":/Status-mail-unread-new-icon.png"  border="0" alt="Icon 1" width="32">
 </td><td style="vertical-align:middle">
-das Format der Mail-Adresse ist nicht gültig
+das Format der Mail-Adresse ist nicht g&uuml;ltig
 </td>
 </tr>
 </table>
@@ -232,17 +226,17 @@ Destination file: secret.data
 </pre>
 </p>
 
-<h2>Kompatibilität mit der miniLock-Browsererweiterung</h2>
+<h2>Kompatibilit&auml;t mit der miniLock-Browsererweiterung</h2>
 <p>
-Das miniLock Dateiformat wurde mit der Chrome-Erweiterung miniLock eingeführt.<br>
+Das miniLock Dateiformat wurde mit der Chrome-Erweiterung miniLock eingef&uuml;hrt.<br>
 MiniLock-Dateien können mit beiden Programmen verarbeitet werden, allerdings unterscheiden sich die akzeptierten Eingaben zur Erzeugung der miniLock-ID:
 </p>
 <ul>
-<li>miniLock nimmt nur gültige Mailadressen als Salt-Wert an; MikroLock nimmt jeden Wert</li>
-<li>miniLock prüft die Mindest-Entropie des Passworts; MikroLock könnte auch ein Passwort mit geringerer Entropie akzeptieren</li>
+<li>miniLock nimmt nur g&uuml;ltige Mailadressen als Salt-Wert an; MikroLock nimmt jeden Wert</li>
+<li>miniLock pr&uuml;ft die Mindest-Entropie des Passworts; MikroLock könnte auch ein Passwort mit geringerer Entropie akzeptieren</li>
 </ul>
 <p>
-Sollten Sie MikroLock und miniLock im Wechsel nutzen wollen, prüfen Sie ob Salt und Passwort in beiden Programmen gültige Eingaben sind.
+Sollten Sie MikroLock und miniLock im Wechsel nutzen wollen, pr&uuml;fen Sie ob Salt und Passwort in beiden Programmen g&uuml;ltige Eingaben sind.
 </p>
 
 <h2>Verwendete Crypto-Funktionen</h2>
