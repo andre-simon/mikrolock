@@ -63,6 +63,7 @@ struct output_options  {
   int task_mode;
   int silent_mode;
   int random_outname;
+  int exclude_my_id;
 };
 
 int array_to_number(uint8_t* array, int size);

@@ -259,16 +259,20 @@ error_code file_encode(FILE* output_file, uint8_t* b_file_nonce_prefix, uint8_t*
     return ret_val;
 }
 
-error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b_my_sk, struct rcpt_list* id_list, struct output_options * out_opts) {
+error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b_my_sk, struct rcpt_list** id_list, struct output_options * out_opts) {
 
     int ret_val = err_failed;
 
-    if(id_list==NULL) {
+    if (out_opts->exclude_my_id){
+        rcpt_list_validate (id_list, (char*) c_sender_id);
+    }
+
+    if(*id_list==NULL) {
         return err_no_rcpt;
     }
     
     unsigned int num_rcpts=0;
-    struct rcpt_list* current = id_list;
+    struct rcpt_list* current = *id_list;
     while (current != NULL) {
       num_rcpts++;
       current = current->next;
@@ -398,7 +402,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
     char b_crypt_block[1024] = {0};
     int exit_loop_on_error=0;
     
-    current = id_list;
+    current = *id_list;
     int rcpt_idx=0;
     while (current != NULL) {
 
@@ -704,6 +708,7 @@ int rcpt_list_add (struct rcpt_list** list, char* id){
     
     snprintf(new_item->id, sizeof new_item->id, "%s", id);
     new_item->next = *list;
+
     *list = new_item;
     
     return 1;
@@ -719,4 +724,19 @@ void rcpt_list_free (struct rcpt_list** list) {
       current = next; 
   }
   *list=NULL;
+}
+
+void rcpt_list_validate (struct rcpt_list** list, char* own_id) {
+
+    struct rcpt_list* next=NULL;
+
+    for (struct rcpt_list** current = list; *current;) {
+       if (!strncmp((*current)->id, own_id, strlen(own_id))) {
+         next = (*current)->next;
+         free (*current);
+         *current = next;
+         continue;
+       }
+       current = &(*current)->next;
+     }
 }

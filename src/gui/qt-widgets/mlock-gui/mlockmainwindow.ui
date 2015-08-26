@@ -28,7 +28,7 @@
        <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -564,7 +564,7 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Select the destination directory and the input file.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;A miniLock file will be decrypted automatically. &lt;/p&gt;&lt;p&gt;Any other file will be encrypted.&lt;/p&gt;&lt;p&gt;You may drag and drop files onto this window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Select the destination directory and the input file.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;A miniLock file will be decrypted automatically. &lt;/p&gt;&lt;p&gt;Any other file will be encrypted.&lt;/p&gt;&lt;p&gt;You may drag and drop a file onto this window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -936,6 +936,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="action_Manual"/>
     <addaction name="separator"/>
+    <addaction name="action_Translation_hints"/>
     <addaction name="actionAbout_mlock"/>
    </widget>
    <addaction name="menuHilfe"/>
@@ -949,6 +950,11 @@ p, li { white-space: pre-wrap; }
   <action name="action_Manual">
    <property name="text">
     <string>&amp;Manual</string>
+   </property>
+  </action>
+  <action name="action_Translation_hints">
+   <property name="text">
+    <string>&amp;Translation hints</string>
    </property>
   </action>
  </widget>

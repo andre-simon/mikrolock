@@ -106,6 +106,7 @@ private slots:
     void on_txtMail_textChanged();
     void on_actionAbout_mlock_triggered();
     void on_action_Manual_triggered();
+    void on_action_Translation_hints_triggered();
     void on_btnClearRecipients_clicked();
     void on_btnOpenFileList_clicked();
     void on_btnBrowseDestDir_clicked();

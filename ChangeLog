@@ -1,5 +1,11 @@
 MikroLock ChangeLog
 
+-> CLI  eigene ID in ID-datei ignorieren
+-> cpp native threads
+-> gui changelog + translation menus
+-> gui drag&drop eingabe in label unter icon anzeigen
+->               fehlermeldung bei mehrereh dateien + verzeichnissen
+
 
 08.07.2015
 

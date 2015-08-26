@@ -166,7 +166,8 @@ int main(int argc, char **argv) {
     out_opts.hash_progress=0.0;
     out_opts.silent_mode=0;
     out_opts.random_outname=0;
-    
+    out_opts.exclude_my_id=0;
+
     int do_enc=0, do_dec=0;
 
 #ifndef WIN32
@@ -174,7 +175,6 @@ int main(int argc, char **argv) {
 #endif
     int c;
 
-    int exclude_me =0;
     int ret_val = EXIT_FAILURE;
 
     FILE *list_file=NULL;
@@ -262,7 +262,7 @@ int main(int argc, char **argv) {
           break;
 
         case 'x':
-            exclude_me = 1;
+            out_opts.exclude_my_id = 1;
             break;
 
         case 'p':
@@ -346,17 +346,21 @@ int main(int argc, char **argv) {
       
         printf("%scrypting file %s...\n", do_enc ? "En" : "De", c_input_file);
 
-        if (do_enc && !exclude_me) {
-	  rcpt_list_add(&id_list, (char*)c_minilock_id);
-        }
+
+	//TODO remove own ID from list if cnt > 1 and exclude_me
 
         if (do_dec || do_enc){
             error_code err_code;
-            if (do_dec)
+            if (do_dec) {
                 err_code = minilock_decode(c_input_file, b_my_sk, b_my_pk, &out_opts);
-            else
-                err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, id_list, &out_opts);
+            } else {
 
+                if (!out_opts.exclude_my_id) {
+                  rcpt_list_add(&id_list, (char*)c_minilock_id);
+                }
+
+                err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, &id_list, &out_opts);
+            }
             sodium_memzero(b_my_sk, sizeof b_my_sk);
 
             switch (err_code){
