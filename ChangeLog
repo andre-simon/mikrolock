@@ -1,12 +1,15 @@
 MikroLock ChangeLog
 
--> CLI  eigene ID in ID-datei ignorieren
--> cpp native threads
--> gui changelog + translation menus
--> gui drag&drop eingabe in label unter icon anzeigen
-->               fehlermeldung bei mehrereh dateien + verzeichnissen
 
+27.08.2015
 
+MikroLock 1.0
+
+-GUI: added translation hints
+-GUI: drag and drop disabled if multiple files are dragged
+-CLI: ignores own miniLock ID also in recipient list if -x is set
+
+---
 08.07.2015
 
 MikroLock 0.15

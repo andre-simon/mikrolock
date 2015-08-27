@@ -501,6 +501,9 @@ p, li { white-space: pre-wrap; }
                <property name="toolTip">
                 <string>Drop a file here after selecting the destination directory.</string>
                </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
                <property name="text">
                 <string/>
                </property>

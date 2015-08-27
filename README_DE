@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MIKROLOCK HANDBUCH - Version 0.15  --------- UTF-8-DATEI --- Juli 2015 ---
+---  MIKROLOCK HANDBUCH - Version 1.0  -------- UTF-8-DATEI --- August 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -111,7 +111,7 @@ Progress 100%
 Destination file: libsodium-1.0.0.tar.gz.minilock
 
 Die verschlüsselte Datei ist libsodium-1.0.0.tar.gz.minilock
-Diese Datei kann vom Empänger EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Sie kann vom Empfänger EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 entschlüsselt werden.
 
 

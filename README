@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MIKROLOCK MANUAL - Version 0.15  ------------ UTF-8 FILE --- July 2015 ---
+---  MIKROLOCK MANUAL - Version 1.0  ----------- UTF-8 FILE --- August 2015 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -125,7 +125,6 @@ Progress 100%
 Writing to file secret.data...
 Progress 100%
 Destination file: secret.data
-
 
 
 4. Compatibility with the miniLock browser extension

@@ -367,11 +367,13 @@ void MlockMainWindow::on_btnSelInputFile_clicked()
 void MlockMainWindow::startFileProcessing(bool promptAction)
 {
     if (!inputFilename.isEmpty()) {
-        if (promptAction &&  QMessageBox::question(this, tr("Process given file"),
-                                                    tr("%1 %2\ninto %3 ?").arg(inputFilename.endsWith(".minilock") ?
-                                                                               tr("Decrypt") :
-                                                                               tr("Encrypt")).arg(QFileInfo(inputFilename).fileName()).arg(ui->txtDestDir->text()),
-                                                    QMessageBox::Yes|QMessageBox::No)== QMessageBox::No)
+        if (    promptAction
+            &&  QMessageBox::question(this,
+                                      tr("Process given file"),
+                                      tr("%1 %2\ninto %3 ?").arg(inputFilename.endsWith(".minilock") ?
+                                      tr("Decrypt") :
+                                      tr("Encrypt")).arg(QFileInfo(inputFilename).fileName()).arg(ui->txtDestDir->text()),
+                                      QMessageBox::Yes|QMessageBox::No)== QMessageBox::No)
             return;
 
         if (inputFilename.endsWith("minilock"))
@@ -556,7 +558,7 @@ void MlockMainWindow::dragEnterEvent(QDragEnterEvent *event)
             ){
         event->acceptProposedAction();
         ui->lblDrop->setEnabled(true);
-    }
+     }
 }
 
 void MlockMainWindow::dragLeaveEvent(QDragLeaveEvent* event)
