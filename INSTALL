@@ -1,10 +1,13 @@
 MikroLock installation instructions
 -------------------------------
 
-mikrolock requires the libsodium library (release 0.6.0).
+mikrolock requires the libsodium library (release 1.0.9).
 mikrolock-gui requires Qt5.
 
-Instructions:
+1. Instructions:
+
+1.1 Linux
+-----------
 
  1. tar xjvf mikrolock-x.x.tar.bz2
  2. cd mikrolock-x.x
@@ -14,3 +17,45 @@ Instructions:
     make install-gui (optional)
     (depending on your installation destination, you need to be root)
  5. make clean (optional)
+
+1.2 Windows
+-----------
+
+Install the following tools and libraries.
+
+a) Install Qt Creator IDE (www.qt.io)
+
+b) Install MingW (gcc toolchain)
+
+    -Download Online-Installer: 
+     https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/installer/
+    -Start mingw-w64-install.exe and select default options
+    -Add bin directory of the downloaded files to the system PATH
+    -open cmd.exe and type "g++ --version" to check
+
+c) Compile Qt:
+
+    -Download and extract package from qt.io:
+     https://www.qt.io/download-open-source/ -> qt-everywhere-opensource-src-5.6.0.tar.gz
+    -Open cmd.exe and change into the Qt directory
+    -Configure Qt. Use static if you do not want to ship Qt DLLs:
+     configure -release -nomake examples -opensource -static -strip -opengl desktop
+    -Compile Qt:
+     mingw32-make -j4
+
+d) Add compiler and Qt paths (location of qmake.exe) in QtCreator
+
+e) Install libsodium:
+
+   - Download Mingw package:
+     https://download.libsodium.org/libsodium/releases/ -> libsodium-1.0.10-mingw.tar.gz
+     Extract the header files, libs and DLLs of libsodium-win32.
+
+f) Install upx from http://upx.sourceforge.net/
+
+g) Open the pro files in src/w32-projects and src/gui/qt-widgets/mlock-gui/ in 
+   QtCreator and adjust the paths of libraries and tools. Compile the lib project 
+   first.
+
+h) Ship mikrolock with libgcc_s_dw2-1.dll libstdc++-6.dll libwinpthread-1.dll
+   (these are located in the mingw32 installation) and the libsodium DLL.

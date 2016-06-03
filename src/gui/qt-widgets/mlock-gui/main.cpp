@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 #include <QTranslator>
 #include <QLocale>
+#include <QDir>
+#include <QSettings>
 
 int main(int argc, char *argv[])
 {
@@ -41,10 +43,15 @@ int main(int argc, char *argv[])
 
     app.installTranslator(&translator);
 
+    QStringList args=QCoreApplication::arguments();
+    if (args.contains("--portable")) {
+        args.removeAll("--portable");
+        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::currentPath());
+    }
+
     MlockMainWindow w;
     w.show();
 
-    QStringList args=QCoreApplication::arguments();
     if (args.count()>1){
         w.setInitialInputFile(args[1]);
     }

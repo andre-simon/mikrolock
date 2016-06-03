@@ -76,6 +76,8 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
     mailRE.setPattern("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
     mailRE.setPatternSyntax(QRegExp::RegExp);
 
+    sodium_mlock( b_my_sk, sizeof b_my_sk);
+
     this->setGeometry( QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter, this->size(),
                                            qApp->desktop()->availableGeometry() ));
     readSettings();
@@ -148,15 +150,34 @@ void MlockMainWindow::on_btnUnlock_clicked(){
     uint8_t b_cs[1];
     uint8_t b_passphrase_blake2[KEY_LEN] = {0};
 
+    sodium_mlock( b_passphrase_blake2, sizeof b_passphrase_blake2);
+
     blake_2s_array((uint8_t*)passphrase.data(), passphrase.length(),
                    b_passphrase_blake2, KEY_LEN);
 
-    int scrypt_retval= crypto_pwhash_scryptsalsa208sha256_ll(b_passphrase_blake2, KEY_LEN,
-                                     (uint8_t*)salt.data(), salt.length(),
-                                     131072, 8, 1,
-                                     b_my_sk, sizeof b_my_sk);
-    if (scrypt_retval) {
-        QMessageBox::critical(this, tr("Scrypt error"), tr("Key derivation failed"));
+    int kdf_retval = 1;
+
+    if (ui->rbArgon2->isChecked()){
+        unsigned char salt_hash[crypto_pwhash_SALTBYTES];
+        crypto_generichash(salt_hash, sizeof salt_hash,
+                           (uint8_t*)salt.data(), salt.length(),
+                           NULL, 0);
+        kdf_retval= crypto_pwhash(b_my_sk, sizeof b_my_sk,
+                                  (char*)b_passphrase_blake2, sizeof b_passphrase_blake2, salt_hash,
+                                  crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+                                  crypto_pwhash_ALG_DEFAULT);
+    } else {
+        // parameters used by MiniLock
+        kdf_retval= crypto_pwhash_scryptsalsa208sha256_ll(b_passphrase_blake2, sizeof b_passphrase_blake2,
+                                                          (uint8_t*)salt.data(), salt.length(),
+                                                          131072, 8, 1,
+                                                          b_my_sk, sizeof b_my_sk);
+    }
+
+    sodium_munlock( b_passphrase_blake2, sizeof b_passphrase_blake2);
+
+    if (kdf_retval) {
+        QMessageBox::critical(this, ui->rbArgon2->isChecked() ? tr("Argon2 error"): tr("Scrypt error"), tr("Key derivation failed"));
         return;
     }
 
@@ -232,7 +253,7 @@ void MlockMainWindow::encrypt() {
         if (!rcptId.isEmpty() ){
 
             if (!rcpt_list_add(&id_list, (char*)rcptId.toStdString().c_str())){
-                QMessageBox::critical(this, tr("Bad miniLock ID"), tr("The ID %1 is invalid.").arg(rcptId));
+                QMessageBox::critical(this, tr("Bad Lock-ID"), tr("The ID %1 is invalid.").arg(rcptId));
                 leCurrentId->selectAll();
                 leCurrentId->setFocus();
                 return;
@@ -429,7 +450,7 @@ void MlockMainWindow::on_actionAbout_mlock_triggered()
     QMessageBox::about( this, "About MikroLock",
                         QString("MikroLock reads and writes encrypted minilock files.\n\n"
                         "MikroLock %1\n"
-                        "(C) 2015 Andre Simon <andre.simon1 at gmx.de>\n\n"
+                        "(C) 2015, 2016 Andre Simon <andre.simon1 at gmx.de>\n\n"
                         "Minilock file format specification:\n"
                         "https://minilock.io\n\n"
                         "Built with Qt version %2\n\n"
@@ -515,6 +536,14 @@ void MlockMainWindow::on_btnBrowseDestDir_clicked()
     QDesktopServices::openUrl(QUrl::fromLocalFile(ui->txtDestDir->text()));
 }
 
+void MlockMainWindow::on_rbScrypt_clicked(){
+    ui->rbArgon2->setChecked(false);
+}
+
+void MlockMainWindow::on_rbArgon2_clicked(){
+    ui->rbScrypt->setChecked(false);
+}
+
 void MlockMainWindow::on_stackedWidget_currentChanged(int idx)
 {
     ui->progressBar->setVisible(false);
@@ -592,7 +621,8 @@ void MlockMainWindow::writeSettings()
      settings.setValue("txtDestDir", ui->txtDestDir->text());
      settings.setValue("cbOmitId", ui->cbOmitId->isChecked());
      settings.setValue("cbRandomFileName", ui->cbRandomFileName->isChecked());
-
+     settings.setValue("rbScrypt", ui->rbScrypt->isChecked());
+     settings.setValue("rbArgon2", ui->rbArgon2->isChecked());
      settings.endGroup();
  }
 
@@ -616,13 +646,17 @@ void MlockMainWindow::writeSettings()
      ui->txtDestDir->setText(settings.value("txtDestDir").toString());
      ui->cbOmitId->setChecked(settings.value("cbOmitId").toBool());
      ui->cbRandomFileName->setChecked(settings.value("cbRandomFileName").toBool());
+     ui->rbScrypt->setChecked(settings.value("rbScrypt").toBool());
+     ui->rbArgon2->setChecked(settings.value("rbArgon2").toBool());
+
      settings.endGroup();
  }
 
 
 MlockMainWindow::~MlockMainWindow()
 {
-    sodium_memzero( b_my_sk, sizeof b_my_sk);
+    sodium_munlock( b_my_sk, sizeof b_my_sk);
+    //sodium_munlock(b_passphrase_blake2, sizeof b_passphrase_blake2);
     writeSettings();
     delete ui;
 }
@@ -637,7 +671,8 @@ void DecryptThread::run() {
 }
 
 void EncryptThread::run()  {
-    int result= minilock_encode((uint8_t*) inFileName.toLocal8Bit().data(), MlockMainWindow::c_minilock_id,
+    int result= minilock_encode((uint8_t*) inFileName.toLocal8Bit().data(),
+                                MlockMainWindow::c_minilock_id,
                                 MlockMainWindow::b_my_sk,
                                 &MlockMainWindow::id_list,
                                 &MlockMainWindow::out_opts);

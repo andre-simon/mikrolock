@@ -30,6 +30,7 @@
 #define NONCE_PREFIX_LEN crypto_box_PUBLICKEYBYTES/2
 #define MAC_LEN  crypto_secretbox_MACBYTES
 
+// stack sizes: OSX 8M; Linux 4M; W32 1M
 #ifndef WIN32
 #define BUF_READ_FILE_LEN 1048576
 #else

@@ -1,7 +1,7 @@
 /*
 mikrolock reads and writes encrypted files in the minilock format
 
-Copyright (C) 2014 Andre Simon
+Copyright (C) 2014, 2016 Andre Simon
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <stdio.h>
 
+#include <sodium.h>
 #include <sodium/crypto_pwhash_scryptsalsa208sha256.h>
+#include <sodium/crypto_pwhash.h>
 #include <sodium/randombytes.h>
 
 #ifndef WIN32
@@ -118,22 +120,24 @@ void print_help() {
 	printf("  -E, --encrypt <file>  Encrypt the given file (see -r)\n");
 	printf("  -D, --decrypt <file>  Decrypt the given miniLock file\n");
 	printf("  -o, --output <file>   Override the target file name (assumes -D or -E)\n");
-	printf("  -m, --mail <string>   Mail address (salt)\n");
-	printf("  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated, assumes -E)\n\n");
+        printf("  -k, --kdf <name>      Key derivation function to use (name: \"scrypt\" or \"argon2\")\n");
+        printf("                        scrypt is the default, argon2 is experimental\n");
+        printf("  -m, --mail <string>   Mail address (salt for key derivation)\n");
+	printf("  -r, --rcpt <string>   Recipient's Lock-ID (may be repeated, assumes -E)\n\n");
 	printf("  -h, --help            Print this help screen\n");
-	printf("  -l, --list <file>     Recipient list text file (contains one miniLock ID per line)\n");
+	printf("  -l, --list <file>     Recipient list text file (contains one Lock-ID per line)\n");
 	printf("                        ID descriptions may be added using these delimiters: space or one of [,;/-|]\n");
 	printf("  -p, --pinentry        Use pinentry program to ask for the passphrase\n");
 	printf("  -q, --quiet           Do not print progress information\n");
 	printf("  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)\n");
 	printf("  -v, --version         Print version information\n");
-	printf("  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)\n");
+	printf("  -x, --exclude-me      Exlude own Lock-ID from recipient list (assumes -E)\n");
 
-	printf("\nIf neither -E nor -D is given, mikrolock exits after showing your miniLock ID.\n");
+	printf("\nIf neither -E nor -D is given, mikrolock exits after showing your Lock-ID.\n");
 }
 
 void print_version(int show_license_info) {
-        printf("mikrolock " MIKROLOCK_VERSION " Copyright 2014, 2015 Andre Simon\n");
+        printf("mikrolock " MIKROLOCK_VERSION " Copyright 2014-2016 Andre Simon\n");
 
   if (show_license_info){
     printf("This program comes with ABSOLUTELY NO WARRANTY\n");
@@ -175,6 +179,7 @@ int main(int argc, char **argv) {
 #endif
     int c;
 
+    int use_kdf_argon2 = 0;
     int ret_val = EXIT_FAILURE;
 
     FILE *list_file=NULL;
@@ -182,25 +187,27 @@ int main(int argc, char **argv) {
     while (1) {
         int option_index = 0;
         static struct option long_options[] = {
-            {"encrypt", required_argument, 0, 'E' },
-            {"decrypt", required_argument, 0, 'D' },
-            {"output",  required_argument, 0, 'o' },
-            {"quiet",   no_argument,       0, 'q' },
-            {"version", no_argument,       0, 'v' },
-            {"help",    no_argument,       0, 'h' },
-            {"exclude-me", no_argument,    0, 'x' },
-            {"pinentry", no_argument,      0, 'p' },
-            {"mail",     required_argument,0, 'm' },
-            {"rcpt",     required_argument,0, 'r' },
-            {"random-name", no_argument,   0, 'R' },
-            {"list",    required_argument, 0, 'l' },
-            {0,         0,                 0, 0 }
+            {"encrypt",     required_argument, 0, 'E' },
+            {"decrypt",     required_argument, 0, 'D' },
+            {"output",      required_argument, 0, 'o' },
+            {"quiet",       no_argument,       0, 'q' },
+            {"version",     no_argument,       0, 'v' },
+            {"help",        no_argument,       0, 'h' },
+            {"exclude-me",  no_argument,       0, 'x' },
+            {"pinentry",    no_argument,       0, 'p' },
+            {"mail",        required_argument, 0, 'm' },
+            {"rcpt",        required_argument, 0, 'r' },
+            {"random-name", no_argument,       0, 'R' },
+            {"list",        required_argument, 0, 'l' },
+            {"kdf",        required_argument,  0, 'k' },
+            {0,             0,                 0, 0 }
         };
 
-        c = getopt_long(argc, argv, "E:D:o:qvhm:r:xpRl:",
+        c = getopt_long(argc, argv, "E:D:o:qvhm:r:xpRl:k:",
                         long_options, &option_index);
         if (c == -1)
             break;
+        
         switch (c) {
 
         case 'm':
@@ -232,12 +239,10 @@ int main(int argc, char **argv) {
             break;
 
         case 'r':
-
             if (!rcpt_list_add(&id_list, optarg)) {
-                fprintf(stderr, "ERROR: invalid miniLock ID: %s\n", optarg);
+                fprintf(stderr, "ERROR: invalid Lock-ID: %s\n", optarg);
                 goto main_exit_on_failure;
             }
-            
             break;
 
         case 'l':
@@ -252,13 +257,16 @@ int main(int argc, char **argv) {
             while (fgets(c_rcpt_line, sizeof c_rcpt_line -1, list_file)){
                 char *token = strtok(c_rcpt_line, " ,;/-|\r\n\t");
                 if (!rcpt_list_add(&id_list, token)) {
-		  fprintf(stderr, "ERROR: invalid miniLock ID in %s: %s\n",  optarg,  token);
-		  fclose(list_file);
-		  goto main_exit_on_failure;
-		}
-
+                  fprintf(stderr, "ERROR: invalid Lock-ID in %s: %s\n",  optarg,  token);
+                  fclose(list_file);
+                  goto main_exit_on_failure;
+                }
             }
             fclose(list_file);
+          break;
+          
+        case 'k':
+          use_kdf_argon2 = !strncmp(optarg, "argon2", 6);
           break;
 
         case 'x':
@@ -285,15 +293,17 @@ int main(int argc, char **argv) {
 
     print_version(1);
 
-    if(!strlen((const char*)c_user_salt)){
+    if (!strlen((const char*)c_user_salt)){
 	prompt_tty("Please enter your mail address:\n", c_user_salt, sizeof c_user_salt, 0);
     }
+    
+    sodium_mlock(c_user_passphrase, sizeof c_user_passphrase);
     
     #ifndef WIN32
     if (!use_pinentry ||  prompt_pinentry((const char*)c_user_salt, c_user_passphrase, sizeof c_user_passphrase)<0){
     #endif
-
-      prompt_tty("Please enter your secret passphrase:\r\n", c_user_passphrase, sizeof c_user_passphrase, 1);
+  
+        prompt_tty("Please enter your secret passphrase:\r\n", c_user_passphrase, sizeof c_user_passphrase, 1);
 
     #ifndef WIN32
     }
@@ -304,27 +314,46 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Minimum length: 20 chars. If shorter than 40 chars, the passphrase must consist of at least four words\n");
         goto main_exit_on_failure;
     }
-
-    if (strlen( (const char*) c_user_passphrase)<40) {
-      printf("WARNING: a weak passphrase may be declined by the original miniLock Chrome extension.\n");
-    }
    
-    printf("Unlocking...\n");
+   printf("Deriving key using %s...\n", use_kdf_argon2 ? "Argon2":"scrypt");
+    
+    if (sodium_init() == -1) {
+      fprintf(stderr, "ERROR: libsodium init failed\n");
+      goto main_exit_on_failure;
+    }
 
     uint8_t b_passphrase_blake2[KEY_LEN] = {0};
     uint8_t b_my_sk[KEY_LEN] = {0};
-
+    sodium_mlock(b_passphrase_blake2, sizeof b_passphrase_blake2);
+    sodium_mlock(b_my_sk, sizeof b_my_sk);
+    
     blake_2s_array(c_user_passphrase, strlen((char *)c_user_passphrase),
                    b_passphrase_blake2, KEY_LEN);
 
-    sodium_memzero(c_user_passphrase, strlen((char *)c_user_passphrase));
+    sodium_munlock(c_user_passphrase, sizeof c_user_passphrase);
 
-    int scrypt_retval= crypto_pwhash_scryptsalsa208sha256_ll(b_passphrase_blake2, KEY_LEN,
+    int kdf_retval = 1;
+    
+    if (use_kdf_argon2){
+      unsigned char salt_hash[crypto_pwhash_SALTBYTES];
+      crypto_generichash(salt_hash, sizeof salt_hash,
+                        (const uint8_t *)c_user_salt, strlen((char *)c_user_salt),
+                         NULL, 0);
+      kdf_retval= crypto_pwhash(b_my_sk, sizeof b_my_sk,
+                                (char*)b_passphrase_blake2, sizeof b_passphrase_blake2, salt_hash,
+                                crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE, 
+                                crypto_pwhash_ALG_DEFAULT);
+    } else {
+      // parameters used by MiniLock
+      kdf_retval= crypto_pwhash_scryptsalsa208sha256_ll(b_passphrase_blake2, sizeof b_passphrase_blake2,
                                      (const uint8_t *)c_user_salt, strlen((char *)c_user_salt),
                                      131072, 8, 1,
                                      b_my_sk, sizeof b_my_sk);
-
-    if (scrypt_retval) {
+    }
+    
+    sodium_munlock(b_passphrase_blake2, sizeof b_passphrase_blake2);
+    
+    if (kdf_retval) {
         fprintf(stderr, "ERROR: key derivation failed\n");
         goto main_exit_on_failure;
     }
@@ -340,14 +369,11 @@ int main(int argc, char **argv) {
 
     base58_encode((unsigned char *)c_minilock_id, b_my_pk, KEY_LEN + 1);
 
-    printf("Your miniLock-ID: %s\n", c_minilock_id);
+    printf("Your Lock-ID: %s\n", c_minilock_id);
 
     if (do_dec || do_enc) {
       
         printf("%scrypting file %s...\n", do_enc ? "En" : "De", c_input_file);
-
-
-	//TODO remove own ID from list if cnt > 1 and exclude_me
 
         if (do_dec || do_enc){
             error_code err_code;
@@ -361,7 +387,7 @@ int main(int argc, char **argv) {
 
                 err_code = minilock_encode(c_input_file, c_minilock_id, b_my_sk, &id_list, &out_opts);
             }
-            sodium_memzero(b_my_sk, sizeof b_my_sk);
+            sodium_munlock(b_my_sk, sizeof b_my_sk);
 
             switch (err_code){
             case err_ok:

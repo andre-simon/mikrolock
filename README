@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MIKROLOCK MANUAL - Version 1.0  ----------- UTF-8 FILE --- August 2015 ---
+---  MIKROLOCK MANUAL - Version 1.1  ------------- UTF-8 FILE --- June 2016 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -35,20 +35,20 @@ without configuration or learning efforts. The miniLock file format may also be
 applied using the Chrome extension, this might help if corporate rules do not
 allow an installation of MikroLock.
 
-The key element of encryption is the miniLock-ID, which can be calculated on 
+The key element of encryption is the Lock-ID, which can be calculated on 
 any computer, based on a mail address and a passphrase.
-This minilock ID is a short public key to be published on websites, mail
+This Lock-ID is a short public key to be published on websites, mail
 signatures, twitter etc. to enable anyone to encrypt data for this ID. 
 Only the receiver who applies the correct mail and passphrase to derive the 
 same ID can decrypt the content.
 
-A minilock ID looks like this: jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83
+A Lock-ID looks like this: jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83
 
-Since the minilock IDs are very comfortable to handle, there is no need for a
+Since Lock-IDs are very comfortable to handle, there is no need for a
 cumbersome key exchange process like using keyservers or manually copying key
 files to hosts.
 
-A sender can define a list of minilock IDs to let multiple recipients decrypt 
+A sender can define a list of Lock-IDs to let multiple recipients decrypt 
 the file. There is no need to generate a new file for each receiver.
 A minilock file does not contain any visible information about its recipients.
 
@@ -59,11 +59,11 @@ Read more about the cryptographic details: https://minilock.io.
 -------------------------------------------------------------------------------
 
 A wants to encrypt a file for B. B enters his mail address and passphrase into
-MikroLock to obtain his miniLock ID. He sends this ID to A.
-A encrypts the file and adds B's miniLock ID as recipient ID. A now sends the
+MikroLock to obtain his Lock-ID. He sends this ID to A.
+A encrypts the file and adds B's Lock-ID as recipient ID. A now sends the
 encrypted file to B, who is able to decrypt it using his passphrase/mail
 combination.
-It is important to keep the passphrase secret - only the miniLock IDs (=public
+It is important to keep the passphrase secret - only the Lock-IDs (=public
 keys) are being exchanged.
 
 
@@ -78,19 +78,21 @@ Available options:
   -E, --encrypt <file>  Encrypt the given file (see -r)
   -D, --decrypt <file>  Decrypt the given miniLock file
   -o, --output <file>   Override the target file name (assumes -D or -E)
-  -m, --mail <string>   Mail address (salt)
-  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated, assumes -E)
+  -k, --kdf <name>      Key derivation function to use (name: "scrypt" or "argon2")
+                        scrypt is the default, argon2 is experimental
+  -m, --mail <string>   Mail address (salt for key derivation)
+  -r, --rcpt <string>   Recipient's Lock-ID (may be repeated, assumes -E)
 
   -h, --help            Print this help screen
-  -l, --list <file>     Recipient list text file (contains one miniLock ID per line)
+  -l, --list <file>     Recipient list text file (contains one Lock-ID per line)
                         ID descriptions may be added using these delimiters: space or one of [,;/|-]
   -p, --pinentry        Use pinentry program to ask for the passphrase
   -q, --quiet           Do not print progress information
   -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
   -v, --version         Print version information
-  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
+  -x, --exclude-me      Exlude own Lock-ID from recipient list (assumes -E)
 
-If neither -E nor -D is given, mikrolock exits after showing your miniLock ID.
+If neither -E nor -D is given, mikrolock exits after showing your Lock-ID.
 
 
 Examples:
@@ -102,7 +104,7 @@ mikrolock --encrypt secret.data --mail sendersalt@holygrail.com --rcpt EX9k9VmGz
 
 Please enter your secret passphrase:
 Unlocking...
-Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
+Your Lock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
 Encrypting file secret.data...
 Progress 100%
 Calculating file hash...
@@ -118,7 +120,7 @@ DECRYPTION
 mikrolock --decrypt secret.data.minilock --mail receiver@test.org
 Please enter your secret passphrase:
 Unlocking...
-Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Your Lock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Decrypting file secret.data.minilock...
 Calculating file hash...
 Progress 100%
@@ -132,30 +134,39 @@ Destination file: secret.data
 
 The miniLock file format was established by the miniLock Chrome browser
 extension. While the produced files are interchangeable with each program, the
-accepted input to obtain a miniLock ID differs:
+accepted input to obtain a Lock-ID differs:
 
+ * miniLock only supports Lock-IDs generated by scrypt
+ 
  * miniLock accepts only valid mail addresses as salt; MikroLock accepts any
    value
 
  * miniLock applies a passphrase entropy check; MikroLock may accept passphrases
    with lower entropy
 
-If you are going to use MikroLock and miniLock in parallel, choose a salt and
-passphrase which is accepted in both applications.
+If you are going to use MikroLock and miniLock in parallel, choose scrypt as kdf, 
+and check whether salt and passphrase are being accepted in both applications.
 
 
 5. Applied crypto functions
 -------------------------------------------------------------------------------
 
-A miniLock-ID is defined as:
+A Lock-ID is defined as:
 
-secret_key := scrypt(blake2(passphrase), mail, 131072, 1)
-public_key := crypto_scalarmult_base(secret_key) 
-miniLock id := base58( public_key + blake2(public_key) )
+secret_key :=      scrypt (blake2(passphrase), mail, 131072, 1) 
+               OR argon2i (blake2(passphrase), generichash(mail), 
+                           OPSLIMIT_SENSITIVE, MEMLIMIT_SENSITIVE)
+          
+public_key := crypto_scalarmult_base (secret_key) 
 
-The JSON header of a miniLock file contains the sender's miniLock ID,
+Lock-ID := base58 ( public_key + blake2(public_key) )
+
+The user may choose scrypt or Argon2 to calculate the secret_key.
+Scrypt parameters were taken from miniLock, whereas Argon2 parameters are 
+recommended for handling sensitive data.
+
+The JSON header of a miniLock file contains the sender's Lock-ID,
 the recipient's IDs, file hash and the random key of the encrypted input file.
-
 This information is encrypted separately with each given recipient ID as public
 key using crypto_box_easy
 (key exchange: Curve25519; encryption: XSalsa20 stream cipher; authentication:
@@ -170,6 +181,8 @@ https://minilock.io.
 https://doc.libsodium.org/password_hashing/index.html
 https://blake2.net
 https://en.wikipedia.org/wiki/Base58
+https://download.libsodium.org/libsodium/content/password_hashing/scrypt.html
+https://download.libsodium.org/libsodium/content/password_hashing/the_argon2i_function.html
 https://doc.libsodium.org/advanced/scalar_multiplication.html
 https://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html
 

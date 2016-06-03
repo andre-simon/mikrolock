@@ -35,6 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern "C" {
 #include <sodium/crypto_pwhash_scryptsalsa208sha256.h>
+#include <sodium/crypto_pwhash.h>
+#include <sodium/crypto_generichash.h>
 #include <sodium/randombytes.h>
 #include "utils.h"
 #include "minilock.h"
@@ -50,7 +52,7 @@ class MlockMainWindow : public QMainWindow
 
 public:
 
-    //list of minilock IDs which can decrypt the file
+    //list of Lock-IDs which can decrypt the file
     static  struct rcpt_list* id_list;
 
     static uint8_t b_my_sk[KEY_LEN] ;
@@ -110,6 +112,8 @@ private slots:
     void on_btnClearRecipients_clicked();
     void on_btnOpenFileList_clicked();
     void on_btnBrowseDestDir_clicked();
+    void on_rbScrypt_clicked();
+    void on_rbArgon2_clicked();
 
     void on_stackedWidget_currentChanged(int idx);
 

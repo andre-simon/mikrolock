@@ -6,7 +6,7 @@ CC=gcc
 
 LIBS=libs/
 
-QMAKE=qmake-qt5
+QMAKE=qmake
 
 GUI_QT_DIR=./gui/qt-widgets/mlock-gui/
 

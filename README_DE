@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
----  MIKROLOCK HANDBUCH - Version 1.0  -------- UTF-8-DATEI --- August 2015 ---
+---  MIKROLOCK HANDBUCH - Version 1.1  ---------- UTF-8-DATEI --- Juni 2016 ---
 -------------------------------------------------------------------------------
 
 OSI Certified Open Source Software
@@ -36,7 +36,7 @@ Einarbeitung. Das miniLock-Format kann durch die Chrome Erweiterung auch dann
 eingesetzt werden, wenn keine Software wie MikroLock installiert werden kann 
 (Firmen-Richtlinien o.ä.).
 
-Dreh- und Angelpunkt der Verschlüsselung ist die miniLock-ID, die durch Eingabe
+Dreh- und Angelpunkt der Verschlüsselung ist die Lock-ID, die durch Eingabe
 von Mail-Adresse und Passwort auf jedem PC berechnet werden kann. 
 Diese MiniLock-ID ist ein kurzer Public-Key, der auf Webseiten, in Mailsigna-
 turen, auf Twitter oder sonstwo veröffentlicht wird, damit jedermann in der Lage
@@ -44,13 +44,12 @@ ist Inhalte für diese ID zu verschlüsseln. Nur ein Empfänger mit der
 richtigen Passwort/Mail-Kombination zur Erzeugung dieser ID kann die Daten 
 wieder entschlüsseln.
 
-Eine MiniLock-ID sieht wie folgt aus: 
-jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83
+Eine Lock-ID sieht wie folgt aus: jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83
 
 Da diese IDs sehr bequem zu handhaben sind, ist kein aufwändiger Schlüsseltausch 
 mit Keyservern oder manuellen Dateikopien notwendig.
 
-Beim Verschlüsseln kann eine Liste von miniLock-IDs angegeben werden, um 
+Beim Verschlüsseln kann eine Liste von Lock-IDs angegeben werden, um 
 mehreren Empfängern zu ermöglichen die Daten zu entschlüsseln. Es muss also 
 keine separate Datei für jeden Empfänger erzeugt werden. MiniLock-Dateien 
 enthalten keine sichtbaren Hinweise auf Ihre Empfänger.
@@ -60,12 +59,12 @@ enthalten keine sichtbaren Hinweise auf Ihre Empfänger.
 -------------------------------------------------------------------------------
 
 A möchte etwas für B verschlüsseln. B gibt seine Mail-Adresse und sein Passwort
-in MikroLock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.
-A verschlüsselt die Datei und gibt die MiniLock-ID von B als Empfänger-ID an.
+in MikroLock ein, um seine Lock-ID zu erhalten. Diese ID sendet er an A.
+A verschlüsselt die Datei und gibt die Lock-ID von B als Empfänger-ID an.
 A sendet nun die verschlüsselte Datei an B, der sie mit seiner Passwort/Mail-
 Kombination entschlüsseln kann.
 Wichtig hierbei ist, dass das Passwort geheim bleibt - es werden nur die 
-MiniLock-IDs (=public keys) ausgetauscht.
+Lock-IDs (=public keys) ausgetauscht.
 
 
 3.  Funktionen
@@ -79,19 +78,21 @@ Available options:
   -E, --encrypt <file>  Encrypt the given file (see -r)
   -D, --decrypt <file>  Decrypt the given miniLock file
   -o, --output <file>   Override the target file name (assumes -D or -E)
-  -m, --mail <string>   Mail address (salt)
-  -r, --rcpt <string>   Recipient's miniLock ID (may be repeated, assumes -E)
+  -k, --kdf <name>      Key derivation function to use (name: "scrypt" or "argon2")
+                        scrypt is the default, argon2 is experimental
+  -m, --mail <string>   Mail address (salt for key derivation)
+  -r, --rcpt <string>   Recipient's Lock-ID (may be repeated, assumes -E)
 
   -h, --help            Print this help screen
-  -l, --list <file>     Recipient list text file (contains one miniLock ID per line)
+  -l, --list <file>     Recipient list text file (contains one Lock-ID per line)
                         ID descriptions may be added using these delimiters: space or one of [,;/|-]
   -p, --pinentry        Use pinentry program to ask for the passphrase
   -q, --quiet           Do not print progress information
   -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
   -v, --version         Print version information
-  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
+  -x, --exclude-me      Exlude own Lock-ID from recipient list (assumes -E)
 
-If neither -E nor -D is given, mikrolock exits after showing your miniLock ID.
+If neither -E nor -D is given, mikrolock exits after showing your Lock-ID.
 
 
 Beispiele:
@@ -103,7 +104,7 @@ mikrolock --encrypt libsodium-1.0.0.tar.gz --mail sendersalt@holygrail.com --rcp
 
 Please enter your secret passphrase:
 Unlocking...
-Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
+Your Lock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
 Encrypting file libsodium-1.0.0.tar.gz...
 Progress 100%
 Calculating file hash...
@@ -120,7 +121,7 @@ ENTSCHLÜSSELUNG:
 mikrolock --decrypt libsodium-1.0.0.tar.gz.minilock --mail receiver@test.org
 Please enter your secret passphrase:
 Unlocking...
-Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Your Lock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Decrypting file libsodium-1.0.0.tar.gz.minilock...
 Calculating file hash...
 Writing to file libsodium-1.0.0.tar.gz...
@@ -131,7 +132,9 @@ Writing to file libsodium-1.0.0.tar.gz...
 
 Das miniLock Dateiformat wurde mit der Chrome-Erweiterung miniLock eingeführt.
 MiniLock-Dateien können mit beiden Programmen verarbeitet werden, allerdings
-unterscheiden sich die akzeptierten Eingaben zur Erzeugung der miniLock-ID:
+unterscheiden sich die akzeptierten Eingaben zur Erzeugung der Lock-ID:
+
+ * miniLock akzeptiert nur IDs die mit scrypt erzeugt wurden
 
  * miniLock nimmt nur gültige Mailadressen als Salt-Wert an; MikroLock jedoch
    jeden Wert
@@ -139,26 +142,33 @@ unterscheiden sich die akzeptierten Eingaben zur Erzeugung der miniLock-ID:
  * miniLock prüft die Mindest-Entropie des Passworts; MikroLock könnte auch
    ein Passwort mit geringerer Entropie akzeptieren
 
-Sollten Sie MikroLock und miniLock im Wechsel benutzen wollen, prüfen Sie
-ob Salt und Passwort in beiden Programmen gültige Eingaben sind.
+Sollten Sie MikroLock und miniLock im Wechsel benutzen wollen, vwerwenden Sie 
+scrypt als KDF und prüfen Sie, ob Salt und Passwort in beiden Programmen gültige 
+Eingaben sind.
 
 
 5. Verwendete Crypto-Funktionen
 -------------------------------------------------------------------------------
 
-Die MiniLock-ID wird wie folgt erzeugt:
+Die Lock-ID wird wie folgt erzeugt:
 
-secret_key := scrypt(blake2(passphrase), mail, 131072, 1)
-public_key := crypto_scalarmult_base(secret_key) 
-miniLock id := base58( public_key + blake2(public_key) )
+secret_key :=      scrypt (blake2(passphrase), mail, 131072, 1) 
+               OR argon2i (blake2(passphrase), generichash(mail), 
+                           OPSLIMIT_SENSITIVE, MEMLIMIT_SENSITIVE)
+          
+public_key := crypto_scalarmult_base (secret_key) 
 
-Der JSON-Dateiheader der MiniLock-Dateien enthält die MiniLock-ID des
+Lock-ID := base58 ( public_key + blake2(public_key) )
+
+Zur Berechnung von secret_key kann vom Benutzer scrypt oder Argon2 gewählt werden.
+Die Parameter für scrypt wurden von miniLock übernommen, die für Argon2 ent-
+sprechen der Empfehlung für vertrauliche Daten.
+
+Der JSON-Dateiheader der MiniLock-Dateien enthält die Lock-ID des
 Senders, die IDs der Empfänger sowie Schlüssel (zufällig erzeugt) und
-Hashwert der verschlüsselten Eingabedatei.
-
-Diese Informationen werden separat mit jeder angegebenen Empfänger-ID als
-Public-Key mittels crypto_box_easy verschlüsselt
-(Schlüsseltausch: Curve25519; Verfahren: XSalsa20 stream cipher;
+Hashwert der verschlüsselten Eingabedatei. Diese Informationen werden separat 
+mit jeder angegebenen Empfänger-ID als Public-Key mittels crypto_box_easy 
+verschlüsselt (Schlüsseltausch: Curve25519; Verfahren: XSalsa20 stream cipher;
 Authentifizierung: Poly1305 MAC).
 
 Die Eingabedatei wird mit crypto_secretbox_easy verschlüsselt
@@ -170,8 +180,10 @@ https://minilock.io.
 https://doc.libsodium.org/password_hashing/index.html
 https://blake2.net
 https://en.wikipedia.org/wiki/Base58
-http://doc.libsodium.org/advanced/scalar_multiplication.html
-http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html
+https://download.libsodium.org/libsodium/content/password_hashing/scrypt.html
+https://download.libsodium.org/libsodium/content/password_hashing/the_argon2i_function.html
+https://doc.libsodium.org/advanced/scalar_multiplication.html
+https://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html
 
 
 6.  Plattformen

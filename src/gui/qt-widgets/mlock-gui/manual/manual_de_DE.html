@@ -36,14 +36,14 @@ eingesetzt werden, wenn keine Software wie MikroLock installiert werden darf (Fi
 </p>
 
 <p>
-Dreh- und Angelpunkt der Verschl&uuml;sselung ist die miniLock-ID, die durch Eingabe
+Dreh- und Angelpunkt der Verschl&uuml;sselung ist die Lock-ID, die durch Eingabe
 von Mail-Adresse und Passwort auf jedem PC berechnet werden kann. 
-Diese MiniLock-ID  ist ein kurzer Public-Key der auf Webseiten, in Mailsignaturen, auf Twitter oder sonstwo ver&ouml;ffentlicht wird, damit jedermann in der Lage ist Inhalte f&uuml;r diese ID zu verschl&uuml;sseln.
+Diese Lock-ID  ist ein kurzer Public-Key der auf Webseiten, in Mailsignaturen, auf Twitter oder sonstwo ver&ouml;ffentlicht wird, damit jedermann in der Lage ist Inhalte f&uuml;r diese ID zu verschl&uuml;sseln.
 Nur ein Empf&auml;nger mit  der richtigen Passwort/Mail-Kombination zur Erzeugung dieser ID kann die Daten wieder entschl&uuml;sseln.
 </p>
 
 <p>
-Eine MiniLock-ID sieht wie folgt aus: <code>jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83</code>
+Eine Lock-ID sieht wie folgt aus: <code>jrcY8VJWKihbiLsDnaMaNSoL2fZSTiRmEeJcKGBYxnb83</code>
 </p>
 
 <p>
@@ -51,7 +51,7 @@ Da  diese IDs sehr bequem zu handhaben sind, ist kein aufw&auml;ndiger  Schl&uum
 </p>
 
 <p>
-Beim Verschl&uuml;sseln kann eine Liste von miniLock-IDs  angegeben werden, um mehreren Empf&auml;ngern zu erm&ouml;glichen die Daten zu entschl&uuml;sseln.
+Beim Verschl&uuml;sseln kann eine Liste von Lock-IDs  angegeben werden, um mehreren Empf&auml;ngern zu erm&ouml;glichen die Daten zu entschl&uuml;sseln.
 Es muss also nicht eine separate Datei f&uuml;r jeden Empf&auml;nger erzeugt werden.
 MiniLock-Dateien enthalten keine sichtbaren Hinweise auf Ihre Empf&auml;nger.
 </p>
@@ -59,9 +59,9 @@ MiniLock-Dateien enthalten keine sichtbaren Hinweise auf Ihre Empf&auml;nger.
 
 <h2>Wie funktioniert's?</h2>
 <p>
-A  m&ouml;chte etwas f&uuml;r B verschl&uuml;sseln. B gibt seine Mail-Adresse und sein Passwort in MikroLock ein, um seine MiniLock-ID zu erhalten. Diese ID sendet er an A.<br>
-A verschl&uuml;sselt die Datei und gibt die MiniLock-ID von B als Empf&auml;nger-ID an. A sendet nun die verschl&uuml;sselte Datei an B, der sie mit seiner Passwort/Mail-Kombination entschl&uuml;sseln kann.<br>
-Wichtig hierbei ist, dass das Passwort geheim bleibt - es werden nur die MiniLock-IDs (=public keys) ausgetauscht.
+A  m&ouml;chte etwas f&uuml;r B verschl&uuml;sseln. B gibt seine Mail-Adresse und sein Passwort in MikroLock ein, um seine Lock-ID zu erhalten. Diese ID sendet er an A.<br>
+A verschl&uuml;sselt die Datei und gibt die Lock-ID von B als Empf&auml;nger-ID an. A sendet nun die verschl&uuml;sselte Datei an B, der sie mit seiner Passwort/Mail-Kombination entschl&uuml;sseln kann.<br>
+Wichtig hierbei ist, dass das Passwort geheim bleibt - es werden nur die Lock-IDs (=public keys) ausgetauscht.
 </p>
 
 
@@ -70,8 +70,8 @@ Wichtig hierbei ist, dass das Passwort geheim bleibt - es werden nur die MiniLoc
 <p>
 Nach dem Start des Programms werden eine Mail-Adresse und ein Passwort abgefragt.<br>
 Statt der Mail-Adresse ist auch ein beliebiger anderer Wert erlaubt (das miniLock Chrome-Plugin akzeptiert ausschlie&szlig;lich Mail-Adressen).<br>
-Aus diesen Informationen wird ein Schl&uuml;sselpaar gebildet (privater und &ouml;ffentlicher Schl&uuml;ssel).<br>
-
+Aus diesen Informationen wird mit Hilfe einer zu wählenden Schlüsselableitungsfunktion (scrypt oder Argon2) ein Schl&uuml;sselpaar gebildet (privater und &ouml;ffentlicher Schl&uuml;ssel).<br>
+<b>Wichtig:</b> Zum Erzeugen einer bestimmten Lock-ID muss immer dieselbe Kombination von Mail-Adresse, Passwort und Funktion angegeben werden.<br>
 Damit die verschl&uuml;sselte Datei wirksam gesch&uuml;tzt ist, muss ein Passwort mit weniger als 40 Zeichen L&auml;nge aus mehreren zuf&auml;llig gew&auml;hlten W&ouml;rtern bestehen.<br>
 </p>
 
@@ -128,7 +128,7 @@ das Passwort ist ausreichend sicher
 </tr>
 </table>
 
-Nach dem Klick auf &quot;Meine miniLock-ID erzeugen&quot; wird die eigene ID am unteren Fensterrand angezeigt. Sie kann dort auch kopiert werden.<br><br>
+Nach dem Klick auf &quot;Meine Lock-ID erzeugen&quot; wird die eigene ID am unteren Fensterrand angezeigt. Sie kann dort auch kopiert werden.<br><br>
 Nun wird zum Ein- und Ausgabedialog gewechselt:
 </p>
 
@@ -145,8 +145,8 @@ Wenn eine miniLock-Datei ausgew&auml;hlt wurde, wird diese automatisch entschl&u
 <img src=":/manual/manual4.png"  border="0" alt="MikroLock GUI 4">
 
 <p>
-In der oberen Liste werden die miniLock-IDs der Datei-Empf&auml;nger angegeben.<br>
-Mit &quot;Liste einlesen&quot; wird eine Textdatei importiert, die pro Zeile eine MiniLock-ID enth&auml;lt. Hinter den IDs k&ouml;nnen in der Datei die dazugehörigen Namen wie folgt eingetragen werden:
+In der oberen Liste werden die Lock-IDs der Datei-Empf&auml;nger angegeben.<br>
+Mit &quot;Liste einlesen&quot; wird eine Textdatei importiert, die pro Zeile eine Lock-ID enth&auml;lt. Hinter den IDs k&ouml;nnen in der Datei die dazugehörigen Namen wie folgt eingetragen werden:
 <pre>
 y5qBLmncv36r98tFMw5YVoc9SHkfLDg8Wz7zf9yrPYPh2 / Andre Simon
 8SmHNEEZiK1RgWoN9xryJb8opBky9Kh7txhmgb1RLrUrW ; Customer XYZ
@@ -156,7 +156,7 @@ ULgpTbP7isNNV6kgDbNVtQo5YRuUhc4N5AAEEbne9bjJi | Jane
 Die Information hinter den Trennern wird nach dem Laden als Tooltip angezeigt.
 <br><br>
 Der Button &quot;Empf&auml;nger l&ouml;schen&quot; entfernt alle Empf&auml;nger-IDs.<br>
-Die Option &quot;Meine ID auslassen&quot; entfernt die eigene miniLock-ID aus der Empf&auml;ngerliste.<br>
+Die Option &quot;Meine ID auslassen&quot; entfernt die eigene Lock-ID aus der Empf&auml;ngerliste.<br>
 Mit &quot;Zufallsnamen erzeugen&quot; wird die verschl&uuml;sselte Datei unter einem zuf&auml;llig gew&auml;hlten Namen gespeichert.<br><br>
 Nach dem Klick auf &quot;Datei verschl&uuml;sseln&quot; wird die miniLock-Datei im vorher angegebenen Zielverzeichnis abgelegt.
 </p>
@@ -172,22 +172,24 @@ mikrolock reads and writes encrypted miniLock files (https://minilock.io/)
 
 Available options:
 
-  -E, --encrypt &lt;file&gt;  Encrypt the given file (see -r)
-  -D, --decrypt &lt;file&gt;  Decrypt the given miniLock file
-  -o, --output &lt;file&gt;   Override the target file name (assumes -D or -E)
-  -m, --mail &lt;string&gt;   User mail address (salt)
-  -r, --rcpt &lt;string&gt;   Recipient's miniLock ID (may be repeated, assumes -E)
+-E, --encrypt &lt;file&gt;  Encrypt the given file (see -r)
+-D, --decrypt &lt;file&gt;  Decrypt the given miniLock file
+-o, --output &lt;file&gt;   Override the target file name (assumes -D or -E)
+-k, --kdf &lt;name&gt;      Key derivation function to use (name: "scrypt" or "argon2")
+                      scrypt is the default, argon2 is experimental
+-m, --mail &lt;string&gt;   Mail address (salt for key derivation)
+-r, --rcpt &lt;string&gt;   Recipient's Lock-ID (may be repeated, assumes -E)
 
-  -h, --help            Print this help screen
-  -l, --list &lt;file&gt;     Recipient list text file (contains one miniLock ID per line)
-                        ID descriptions may be added using these delimiters: space or one of [,;/|-]
-  -p, --pinentry        Use pinentry program to ask for the passphrase
-  -q, --quiet           Do not print progress information
-  -R, --random-name     Generate random output filename; write to current working directory (assumes -E)
-  -v, --version         Print version information
-  -x, --exclude-me      Exlude own miniLock ID from recipient list (assumes -E)
+-h, --help            Print this help screen
+-l, --list &lt;file&gt;     Recipient list text file (contains one Lock-ID per line)
+                      ID descriptions may be added using these delimiters: space or one of [,;/|-]
+-p, --pinentry        Use pinentry program to ask for the passphrase
+-q, --quiet           Do not print progress information
+-R, --random-name     Generate random output filename; write to current working directory (assumes -E)
+-v, --version         Print version information
+-x, --exclude-me      Exlude own Lock-ID from recipient list (assumes -E)
 
-If neither -E nor -D is given, mikrolock exits after showing your miniLock ID.
+If neither -E nor -D is given, mikrolock exits after showing your Lock-ID.
 </pre>
 
 <h2>Anwendung der Kommandozeilenversion</h2>
@@ -197,7 +199,7 @@ If neither -E nor -D is given, mikrolock exits after showing your miniLock ID.
 mikrolock --encrypt secret.data --mail sendersalt@holygrail.com --rcpt EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Please enter your secret passphrase:
 Unlocking...
-Your miniLock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
+Your Lock-ID: aUwncs2D48MqB8VFta7RRJ5bjL9PfsmtWF3zYVb3zFLLW
 Encrypting file secret.data...
 Progress 100%
 Calculating file hash...
@@ -216,7 +218,7 @@ Sie kann vom Empf&auml;nger EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX entsch
 mikrolock --decrypt secret.data.minilock --mail receiver@test.org
 Please enter your secret passphrase:
 Unlocking...
-Your miniLock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
+Your Lock-ID: EX9k9VmGzjg7mUBFN9mzc7nkcvhmD6fGZTq3nefEajjxX
 Decrypting file secret.data.minilock...
 Calculating file hash...
 Progress 100%
@@ -229,9 +231,10 @@ Destination file: secret.data
 <h2>Kompatibilit&auml;t mit der miniLock-Browsererweiterung</h2>
 <p>
 Das miniLock Dateiformat wurde mit der Chrome-Erweiterung miniLock eingef&uuml;hrt.<br>
-MiniLock-Dateien können mit beiden Programmen verarbeitet werden, allerdings unterscheiden sich die akzeptierten Eingaben zur Erzeugung der miniLock-ID:
+MiniLock-Dateien können mit beiden Programmen verarbeitet werden, allerdings unterscheiden sich die akzeptierten Eingaben zur Erzeugung der Lock-ID:
 </p>
 <ul>
+<li>miniLock akzeptiert nur IDs die mit scrypt erzeugt wurden</li>
 <li>miniLock nimmt nur g&uuml;ltige Mailadressen als Salt-Wert an; MikroLock nimmt jeden Wert</li>
 <li>miniLock pr&uuml;ft die Mindest-Entropie des Passworts; MikroLock könnte auch ein Passwort mit geringerer Entropie akzeptieren</li>
 </ul>
@@ -241,15 +244,18 @@ Sollten Sie MikroLock und miniLock im Wechsel nutzen wollen, pr&uuml;fen Sie ob 
 
 <h2>Verwendete Crypto-Funktionen</h2>
 <p>
-Die MiniLock-ID wird wie folgt erzeugt:</p>
-<pre>secret_key := <a href="https://doc.libsodium.org/password_hashing/index.html" target="new">scrypt</a>(<a href="https://blake2.net" target="new">blake2</a>(passphrase), mail, 131072, 1)
-public_key := <a href="http://doc.libsodium.org/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret_key)
-miniLock id := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( public_key + <a href="https://blake2.net" target="new">blake2</a>(public_key) )
+Die Lock-ID wird wie folgt erzeugt:</p>
+<pre>secret_key :=     <a href="https://download.libsodium.org/doc/password_hashing/index.html" target="new">scrypt</a>(<a href="https://blake2.net" target="new">blake2</a>(passphrase), mail, 131072, 1)
+               OR <a href="https://download.libsodium.org/libsodium/content/password_hashing/the_argon2i_function.html" target="new">argon2i</a> (<a href="https://blake2.net" target="new">blake2</a>(passphrase), <a href="https://download.libsodium.org/libsodium/content/hashing/generic_hashing.html" target="new">generichash</a>(mail),
+                           OPSLIMIT_SENSITIVE, MEMLIMIT_SENSITIVE)
+public_key := <a href="https://download.libsodium.org/doc/advanced/scalar_multiplication.html" target="new">crypto_scalarmult_base</a>(secret_key)
+Lock-ID := <a href="https://en.wikipedia.org/wiki/Base58" target="new">base58</a>( public_key + <a href="https://blake2.net" target="new">blake2</a>(public_key) )
 </pre>
 <p>
-Der JSON-Dateiheader der MiniLock-Dateien enth&auml;lt die MiniLock-ID des Senders, die IDs der Empf&auml;nger sowie Schl&uuml;ssel (zuf&auml;llig erzeugt) und Hashwert der verschl&uuml;sselten Eingabedatei.<br><br>
-Diese Informationen werden separat mit jeder angegebenen Empf&auml;nger-ID als Public-Key mittels <a href="http://doc.libsodium.org/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a>  verschl&uuml;sselt (Schl&uuml;sseltausch: Curve25519; Verfahren: XSalsa20 stream cipher; Authentifizierung: Poly1305 MAC).<br><br>
-Die Eingabedatei wird mit <a href="http://doc.libsodium.org/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> verschl&uuml;sselt (Verfahren: XSalsa20 stream cipher; Authentifizierung: Poly1305 MAC). <br><br>
+Zur Berechnung von secret_key kann vom Benutzer scrypt oder Argon2 gewählt werden. Die Parameter für scrypt wurden von miniLock übernommen, die für Argon2 entsprechen der Empfehlung für vertrauliche Daten.<br><br>
+Der JSON-Dateiheader der MiniLock-Dateien enth&auml;lt die Lock-ID des Senders, die IDs der Empf&auml;nger sowie Schl&uuml;ssel (zuf&auml;llig erzeugt) und Hashwert der verschl&uuml;sselten Eingabedatei.<br><br>
+Diese Informationen werden separat mit jeder angegebenen Empf&auml;nger-ID als Public-Key mittels <a href="https://download.libsodium.org/doc/public-key_cryptography/authenticated_encryption.html" target="new">crypto_box_easy</a>  verschl&uuml;sselt (Schl&uuml;sseltausch: Curve25519; Verfahren: XSalsa20 stream cipher; Authentifizierung: Poly1305 MAC).<br><br>
+Die Eingabedatei wird mit <a href="https://download.libsodium.org/doc/secret-key_cryptography/authenticated_encryption.html" target="new">crypto_secretbox_easy</a> verschl&uuml;sselt (Verfahren: XSalsa20 stream cipher; Authentifizierung: Poly1305 MAC). <br><br>
 Mehr Infos zu den kryptographischen Eigenschaften und dem Dateiformat: <a href="https://minilock.io">https://minilock.io</a>.
 </p>
 

@@ -32,17 +32,16 @@
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gib ein geheimes Passwort ein, das aus mehreren zufällig gewählten Wörtern besteht. Ein zu schwaches Passwort könnte vom originalen miniLock Chrome-Plugin abgelehnt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="227"/>
+        <location filename="mlockmainwindow.ui" line="278"/>
         <source>Press this button to get to the file processing screen.</source>
         <translation>Drücke den Button um zur Dateiauswahl zu gelangen.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="230"/>
         <source>Generate my miniLock ID</source>
-        <translation>Erzeuge meine MiniLock ID</translation>
+        <translation type="vanished">Erzeuge meine MiniLock ID</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="276"/>
+        <location filename="mlockmainwindow.ui" line="327"/>
         <source>Enter your mail address and your passphrase.</source>
         <translation>Gib Mail-Adresse und Passwort ein.</translation>
     </message>
@@ -75,7 +74,6 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gib ein geheimes Passwort ein (Mindestlänge: 20 Zeichen). Wenn die Länge unter 40 Zeichen bleibt, muss das Passwort aus mind. 5 zufällig gewählten Wörtern bestehen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="302"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -90,7 +88,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;µlock uses your email and passphrase to derive your &lt;span style=&quot; font-weight:600;&quot;&gt;miniLock ID&lt;/span&gt;.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Refer to &lt;a href=&quot;http://www.diceware.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Diceware.com&lt;/span&gt;&lt;/a&gt; for a method to generate good passphrases.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -99,17 +97,16 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sieh unter &lt;a href=&quot;http://www.diceware.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Diceware.com&lt;/span&gt;&lt;/a&gt; nach, wie man gute Passwörter erzeugen kann.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="343"/>
         <source>Send your miniLock ID to others so they can encrypt files to you.&lt;br&gt;Encrypt files to friends using their miniLock IDs. &lt;br&gt;&lt;br&gt;Your email is only used to derive your miniLock ID -&lt;br&gt; it remains completely secret and anonymous.</source>
-        <translation>Sende deine MiniLock-ID an andere, damit sie Dateien für Dich verschlüsseln können.&lt;br&gt;&lt;br&gt;Verschlüssele Dateien für andere mit deren MiniLock-IDs.&lt;br&gt;&lt;br&gt;Deine E-Mail Adresse wird nur verwendet, um deine MiniLock-ID zu erzeugen - sie bleibt geheim und anonym.</translation>
+        <translation type="vanished">Sende deine MiniLock-ID an andere, damit sie Dateien für Dich verschlüsseln können.&lt;br&gt;&lt;br&gt;Verschlüssele Dateien für andere mit deren MiniLock-IDs.&lt;br&gt;&lt;br&gt;Deine E-Mail Adresse wird nur verwendet, um deine MiniLock-ID zu erzeugen - sie bleibt geheim und anonym.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="377"/>
+        <location filename="mlockmainwindow.ui" line="424"/>
         <source>Select the directory to store the encrypted or decrypted file.</source>
         <translation>Wähle das Verzeichnis, in dem die Ausgabedatei gespeichert werden soll.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="380"/>
+        <location filename="mlockmainwindow.ui" line="427"/>
         <source>Select the destination directory</source>
         <translation>Wähle das  Ausgabeverzeichnis</translation>
     </message>
@@ -118,90 +115,186 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Gib das Ausgabeverzeichnis ein.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="397"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your destination directory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies ist das Ausgabeverzeichnis.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dies ist das Ausgabeverzeichnis.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="426"/>
+        <location filename="mlockmainwindow.ui" line="473"/>
         <source>Select a minilock file to decrypt or any other file to encrypt.</source>
         <translation>Wähle eine minilock-Datei zur Entschlüsselung oder jede andere Datei zur Verschlüsselung aus.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="429"/>
-        <location filename="mlockmainwindow.cpp" line="362"/>
+        <location filename="mlockmainwindow.ui" line="476"/>
+        <location filename="mlockmainwindow.cpp" line="383"/>
         <source>Select the input file</source>
         <translation>Wähle die Eingabedatei</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="502"/>
+        <location filename="mlockmainwindow.ui" line="549"/>
         <source>Drop a file here after selecting the destination directory.</source>
         <translation>Ziehe eine Datei auf das Fenster nachdem Du das Ausgabeverzeichnis gewählt hast.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="567"/>
+        <location filename="mlockmainwindow.ui" line="617"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Select the destination directory and the input file.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;A miniLock file will be decrypted automatically. &lt;/p&gt;&lt;p&gt;Any other file will be encrypted.&lt;/p&gt;&lt;p&gt;You may drag and drop a file onto this window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Select the destination directory and the input file.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;A miniLock file will be decrypted automatically. &lt;/p&gt;&lt;p&gt;Any other file will be encrypted.&lt;/p&gt;&lt;p&gt;You may drag and drop files onto this window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wähle das Ausgabeverzeichnis und die Eingabedatei.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Eine miniLock-Datei wird automatisch entschlüsselt. &lt;/p&gt;&lt;p&gt;Jede andere Datei wird verschlüsselt.&lt;/p&gt;&lt;p&gt;Du kannst eine Datei auf dieses Fenster ziehen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="598"/>
         <source>List of recipient miniLock IDs:</source>
+        <translation type="vanished">Liste der Empfänger-IDs:</translation>
+    </message>
+    <message>
+        <source>Add a miniLock ID of whom should be able to open the file.</source>
+        <translation type="vanished">Füge eine ID der Person hinzu, die deine miniLock-Datei öffnen darf.</translation>
+    </message>
+    <message>
+        <source>Add miniLock ID</source>
+        <translation type="vanished">MiniLock-ID hinzufügen</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open a text file which contains one miniLock ID per line and use the entries to replace the recipient IDs above.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Öffne eine Textdatei, die eine miniLock-ID pro Zeile enthält, und ersetze damit die obigen Empfänger-IDs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Read list file</source>
+        <translation type="vanished">Liste einlesen</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="200"/>
+        <source>Select a function to calculate a key from the input fields above. Always use the same function to generate your Lock-ID.</source>
+        <translation>Wähle eine Funktion um einen Schlüssel aus den obigen Daten zu berechnen. Benutze immer die gleiche Funktion um deine Lock-ID zu erhalten.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="203"/>
+        <source>Key derivation function</source>
+        <translation>Schlüsselableitungsfunktion</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="209"/>
+        <source>Select scrypt as key derivation function.</source>
+        <translation>Wähle scrypt als Schlüsselableitungsfunktion.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="212"/>
+        <source>s&amp;crypt</source>
+        <translation>scrypt</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="222"/>
+        <source>Use Argon2 as key derivation function.</source>
+        <translation>Wähle Argon2 als Schlüsselableitungsfunktion.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="225"/>
+        <source>Argon&amp;2</source>
+        <translation>Argon2</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="281"/>
+        <source>Generate my Lock-ID</source>
+        <translation>Erzeuge meine Lock-ID</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="353"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MikroLock uses your email and passphrase to derive your &lt;span style=&quot; font-weight:600;&quot;&gt;Lock-ID&lt;/span&gt;.&lt;/p&gt;
+
+&lt;p&gt;Refer to &lt;a href=&quot;http://www.diceware.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Diceware.com&lt;/span&gt;&lt;/a&gt; for a method to generate good passphrases.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MikroLock nutzt die Mail-Adresse und das Passwort, um deine &lt;span style=&quot;font-weight:600;&quot;&gt;Lock-ID&lt;/span&gt; zu berechnen.&lt;/p&gt;
+&lt;p&gt;Sieh unter &lt;a href=&quot;http://www.diceware.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Diceware.com&lt;/span&gt;&lt;/a&gt; nach, wie man gute Passwörter erzeugen kann.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="390"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Send your Lock-ID to others so they can encrypt files to you.&lt;br/&gt;Encrypt files to friends using their Lock-IDs. &lt;br/&gt;&lt;br/&gt;Your email is only used to derive your Lock ID - it remains completely secret and anonymous.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sende deine MiniLock-ID an andere, damit sie Dateien für Dich verschlüsseln können.&lt;br&gt;Verschlüssele Dateien für andere mit deren Lock-IDs.&lt;br&gt;&lt;br&gt;Deine E-Mail Adresse wird nur verwendet, um deine Lock-ID zu erzeugen - sie bleibt geheim und anonym.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="444"/>
+        <source>This is your destination directory.</source>
+        <translation>Dies ist das Ausgabeverzeichnis.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="648"/>
+        <source>List of recipient Lock-IDs:</source>
         <translation>Liste der Empfänger-IDs:</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="628"/>
-        <source>Add a miniLock ID of whom should be able to open the file.</source>
+        <location filename="mlockmainwindow.ui" line="678"/>
+        <source>Add a Lock-ID of whom should be able to open the file.</source>
         <translation>Füge eine ID der Person hinzu, die deine miniLock-Datei öffnen darf.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="631"/>
-        <source>Add miniLock ID</source>
-        <translation>MiniLock-ID hinzufügen</translation>
+        <location filename="mlockmainwindow.ui" line="681"/>
+        <source>Add Lock-ID</source>
+        <translation>Lock-ID hinzufügen</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="650"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open a text file which contains one miniLock ID per line and use the entries to replace the recipient IDs above.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Öffne eine Textdatei, die eine miniLock-ID pro Zeile enthält, und ersetze damit die obigen Empfänger-IDs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <location filename="mlockmainwindow.ui" line="700"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open a text file which contains one Lock-ID per line and use the entries to replace the recipient IDs above.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Öffne eine Textdatei, die eine Lock-ID pro Zeile enthält, und ersetze damit die obigen Empfänger-IDs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="653"/>
-        <source>Read list file</source>
+        <location filename="mlockmainwindow.ui" line="703"/>
+        <source>Read list of IDs</source>
         <translation>Liste einlesen</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="664"/>
+        <location filename="mlockmainwindow.ui" line="714"/>
         <source>Clear the recipient list.</source>
         <translation>Löscht die Empfänger-Liste.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="667"/>
+        <location filename="mlockmainwindow.ui" line="717"/>
         <source>Clear recipients</source>
         <translation>Liste leeren</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="680"/>
+        <location filename="mlockmainwindow.ui" line="730"/>
         <source>Omit my ID</source>
         <translation>Meine ID auslassen</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="687"/>
+        <location filename="mlockmainwindow.ui" line="737"/>
         <source>Generate a random output filename</source>
         <translation>Zufallsnamen erzeugen</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="716"/>
+        <location filename="mlockmainwindow.ui" line="766"/>
         <source>Encrypt the file</source>
         <translation>Datei verschlüsseln</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="750"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Encrypt your file!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Add the miniLock ID of each person which should be able to decrypt the file.&lt;/p&gt;&lt;p&gt;If you omit your own ID, you will not be able to decrypt the resulting file.&lt;/p&gt;&lt;p&gt;A miniLock file does not give visible hints about the sender nor the recipients.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Encrypt your file!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Add the miniLock ID of each person which should be able to decrypt the file.&lt;/p&gt;&lt;p&gt;You can add up to 128 recipient IDs.&lt;/p&gt;&lt;p&gt;If you omit your own ID, you will not be able to decrypt the resulting file.&lt;/p&gt;&lt;p&gt;A miniLock file does not give visible hints about the sender nor the recipients.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Verschlüssele deine Datei!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Füge die miniLock-ID jeder Person hinzu, die die Datei öffnen soll.&lt;/p&gt;&lt;p&gt;Wenn Du Deine ID auslässt, kannst du die verschlüsselte Datei nicht öffnen.&lt;/p&gt;&lt;p&gt;Eine miniLock-Datei enthält keine sichtbaren Hinweise auf Sender oder Empfänger.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <location filename="mlockmainwindow.ui" line="800"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Encrypt your file!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Add the Lock-ID of each person which should be able to decrypt the file.&lt;/p&gt;&lt;p&gt;If you omit your own ID, you will not be able to decrypt the resulting file.&lt;/p&gt;&lt;p&gt;A miniLock file does not give visible hints about the sender nor the recipients.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Verschlüssele deine Datei!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Füge die Lock-ID jeder Person hinzu, die die Datei öffnen soll.&lt;/p&gt;&lt;p&gt;Wenn Du Deine ID auslässt, kannst du die verschlüsselte Datei nicht öffnen.&lt;/p&lt;p&gt;Eine miniLock-Datei enthält keine sichtbaren Hinweise auf Sender oder Empfänger.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="957"/>
+        <location filename="mlockmainwindow.ui" line="853"/>
+        <source>Move to the previous screen.</source>
+        <translation>Zum vorherigen Dialog wechseln.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="880"/>
+        <source>This is your Lock-ID.</source>
+        <translation>Dies ist deine Lock-ID.</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="883"/>
+        <source>&lt;My Lock-ID&gt;</source>
+        <translation>&lt;Meine Lock-ID&gt;</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="893"/>
+        <source>Copy your Lock-ID to the clipboard.</source>
+        <translation>Kopiere deine Lock-ID in die Zwischenablage.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Encrypt your file!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Add the miniLock ID of each person which should be able to decrypt the file.&lt;/p&gt;&lt;p&gt;If you omit your own ID, you will not be able to decrypt the resulting file.&lt;/p&gt;&lt;p&gt;A miniLock file does not give visible hints about the sender nor the recipients.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Encrypt your file!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Add the miniLock ID of each person which should be able to decrypt the file.&lt;/p&gt;&lt;p&gt;You can add up to 128 recipient IDs.&lt;/p&gt;&lt;p&gt;If you omit your own ID, you will not be able to decrypt the resulting file.&lt;/p&gt;&lt;p&gt;A miniLock file does not give visible hints about the sender nor the recipients.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Verschlüssele deine Datei!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Füge die miniLock-ID jeder Person hinzu, die die Datei öffnen soll.&lt;/p&gt;&lt;p&gt;Wenn Du Deine ID auslässt, kannst du die verschlüsselte Datei nicht öffnen.&lt;/p&gt;&lt;p&gt;Eine miniLock-Datei enthält keine sichtbaren Hinweise auf Sender oder Empfänger.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.ui" line="1007"/>
         <source>&amp;Translation hints</source>
         <translation>Ü&amp;bersetzungshinweise</translation>
     </message>
@@ -210,75 +303,71 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Datei verschlüsseln!&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Füge die miniLock-ID jeder Person hinzu, welche die Datei entschlüsseln darf.&lt;/p&gt;&lt;p&gt;Du kannst bis zu 50 Empfänger-IDs angeben.&lt;/p&gt;&lt;p&gt;Wenn Du deine eigene ID auslässt, kannst du die verschlüsselte Datei nicht mehr öffnen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="803"/>
         <source>Move to the previous screen</source>
-        <translation>Zum vorherigen Dialog wechseln</translation>
+        <translation type="vanished">Zum vorherigen Dialog wechseln</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="830"/>
         <source>This is your miniLock ID</source>
-        <translation>Dies ist Deine miniLock ID</translation>
+        <translation type="vanished">Dies ist Deine miniLock ID</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="833"/>
         <source>&lt;My miniLock ID&gt;</source>
-        <translation>&lt;Meine MiniLock ID&gt;</translation>
+        <translation type="vanished">&lt;Meine MiniLock ID&gt;</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="843"/>
         <source>Copy your miniLock ID to the clipboard</source>
-        <translation>Kopiere Deine MiniLock ID in die Zwischenablage</translation>
+        <translation type="vanished">Kopiere Deine MiniLock ID in die Zwischenablage</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="908"/>
+        <location filename="mlockmainwindow.ui" line="958"/>
         <source>Browse the destination directory.</source>
         <translation>Gehe ins Ausgabe-Verzeichnis.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="935"/>
+        <location filename="mlockmainwindow.ui" line="985"/>
         <source>He&amp;lp</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="947"/>
+        <location filename="mlockmainwindow.ui" line="997"/>
         <source>&amp;About MikroLock</source>
         <oldsource>&amp;About µlock</oldsource>
         <translation>&amp;Über MikroLock</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.ui" line="952"/>
+        <location filename="mlockmainwindow.ui" line="1002"/>
         <source>&amp;Manual</source>
         <translation>&amp;Handbuch</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="87"/>
-        <location filename="mlockmainwindow.cpp" line="398"/>
-        <location filename="mlockmainwindow.cpp" line="529"/>
+        <location filename="mlockmainwindow.cpp" line="89"/>
+        <location filename="mlockmainwindow.cpp" line="421"/>
+        <location filename="mlockmainwindow.cpp" line="560"/>
         <source>Input file %1</source>
         <translation>Eingabedatei %1</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="97"/>
+        <location filename="mlockmainwindow.cpp" line="99"/>
         <source>The passphrase is too short (minimum: 20 characters).</source>
         <translation>Das Passwort ist zu kurz (Mindestlänge: 20 Zeichen).</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="103"/>
+        <location filename="mlockmainwindow.cpp" line="105"/>
         <source>The passphrase is strong.</source>
         <translation>Das Passwort ist ausreichend sicher.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="110"/>
+        <location filename="mlockmainwindow.cpp" line="112"/>
         <source>The passphrase must consist of at least five random words. It may be declined by the original miniLock Chrome extension.</source>
         <translation>Das Passwort muss aus mindestens fünf Wörtern bestehen. Es könnte vom Original MiniLock-Plugin für Chrome abgewiesen werden.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="131"/>
+        <location filename="mlockmainwindow.cpp" line="133"/>
         <source>You do not need to enter an email address here unless you intend to use the Chrome miniLock extension.</source>
         <translation>Du musst hier keine gültige Mailadresse angeben wenn die miniLock Chrome-Erweiterung nicht ebenfalls genutzt werden soll.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="159"/>
+        <location filename="mlockmainwindow.cpp" line="180"/>
         <source>Scrypt error</source>
         <translation>Scrypt Fehler</translation>
     </message>
@@ -295,42 +384,46 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">%1 ist keine minilock-Datei.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="134"/>
+        <location filename="mlockmainwindow.cpp" line="136"/>
         <source>This mail address appears to be valid.</source>
         <translation>Die Mail-Adresse scheint gültig zu sein.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="137"/>
+        <location filename="mlockmainwindow.cpp" line="139"/>
         <source>This mail address appears to be invalid.</source>
         <translation>Die Mail-Adresse scheint ungültig zu sein.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="159"/>
+        <location filename="mlockmainwindow.cpp" line="180"/>
         <source>Key derivation failed</source>
         <translation>Schlüsselerzeugung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="186"/>
+        <location filename="mlockmainwindow.cpp" line="180"/>
+        <source>Argon2 error</source>
+        <translation>Argon2 Fehler</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.cpp" line="207"/>
         <source>%1 file %2...</source>
         <translation>%1 Datei %2...</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="188"/>
+        <location filename="mlockmainwindow.cpp" line="209"/>
         <source>Decrypting</source>
         <translation>Entschlüssele</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="188"/>
+        <location filename="mlockmainwindow.cpp" line="209"/>
         <source>Encrypting</source>
         <translation>Verschlüssele</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="235"/>
         <source>Bad miniLock ID</source>
-        <translation>Ungültige MiniLock ID</translation>
+        <translation type="vanished">Ungültige MiniLock ID</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="235"/>
+        <location filename="mlockmainwindow.cpp" line="256"/>
         <source>The ID %1 is invalid.</source>
         <translation>Die ID %1 ist ungültig.</translation>
     </message>
@@ -343,138 +436,143 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Du musst einige Empfänger IDs angeben.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="263"/>
+        <location filename="mlockmainwindow.cpp" line="256"/>
+        <source>Bad Lock-ID</source>
+        <translation>Ungültige Lock ID</translation>
+    </message>
+    <message>
+        <location filename="mlockmainwindow.cpp" line="284"/>
         <source>%1 file %2 in %3s</source>
         <translation>Datei %2 wurde in  %3s %1</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="265"/>
+        <location filename="mlockmainwindow.cpp" line="286"/>
         <source>Decrypted</source>
         <translation>entschlüsselt</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="265"/>
+        <location filename="mlockmainwindow.cpp" line="286"/>
         <source>Encrypted</source>
         <translation>verschlüsselt</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="278"/>
-        <location filename="mlockmainwindow.cpp" line="282"/>
-        <location filename="mlockmainwindow.cpp" line="286"/>
-        <location filename="mlockmainwindow.cpp" line="290"/>
-        <location filename="mlockmainwindow.cpp" line="294"/>
-        <location filename="mlockmainwindow.cpp" line="298"/>
-        <location filename="mlockmainwindow.cpp" line="302"/>
-        <location filename="mlockmainwindow.cpp" line="306"/>
-        <location filename="mlockmainwindow.cpp" line="310"/>
-        <location filename="mlockmainwindow.cpp" line="314"/>
-        <location filename="mlockmainwindow.cpp" line="318"/>
-        <location filename="mlockmainwindow.cpp" line="322"/>
+        <location filename="mlockmainwindow.cpp" line="299"/>
+        <location filename="mlockmainwindow.cpp" line="303"/>
+        <location filename="mlockmainwindow.cpp" line="307"/>
+        <location filename="mlockmainwindow.cpp" line="311"/>
+        <location filename="mlockmainwindow.cpp" line="315"/>
+        <location filename="mlockmainwindow.cpp" line="319"/>
+        <location filename="mlockmainwindow.cpp" line="323"/>
         <location filename="mlockmainwindow.cpp" line="327"/>
+        <location filename="mlockmainwindow.cpp" line="331"/>
+        <location filename="mlockmainwindow.cpp" line="335"/>
+        <location filename="mlockmainwindow.cpp" line="339"/>
+        <location filename="mlockmainwindow.cpp" line="343"/>
+        <location filename="mlockmainwindow.cpp" line="348"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="278"/>
+        <location filename="mlockmainwindow.cpp" line="299"/>
         <source>Unknown error.</source>
         <translation>Unbekannter Fehler.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="282"/>
+        <location filename="mlockmainwindow.cpp" line="303"/>
         <source>Could not decrypt the file.</source>
         <translation>Konnte Datei nicht entschlüsseln.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="286"/>
+        <location filename="mlockmainwindow.cpp" line="307"/>
         <source>Could not encrypt the file.</source>
         <translation>Konnte Datei nicht verschlüsseln.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="290"/>
+        <location filename="mlockmainwindow.cpp" line="311"/>
         <source>Could not open the file.</source>
         <translation>Konnte Datei nicht öffnen.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="294"/>
+        <location filename="mlockmainwindow.cpp" line="315"/>
         <source>Could not read the file.</source>
         <translation>Konnte Datei nicht lesen.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="298"/>
+        <location filename="mlockmainwindow.cpp" line="319"/>
         <source>Could not write the file.</source>
         <translation>Konnte Datei nicht schreiben.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="302"/>
+        <location filename="mlockmainwindow.cpp" line="323"/>
         <source>Could not calculate the hash of the file.</source>
         <translation>Konnte den Hashwert der Datei nicht bestimmen.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="306"/>
+        <location filename="mlockmainwindow.cpp" line="327"/>
         <source>Illegal minilock file format.</source>
         <translation>Ungültiges miniLock Dateiformat.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="310"/>
+        <location filename="mlockmainwindow.cpp" line="331"/>
         <source>No recipients defined.</source>
         <translation>Keine Empfänger angegeben.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="314"/>
+        <location filename="mlockmainwindow.cpp" line="335"/>
         <source>You are not allowed to decrypt the file.</source>
         <translation>Du darfst diese Datei nicht öffnen.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="318"/>
+        <location filename="mlockmainwindow.cpp" line="339"/>
         <source>Empty input file.</source>
         <translation>Leere Eingabedatei.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="322"/>
+        <location filename="mlockmainwindow.cpp" line="343"/>
         <source>Output file exists:
 %1</source>
         <translation>Datei existiert bereits:
 %1</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="327"/>
+        <location filename="mlockmainwindow.cpp" line="348"/>
         <source>Undefined error.</source>
         <translation>Undefinierter Fehler.</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="353"/>
+        <location filename="mlockmainwindow.cpp" line="374"/>
         <source>Select destination directory</source>
         <translation>Wähle das Ausgabevereichnis</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="370"/>
+        <location filename="mlockmainwindow.cpp" line="393"/>
         <source>Process given file</source>
         <translation>Verarbeite die angegebene Datei</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="371"/>
+        <location filename="mlockmainwindow.cpp" line="394"/>
         <source>%1 %2
 into %3 ?</source>
         <translation>%1 %2
 in %3 ?</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="372"/>
+        <location filename="mlockmainwindow.cpp" line="395"/>
         <source>Decrypt</source>
         <translation>Entschlüssele</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="373"/>
+        <location filename="mlockmainwindow.cpp" line="396"/>
         <source>Encrypt</source>
         <translation>Verschlüssele</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="441"/>
+        <location filename="mlockmainwindow.cpp" line="464"/>
         <source>About providing translations</source>
         <translation>Übersetzungen erstellen</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="442"/>
+        <location filename="mlockmainwindow.cpp" line="465"/>
         <source>This GUI was developed using the Qt toolkit, and translations may be provided using the tools Qt Linguist and lrelease.
 The ts files for Linguist reside in the src/gui/qt-widgets subdirectory.
 The qm file generated by lrelease has to be saved in l10n.
@@ -502,22 +600,22 @@ entschlüsseln?</translation>
         <translation type="vanished">%1 entschlüsseln?</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="474"/>
+        <location filename="mlockmainwindow.cpp" line="497"/>
         <source>Select the recipient list file</source>
         <translation>Wähle die Empfängerliste aus</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="524"/>
+        <location filename="mlockmainwindow.cpp" line="555"/>
         <source>Enter your mail adress and passphrase</source>
         <translation>Gib deine Mail-Adresse und das Passwort ein</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="536"/>
+        <location filename="mlockmainwindow.cpp" line="567"/>
         <source>Set input and output parameters</source>
         <translation>Setze Ein- und Ausgabeoptionen</translation>
     </message>
     <message>
-        <location filename="mlockmainwindow.cpp" line="541"/>
+        <location filename="mlockmainwindow.cpp" line="572"/>
         <source>Set encryption options for %1</source>
         <translation>Setze Verschlüsselungsoptionen für %1</translation>
     </message>
