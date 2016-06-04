@@ -33,6 +33,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVBoxLayout>
 #include <string.h>
 
+#ifdef Q_OS_WIN32
+#include <QWinTaskbarButton>
+#include <QWinTaskbarProgress>
+#endif
+
 extern "C" {
 #include <sodium/crypto_pwhash_scryptsalsa208sha256.h>
 #include <sodium/crypto_pwhash.h>
@@ -91,6 +96,11 @@ private:
     QString inputFilename;
     QTime timer;
     QVBoxLayout *scrollAreaLayout;
+
+#ifdef Q_OS_WIN32
+    QWinTaskbarButton *taskBarButton;
+    QWinTaskbarProgress *taskBarProgress;
+#endif
 
     QRegExp mailRE;
 

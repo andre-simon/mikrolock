@@ -34,14 +34,16 @@ linux {
 }
 
 win32 {
+        QT += winextras
         DEFINES += WIN32
 
         INCLUDEPATH+=D:\Devel\cpp\libsodium-win32\include
 
-        LIBS += -LD:\Devel\cpp\mlock-code\src\gui\build-mlock-lib-Desktop-Release\release -lmikrolock
+        LIBS += -LD:\Devel\cpp\mlock-code\src -lmikrolock
         LIBS += -LD:\Devel\cpp\libsodium-win32\lib -lsodium
 
-        DESTDIR = ..\\..\\..
+        DESTDIR = ..\\..\\..\\..
         RC_FILE = icon.rc
-        QMAKE_POST_LINK = $$quote(D:\Devel\upx308w\upx.exe --best D:\Devel\cpp\mlock-code\mikrolock-gui.exe)
+
+        QMAKE_POST_LINK = $$quote(D:\Devel\upx391w\upx.exe --best D:\Devel\cpp\mlock-code\mikrolock-gui.exe)
 }

@@ -442,8 +442,9 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         int decrypt_info_array_item_len  = strlen(c_decrypt_info_array_item_json);
 
         if (decrypt_info_array_item_len<500) {
-	    exit_loop_on_error=1;
-	    ret_val = err_format;
+            exit_loop_on_error=1;
+            ret_val = err_format;
+
             goto free_encode_loop_on_failure;
         }
 
@@ -459,6 +460,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
         }
         
         rcpt_idx++;
+        current = current->next;
 
 free_encode_loop_on_failure:
         free(c_file_info_crypted);
@@ -467,8 +469,7 @@ free_encode_loop_on_failure:
         c_decrypt_item_crypted=0;
         free (c_sending_nonce);
         c_sending_nonce=0;
-	if (exit_loop_on_error) break;
-	current = current->next;
+        if (exit_loop_on_error) break;
     }
 
 free_encode_res:
@@ -699,14 +700,14 @@ free_decode_res:
     return ret_val;
 }
 
-int rcpt_list_add (struct rcpt_list** list, char* id){
+int rcpt_list_add (struct rcpt_list** list, char* new_id){
   
-    if (!check_minilock_id((unsigned char*)id))
+    if (!check_minilock_id((const unsigned char*)new_id)){
       return 0;
-  
+    }
+
     struct rcpt_list* new_item = malloc(sizeof(struct rcpt_list));
-    
-    snprintf(new_item->id, sizeof new_item->id, "%s", id);
+    snprintf(new_item->id, sizeof new_item->id,  "%s", new_id);
     new_item->next = *list;
 
     *list = new_item;
@@ -715,6 +716,9 @@ int rcpt_list_add (struct rcpt_list** list, char* id){
 }
 
 void rcpt_list_free (struct rcpt_list** list) {
+
+
+
   struct rcpt_list* current  = *list;
   struct rcpt_list* next = NULL;
   

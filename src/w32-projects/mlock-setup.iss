@@ -5,7 +5,7 @@
 AppName=MikroLock
 
 AppVerName=MikroLock
-OutputBaseFilename=mikrolock-setup-1.0
+OutputBaseFilename=mikrolock-setup-1.1
 
 AppPublisher=André Simon
 AppPublisherURL=http://www.andre-simon.de

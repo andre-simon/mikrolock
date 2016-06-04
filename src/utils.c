@@ -278,8 +278,8 @@ json_value* get_json_value (json_value *json_file_info, const char *c_node_wante
 }
 
 // ID needs to be trimmed
-int check_minilock_id(const unsigned char* new_id){
 
+int check_minilock_id(const unsigned char* new_id){
    if (!new_id || strlen((const char*)new_id)>46) return 0;
 
    uint8_t b_rcpt_pk[KEY_LEN + 2]= {0};

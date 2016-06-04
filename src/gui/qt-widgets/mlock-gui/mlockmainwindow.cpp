@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDesktopServices>
 #include <QSettings>
 #include <QFileInfo>
+#include <QSysInfo>
 
 #include "mlockmainwindow.h"
 #include "ui_mlockmainwindow.h"
@@ -80,6 +81,11 @@ MlockMainWindow::MlockMainWindow(QWidget *parent) :
 
     this->setGeometry( QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter, this->size(),
                                            qApp->desktop()->availableGeometry() ));
+#ifdef Q_OS_WIN32
+    taskBarButton=NULL;
+    taskBarProgress=NULL;
+#endif
+
     readSettings();
 }
 
@@ -221,6 +227,17 @@ void MlockMainWindow::initProgressDisplay(bool isEncryptMode)
 
     out_opts.crypto_progress=0.0;
     out_opts.hash_progress=0.0;
+
+#ifdef Q_OS_WIN32
+    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS7) {
+      if (taskBarButton==NULL){
+         taskBarButton = new QWinTaskbarButton(this);
+         taskBarButton->setWindow(this->windowHandle());
+         taskBarProgress = taskBarButton->progress();
+      }
+      taskBarButton->setOverlayIcon(QIcon(actionPix));
+    }
+#endif
 }
 
 void MlockMainWindow::decrypt(){
@@ -359,6 +376,13 @@ void MlockMainWindow::handleResults(int result){
 
 void MlockMainWindow::updateProgress(int p){
     ui->progressBar->setValue(p);
+#ifdef Q_OS_WIN32
+    if (taskBarProgress!=NULL){
+        taskBarProgress->setValue(p);
+        taskBarProgress->setVisible(p && p!= 100);
+        if (p==100) taskBarButton->clearOverlayIcon();
+    }
+#endif
 }
 
 void MlockMainWindow::on_lbGoPreviousScreen_clicked(){
@@ -598,7 +622,7 @@ void MlockMainWindow::dragLeaveEvent(QDragLeaveEvent* event)
 void MlockMainWindow::addIDInputSlot()
 {
     QLineEdit* le =  new QLineEdit();
-#ifdef WIN32
+#ifdef Q_OS_WIN32
     le->setFont(QFont("Courier New"));
 #else
     le->setFont(QFont("Monospace"));
@@ -656,7 +680,6 @@ void MlockMainWindow::writeSettings()
 MlockMainWindow::~MlockMainWindow()
 {
     sodium_munlock( b_my_sk, sizeof b_my_sk);
-    //sodium_munlock(b_passphrase_blake2, sizeof b_passphrase_blake2);
     writeSettings();
     delete ui;
 }

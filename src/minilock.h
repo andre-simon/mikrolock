@@ -30,7 +30,7 @@ error_code minilock_encode(uint8_t* c_filename, uint8_t* c_sender_id, uint8_t* b
 
 error_code minilock_decode(uint8_t* c_filename, uint8_t* b_my_sk, uint8_t* b_my_pk, struct output_options* out_opts);
 
-int rcpt_list_add(struct rcpt_list** list, char* id);
+int rcpt_list_add(struct rcpt_list** list, char* new_id);
 
 void rcpt_list_free(struct rcpt_list** list);
 
