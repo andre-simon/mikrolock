@@ -33,14 +33,18 @@ linux {
     LIBS += -L../../.. -lmikrolock -lsodium
 }
 
-win32 {
+win32  {
+
         QT += winextras
+        # *64* bit config
+        INCLUDEPATH+=D:\Devel\qt-everywhere-opensource-src-5.7.0\qtwinextras\include\QtWinExtras
+
         DEFINES += WIN32
 
-        INCLUDEPATH+=D:\Devel\cpp\libsodium-win32\include
+        INCLUDEPATH+=D:\Devel\cpp\libsodium-win64\include
 
         LIBS += -LD:\Devel\cpp\mlock-code\src -lmikrolock
-        LIBS += -LD:\Devel\cpp\libsodium-win32\lib -lsodium
+        LIBS += -LD:\Devel\cpp\libsodium-win64\lib -lsodium
 
         DESTDIR = ..\\..\\..\\..
         RC_FILE = icon.rc

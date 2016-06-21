@@ -4,7 +4,8 @@ MikroLock installation instructions
 mikrolock requires the libsodium library (release 1.0.9).
 mikrolock-gui requires Qt5.
 
-1. Instructions:
+1. Compilation:
+---------------
 
 1.1 Linux
 -----------
@@ -21,8 +22,6 @@ mikrolock-gui requires Qt5.
 1.2 Windows
 -----------
 
-Install the following tools and libraries.
-
 a) Install Qt Creator IDE (www.qt.io)
 
 b) Install MingW (gcc toolchain)
@@ -30,6 +29,7 @@ b) Install MingW (gcc toolchain)
     -Download Online-Installer: 
      https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/installer/
     -Start mingw-w64-install.exe and select default options
+     (compilation of 64 bit libs and applications requires extra steps later, marked by *64*)
     -Add bin directory of the downloaded files to the system PATH
     -open cmd.exe and type "g++ --version" to check
 
@@ -39,23 +39,26 @@ c) Compile Qt:
      https://www.qt.io/download-open-source/ -> qt-everywhere-opensource-src-5.6.0.tar.gz
     -Open cmd.exe and change into the Qt directory
     -Configure Qt. Use static if you do not want to ship Qt DLLs:
-     configure -release -nomake examples -opensource -static -strip -opengl desktop
+     configure -release -opensource -confirm-license -static  -qt-zlib -qt-pcre -qt-libpng -qt-libjpeg -qt-freetype -qt-sql-sqlite -no-openssl -nomake examples -opengl  desktop
     -Compile Qt:
-     mingw32-make -j4
+     mingw32-make -k -j4
 
-d) Add compiler and Qt paths (location of qmake.exe) in QtCreator
+d) Add compiler and Qt paths (location of qmake.exe) in QtCreator; create a kit configuration
 
-e) Install libsodium:
+e)  *64*: -open qt-everywhere-opensource-src-5.7.0\qtwinextras and compile the winextras module
+          -edit additional include path for winextras in the mlock-gui pro file
+
+f) Install libsodium:
 
    - Download Mingw package:
      https://download.libsodium.org/libsodium/releases/ -> libsodium-1.0.10-mingw.tar.gz
-     Extract the header files, libs and DLLs of libsodium-win32.
+     Extract the header files, libs and DLLs of libsodium-win32 (*64*: libsodium-win64).
 
-f) Install upx from http://upx.sourceforge.net/
+g) Install upx from http://upx.sourceforge.net/
 
-g) Open the pro files in src/w32-projects and src/gui/qt-widgets/mlock-gui/ in 
-   QtCreator and adjust the paths of libraries and tools. Compile the lib project 
-   first.
+h) Open the pro files in src/w32-projects and src/gui/qt-widgets/mlock-gui/ in
+   QtCreator and adjust the paths of libraries and tools. Assign the kit config to the projects.
+   Compile the lib project first.
 
-h) Ship mikrolock with libgcc_s_dw2-1.dll libstdc++-6.dll libwinpthread-1.dll
+i) Ship mikrolock with libgcc_s_dw2-1.dll (32 bit) libgcc_s_seh-1.dll (*64* bit)  libstdc++-6.dll libwinpthread-1.dll
    (these are located in the mingw32 installation) and the libsodium DLL.

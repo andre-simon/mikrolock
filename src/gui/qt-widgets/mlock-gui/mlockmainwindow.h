@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWinTaskbarProgress>
 #endif
 
+
 extern "C" {
 #include <sodium/crypto_pwhash_scryptsalsa208sha256.h>
 #include <sodium/crypto_pwhash.h>

@@ -18,10 +18,10 @@ unix:LIBS += -lm -lsodium -L.. -lmikrolock
 win32 {
         DEFINES += WIN32
 	
-        INCLUDEPATH+=D:\Devel\cpp\libsodium-win32\include
+        INCLUDEPATH+=D:\Devel\cpp\libsodium-win64\include
 
         LIBS += -L.. -lmikrolock
-	LIBS += -LD:\Devel\cpp\libsodium-win32\lib -lsodium
+        LIBS += -LD:\Devel\cpp\libsodium-win64\lib -lsodium
 
         DESTDIR = ..\\..
         QMAKE_POST_LINK = $$quote(D:\Devel\upx391w\upx.exe --best D:\Devel\cpp\mlock-code\mikrolock.exe)
