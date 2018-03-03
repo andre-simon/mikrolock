@@ -150,6 +150,8 @@ void MlockMainWindow::on_txtMail_textChanged()
 void MlockMainWindow::on_btnUnlock_clicked(){
 
     this->setCursor(Qt::WaitCursor);
+    ui->txtPassPhrase->setEchoMode(QLineEdit::Password);
+    ui->cbShowPass->setChecked(false);
     QByteArray passphrase = ui->txtPassPhrase->text().toUtf8();
     QByteArray salt  = ui->txtMail->text().toUtf8();
 
@@ -474,7 +476,7 @@ void MlockMainWindow::on_actionAbout_mlock_triggered()
     QMessageBox::about( this, "About MikroLock",
                         QString("MikroLock reads and writes encrypted minilock files.\n\n"
                         "MikroLock %1\n"
-                        "(C) 2015, 2016 Andre Simon <andre.simon1 at gmx.de>\n\n"
+                        "(C) 2015-2018 Andre Simon <andre.simon1 at gmx.de>\n\n"
                         "Minilock file format specification:\n"
                         "https://minilock.io\n\n"
                         "Built with Qt version %2\n\n"
@@ -566,6 +568,11 @@ void MlockMainWindow::on_rbScrypt_clicked(){
 
 void MlockMainWindow::on_rbArgon2_clicked(){
     ui->rbScrypt->setChecked(false);
+}
+
+void MlockMainWindow::on_cbShowPass_clicked()
+{
+    ui->txtPassPhrase->setEchoMode( ui->cbShowPass->isChecked() ? QLineEdit::Normal : QLineEdit::Password );
 }
 
 void MlockMainWindow::on_stackedWidget_currentChanged(int idx)
@@ -716,3 +723,4 @@ void UpdateProgressBarThread::run() {
    if (MlockMainWindow::forceThreadStop)
        emit progress(0);
 }
+

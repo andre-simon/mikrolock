@@ -125,12 +125,11 @@ private slots:
     void on_btnBrowseDestDir_clicked();
     void on_rbScrypt_clicked();
     void on_rbArgon2_clicked();
-
+    void on_cbShowPass_clicked();
     void on_stackedWidget_currentChanged(int idx);
 
-  public slots:
+public slots:
     void handleResults(int);
-
     void updateProgress(int);
 };
 
@@ -149,7 +148,6 @@ public:
 signals:
     void resultReady(const int s);
 };
-
 
 class EncryptThread : public QThread
 {
@@ -172,12 +170,10 @@ class UpdateProgressBarThread : public QThread
 
 public:
     UpdateProgressBarThread(){
-
     }
 
     Q_OBJECT
     void run() Q_DECL_OVERRIDE ;
-
 
 signals:
     void progress(const int s);
