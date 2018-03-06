@@ -1,7 +1,7 @@
 #ifndef _MINILOCK_H
 #define _MINILOCK_H
 
-#define MIKROLOCK_VERSION "1.1"
+#define MIKROLOCK_VERSION "1.2"
 
 // for ftelloo: off_t
 #define _FILE_OFFSET_BITS 64

@@ -21,10 +21,12 @@ win32 {
         DESTDIR = ..
 	DEFINES += WIN32
 
-        INCLUDEPATH += ../../../libsodium-win64/include
+        INCLUDEPATH += E:\Devel\cpp\libsodium-win64\include
         INCLUDEPATH += ../libs
 
-        LIBS += -L../../libsodium-win64/lib -lsodium
+#        LIBS += -LE:\Devel\cpp\libsodium-win32\lib -lsodium
+
+        LIBS += -LE:\Devel\cpp\libsodium-win64\lib -lsodium
 }
 unix {
     target.path = /usr/lib

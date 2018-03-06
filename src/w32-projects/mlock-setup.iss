@@ -5,7 +5,7 @@
 AppName=MikroLock
 
 AppVerName=MikroLock
-OutputBaseFilename=mikrolock-setup-1.1
+OutputBaseFilename=mikrolock-setup-1.2
 
 AppPublisher=André Simon
 AppPublisherURL=http://www.andre-simon.de
@@ -26,7 +26,7 @@ Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "A
 
 [Files]
 Source: "..\..\mikrolock-gui.exe"; DestDir: "{app}";  Flags: ignoreversion
-Source: "D:\Devel\cpp\mlock-code\src\w32-projects\dlls\*.dll"; DestDir: "{app}";  Flags: ignoreversion
+Source: "E:\Devel\git\mikrolock\src\w32-projects\dlls\*.dll"; DestDir: "{app}";  Flags: ignoreversion
 Source: "..\gui\qt-widgets\mlock-gui\mikrolock.ico"; DestDir: "{app}";  Flags: ignoreversion
 Source: "..\..\README*"; DestDir: "{app}";  Flags: ignoreversion
 Source: "..\..\TODO"; DestDir: "{app}";  Flags: ignoreversion
@@ -38,18 +38,18 @@ Source: "..\..\l10n\*.*";  DestDir: "{app}\l10n\";  Flags: ignoreversion;
 Source: "..\..\mikrolock.exe";   DestDir: "{app}";  Flags: ignoreversion; Components: cli;
 Source: "..\..\man\*.*";  DestDir: "{app}\man\";  Flags: ignoreversion; Components: cli;
 
-Source: "D:\Devel\cpp\mlock-code\src\*.*";  DestDir: "{app}\src\";  Flags: ignoreversion; Components: sourcecode;
-Source: "D:\Devel\cpp\mlock-code\src\gui\qt-widgets\mlock-gui\*.*";  DestDir: "{app}\src\gui\qt-widgets\mlock-gui\";  Flags: ignoreversion; Components: sourcecode;
-Source: "D:\Devel\cpp\mlock-code\src\gui\qt-widgets\mlock-gui\manual\*.*";  DestDir: "{app}\src\gui\qt-widgets\mlock-gui\manual\";  Flags: ignoreversion; Components: sourcecode;
-Source: "D:\Devel\cpp\mlock-code\src\w32-projects\*.pro";  DestDir: "{app}\src\w32-projects\";  Flags: ignoreversion; Components: sourcecode;
-Source: "D:\Devel\cpp\mlock-code\src\w32-projects\*.iss";  DestDir: "{app}\src\w32-projects\";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\*.*";  DestDir: "{app}\src\";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\gui\qt-widgets\mlock-gui\*.*";  DestDir: "{app}\src\gui\qt-widgets\mlock-gui\";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\gui\qt-widgets\mlock-gui\manual\*.*";  DestDir: "{app}\src\gui\qt-widgets\mlock-gui\manual\";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\w32-projects\*.pro";  DestDir: "{app}\src\w32-projects\";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\w32-projects\*.iss";  DestDir: "{app}\src\w32-projects\";  Flags: ignoreversion; Components: sourcecode;
 
-Source: "D:\Devel\cpp\mlock-code\src\libs\b58\*.*";  DestDir: "{app}\src\libs\b58";  Flags: ignoreversion; Components: sourcecode;
-Source: "D:\Devel\cpp\mlock-code\src\libs\blake2\*.*";  DestDir: "{app}\src\libs\blake2";  Flags: ignoreversion; Components: sourcecode;
-Source: "D:\Devel\cpp\mlock-code\src\libs\json\*.*";  DestDir: "{app}\src\libs\json";  Flags: ignoreversion; Components: sourcecode;
-Source: "D:\Devel\cpp\mlock-code\src\libs\libb64\*.*";  DestDir: "{app}\src\libs\libb64";  Flags: ignoreversion; Components: sourcecode;
-Source: "D:\Devel\cpp\mlock-code\src\libs\libb64\b64\*.*";  DestDir: "{app}\src\libs\libb64\b64";  Flags: ignoreversion; Components: sourcecode;
-Source: "D:\Devel\cpp\mlock-code\src\libs\pinentry\*.*";  DestDir: "{app}\src\libs\pinentry";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\libs\b58\*.*";  DestDir: "{app}\src\libs\b58";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\libs\blake2\*.*";  DestDir: "{app}\src\libs\blake2";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\libs\json\*.*";  DestDir: "{app}\src\libs\json";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\libs\libb64\*.*";  DestDir: "{app}\src\libs\libb64";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\libs\libb64\b64\*.*";  DestDir: "{app}\src\libs\libb64\b64";  Flags: ignoreversion; Components: sourcecode;
+Source: "E:\Devel\git\mikrolock\src\libs\pinentry\*.*";  DestDir: "{app}\src\libs\pinentry";  Flags: ignoreversion; Components: sourcecode;
 
 [Components]
 Name: "main"; Description: "MikroLock GUI"; Types: full compact custom; Flags: fixed

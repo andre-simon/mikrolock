@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secret){
 
 #ifdef WIN32
-  DWORD mode;
+  DWORD mode=0L;
   HANDLE ih = GetStdHandle( STD_INPUT_HANDLE  );
 #endif
 
@@ -61,7 +61,6 @@ void prompt_tty(const char* prompt_txt, uint8_t* input, int max_len, int is_secr
       }
 
 #else
-
       GetConsoleMode( ih, &mode );
       SetConsoleMode( ih, mode & ~(ENABLE_ECHO_INPUT) );
 #endif
@@ -137,7 +136,7 @@ void print_help() {
 }
 
 void print_version(int show_license_info) {
-        printf("mikrolock " MIKROLOCK_VERSION " Copyright 2014-2016 Andre Simon\n");
+        printf("mikrolock " MIKROLOCK_VERSION " Copyright 2014-2018 Andre Simon\n");
 
   if (show_license_info){
     printf("This program comes with ABSOLUTELY NO WARRANTY\n");

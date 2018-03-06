@@ -36,18 +36,20 @@ linux {
 win32  {
 
         QT += winextras
+
         # *64* bit config
-        INCLUDEPATH+=D:\Devel\qt-everywhere-opensource-src-5.7.0\qtwinextras\include\QtWinExtras
+        INCLUDEPATH+=E:\Devel\qt-everywhere-opensource-src-5.9.0_x64\qtwinextras\include\
 
         DEFINES += WIN32
 
-        INCLUDEPATH+=D:\Devel\cpp\libsodium-win64\include
+        INCLUDEPATH+=E:\Devel\cpp\libsodium-win64\include
 
-        LIBS += -LD:\Devel\cpp\mlock-code\src -lmikrolock
-        LIBS += -LD:\Devel\cpp\libsodium-win64\lib -lsodium
+        LIBS += -LE:\Devel\git\mikrolock\src -lmikrolock
+        #LIBS += -LE:\Devel\cpp\libsodium-win32\lib -lsodium
+        LIBS += -LE:\Devel\cpp\libsodium-win64\lib -lsodium
 
         DESTDIR = ..\\..\\..\\..
         RC_FILE = icon.rc
 
-        QMAKE_POST_LINK = $$quote(D:\Devel\upx391w\upx.exe --best D:\Devel\cpp\mlock-code\mikrolock-gui.exe)
+        QMAKE_POST_LINK = $$quote(E:\Devel\upx393w\upx.exe --best E:\Devel\git\mikrolock\mikrolock-gui.exe)
 }

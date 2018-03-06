@@ -238,7 +238,7 @@ void MlockMainWindow::initProgressDisplay(bool isEncryptMode)
          taskBarProgress = taskBarButton->progress();
       }
       taskBarButton->setOverlayIcon(QIcon(actionPix));
-    }  
+    }
 #endif
 }
 

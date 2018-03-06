@@ -34,8 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 
 #ifdef Q_OS_WIN32
-#include <QWinTaskbarButton>
-#include <QWinTaskbarProgress>
+#include <QtWinExtras/QWinTaskbarButton>
+#include <QtWinExtras/QWinTaskbarProgress>
 #endif
 
 
